@@ -9,7 +9,6 @@ function MainPage() {
         <nav>
           <ul>
             <li>여행지</li>
-            <li>내 여행</li>
             <li>고객지원</li>
             <li>이용방법</li>
             <li>로그인</li>
