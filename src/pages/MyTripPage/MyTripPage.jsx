@@ -1,15 +1,20 @@
 import React from 'react';
-import styled from 'styled-components';
+import { 
+  Container,
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Navbar from '@/components/common/Navbar/Navbar';
 
-const Container = styled.div`
-  padding: 20px;
-`;
+const StyledContainer = styled(Container)({
+  maxWidth: '1200px !important',
+  padding: '0 20px',
+});
 
 const MyTripPage = () => {
   return (
-    <Container>
-      <h1>My Trip Page</h1>
-    </Container>
+    <StyledContainer>
+      <Navbar />
+    </StyledContainer>
   );
 };
 
