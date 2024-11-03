@@ -11,12 +11,14 @@ import BudgetPage from './pages/BudgetPage/BudgetPage';
 import MainPage from './pages/MainPage/MainPage';
 import MyTripPage from './pages/MyTripPage/MyTripPage';
 import TripPlacePage from './pages/TripPlacePage/TripPlacePage';
+import LoginPage from './pages/auth/LoginPage/LoginPage';
+import SignupPage from './pages/auth/SignupPage/SignupPage';
 
 function App() {
   return (
     <MuiThemeProvider theme={muiTheme}>
       <StyledThemeProvider theme={muiTheme}>
-        <CssBaseline /> {/* MUI의 기본 스타일 초기화 */}
+        <CssBaseline />
         <GlobalStyles />
         <Router>
           <Routes>
@@ -24,6 +26,8 @@ function App() {
             <Route path="/budget" element={<BudgetPage />} />
             <Route path="/my-trip" element={<MyTripPage />} />
             <Route path="/trip-place" element={<TripPlacePage />} />
+            <Route path="/auth/login" element={<LoginPage />} />
+            <Route path="/auth/signup" element={<SignupPage />} />
           </Routes>
         </Router>
       </StyledThemeProvider>
