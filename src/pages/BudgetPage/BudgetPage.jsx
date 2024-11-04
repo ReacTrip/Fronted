@@ -195,7 +195,7 @@ const BudgetPage = () => {
       {/* 왼쪽 영역 */}
       <Grid item xs={8} sx={{ padding: "0 16px 16px" }}>
         <ImageWithTextOverlay/>
-        <Typography variant="h5" component="div" sx={{mt : 4}}>
+        <Typography variant="h5" component="div" sx={{fontWeight : 'bold',  mt : 3}}>
           여행 일정
         </Typography>
         <Divider sx={{ margin: '20px 0' }} />
