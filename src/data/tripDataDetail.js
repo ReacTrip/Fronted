@@ -12,6 +12,36 @@ export const detailData = [
     author: "여행러버",
     image: trip1,
     date: "2024.11.01 - 2024.11.04",
+    1:[
+      {
+        place : "제주 감귤 농장",
+        images : ['1.png', '2.png', '3.png']
+      },
+      {
+        place : "제주 감귤 농장", 
+        images : ['1.png', '2.png', '3.png']
+      }
+    ],
+    2:[
+      {
+        place : "제주 감귤 농장",
+        images : ['1.png', '2.png', '3.png']
+      },
+      {
+        place : "제주 감귤 농장", 
+        images : ['1.png', '2.png', '3.png']
+      }
+    ],
+    3:[
+      {
+        place : "제주 감귤 농장",
+        images : ['1.png', '2.png', '3.png']
+      },
+      {
+        place : "제주 감귤 농장", 
+        images : ['1.png', '2.png', '3.png']
+      }
+    ],
     tags: ["제주도", "휴양", "맛집"],
   },
   {
