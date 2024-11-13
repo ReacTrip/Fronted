@@ -1,6 +1,10 @@
+// Jeju.jsx
 import React from 'react';
 import styled from 'styled-components';
 import Navbar from '@/components/common/Navbar/Navbar';
+
+//제주도 대표 이미지 임포트
+import jejuRandmark from '@/assets/images/TripPlace/jeju/jejuRandmark.png';
 
 // 제주도 관광지 이미지 임포트
 import jejuAttraction1 from '@/assets/images/TripPlace/jeju/jejuAttraction1.png';
@@ -17,14 +21,49 @@ import jejuFood1 from '@/assets/images/TripPlace/jeju/jejuFood1.png';
 import jejuFood2 from '@/assets/images/TripPlace/jeju/jejuFood2.png';
 import jejuFood3 from '@/assets/images/TripPlace/jeju/jejuFood3.png';
 
-const Container = styled.div`
-  padding: 20px;
+// 배경 이미지와 오버레이 텍스트 스타일
+const HeroSection = styled.div`
+  position: relative;
+  height: 400px;
+  background-image: url(${jejuRandmark}); /* 배경 이미지를 원하는 이미지로 설정 */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
 `;
 
-const Title = styled.h1`
-  text-align: center;
-  margin-bottom: 0px;
-  font-size: 48px;
+const HeroOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* 어두운 오버레이 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const HeroTextContainer = styled.div`
+  position: relative;
+  z-index: 1;
+`;
+
+const HeroTitle = styled.h1`
+  font-size: 3rem;
+  margin: 0;
+`;
+
+const HeroSubtitle = styled.p`
+  font-size: 1.25rem;
+  margin-top: 10px;
+`;
+
+const Container = styled.div`
+  padding: 20px;
 `;
 
 const SectionTitle = styled.h2`
@@ -41,7 +80,7 @@ const GridContainer = styled.div`
 
 const Divider = styled.hr`
   border: 1px solid #ccc;
-  margin: 40px 0; /* 위아래 40px 간격 추가 */
+  margin: 40px 0;
 `;
 
 const Card = styled.div`
@@ -86,50 +125,59 @@ const Jeju = () => {
   ];
 
   return (
-    <Container>
+    <div>
       <Navbar />
-      <Title>제주도</Title>
+      <HeroSection>
+        <HeroOverlay>
+          <HeroTextContainer>
+            <HeroTitle>제주도</HeroTitle>
+            <HeroSubtitle>2024 제주도 자유여행 가볼만한 곳 추천</HeroSubtitle>
+          </HeroTextContainer>
+        </HeroOverlay>
+      </HeroSection>
       
-      <SectionTitle>관광지</SectionTitle>
-      <GridContainer>
-        {attractions.map((attraction, index) => (
-          <Card key={index}>
-            <CardImage src={attraction.image} alt={attraction.title} />
-            <CardContent>
-              <h3>{attraction.title}</h3>
-            </CardContent>
-          </Card>
-        ))}
-      </GridContainer>
-      
-      <Divider />
-  
-      <SectionTitle>축제</SectionTitle>
-      <GridContainer>
-        {festivals.map((festival, index) => (
-          <Card key={index}>
-            <CardImage src={festival.image} alt={festival.title} />
-            <CardContent>
-              <h3>{festival.title}</h3>
-            </CardContent>
-          </Card>
-        ))}
-      </GridContainer>
-  
-      <Divider />
-  
-      <SectionTitle>음식</SectionTitle>
-      <GridContainer>
-        {foods.map((food, index) => (
-          <Card key={index}>
-            <CardImage src={food.image} alt={food.title} />
-            <CardContent>
-              <h3>{food.title}</h3>
-            </CardContent>
-          </Card>
-        ))}
-      </GridContainer>
-    </Container>
+      <Container>
+        <SectionTitle>관광지</SectionTitle>
+        <GridContainer>
+          {attractions.map((attraction, index) => (
+            <Card key={index}>
+              <CardImage src={attraction.image} alt={attraction.title} />
+              <CardContent>
+                <h3>{attraction.title}</h3>
+              </CardContent>
+            </Card>
+          ))}
+        </GridContainer>
+        
+        <Divider />
+    
+        <SectionTitle>축제</SectionTitle>
+        <GridContainer>
+          {festivals.map((festival, index) => (
+            <Card key={index}>
+              <CardImage src={festival.image} alt={festival.title} />
+              <CardContent>
+                <h3>{festival.title}</h3>
+              </CardContent>
+            </Card>
+          ))}
+        </GridContainer>
+    
+        <Divider />
+    
+        <SectionTitle>음식</SectionTitle>
+        <GridContainer>
+          {foods.map((food, index) => (
+            <Card key={index}>
+              <CardImage src={food.image} alt={food.title} />
+              <CardContent>
+                <h3>{food.title}</h3>
+              </CardContent>
+            </Card>
+          ))}
+        </GridContainer>
+      </Container>
+    </div>
   );
 };
 
