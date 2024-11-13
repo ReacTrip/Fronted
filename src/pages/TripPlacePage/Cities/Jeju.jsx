@@ -1,31 +1,36 @@
 // Jeju.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Navbar from '@/components/common/Navbar/Navbar';
+import { IconButton } from '@mui/material';
+import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 
-//제주도 대표 이미지 임포트
-import jejuRandmark from '@/assets/images/TripPlace/jeju/jejuRandmark.png';
+// 제주도 랜드마크 이미지 배열
+import jejuRandmark1 from '@/assets/images/TripPlace/jeju/jejuRandmark1.png';
+import jejuRandmark2 from '@/assets/images/TripPlace/jeju/jejuRandmark2.png';
+import jejuRandmark3 from '@/assets/images/TripPlace/jeju/jejuRandmark3.png';
 
-// 제주도 관광지 이미지 임포트
+// 기존 관광지, 축제, 음식 이미지 임포트 유지
 import jejuAttraction1 from '@/assets/images/TripPlace/jeju/jejuAttraction1.png';
 import jejuAttraction2 from '@/assets/images/TripPlace/jeju/jejuAttraction2.png';
 import jejuAttraction3 from '@/assets/images/TripPlace/jeju/jejuAttraction3.png';
 
-// 제주도 축제 이미지 임포트
 import jejuFestival1 from '@/assets/images/TripPlace/jeju/jejuFestival1.png';
 import jejuFestival2 from '@/assets/images/TripPlace/jeju/jejuFestival2.png';
 import jejuFestival3 from '@/assets/images/TripPlace/jeju/jejuFestival3.png';
 
-// 제주도 음식 이미지 임포트
 import jejuFood1 from '@/assets/images/TripPlace/jeju/jejuFood1.png';
 import jejuFood2 from '@/assets/images/TripPlace/jeju/jejuFood2.png';
 import jejuFood3 from '@/assets/images/TripPlace/jeju/jejuFood3.png';
+
+// 랜드마크 이미지 배열
+const landmarkImages = [jejuRandmark1, jejuRandmark2, jejuRandmark3];
 
 // 배경 이미지와 오버레이 텍스트 스타일
 const HeroSection = styled.div`
   position: relative;
   height: 400px;
-  background-image: url(${jejuRandmark}); /* 배경 이미지를 원하는 이미지로 설정 */
+  background-image: url(${(props) => props.backgroundImage});
   background-size: cover;
   background-position: center;
   display: flex;
@@ -41,7 +46,7 @@ const HeroOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* 어두운 오버레이 */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,6 +67,7 @@ const HeroSubtitle = styled.p`
   margin-top: 10px;
 `;
 
+// 기타 기존 스타일 컴포넌트 유지
 const Container = styled.div`
   padding: 20px;
 `;
@@ -106,10 +112,24 @@ const CardContent = styled.div`
 `;
 
 const Jeju = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const handlePrevClick = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? landmarkImages.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleNextClick = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === landmarkImages.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
   const attractions = [
-    { image: jejuFood1, title: '제주 흑돼지' },
-    { image: jejuFood2, title: '제주 은갈치' },
-    { image: jejuFood3, title: '제주 고기국수' },
+    { image: jejuAttraction1, title: '에코랜드 테마파크' },
+    { image: jejuAttraction2, title: '대포해안주상절리대' },
+    { image: jejuAttraction3, title: '동문 재래시장' },
   ];
 
   const festivals = [
@@ -119,23 +139,49 @@ const Jeju = () => {
   ];
 
   const foods = [
-    { image: jejuAttraction1, title: '에코랜드 테마파크' },
-    { image: jejuAttraction2, title: '대포해안주상절리대' },
-    { image: jejuAttraction3, title: '동문 재래시장' },
+    { image: jejuFood1, title: '제주 흑돼지' },
+    { image: jejuFood2, title: '제주 은갈치' },
+    { image: jejuFood3, title: '제주 고기국수' },
   ];
 
   return (
     <div>
       <Navbar />
-      <HeroSection>
+      <HeroSection backgroundImage={landmarkImages[currentImageIndex]}>
         <HeroOverlay>
           <HeroTextContainer>
             <HeroTitle>제주도</HeroTitle>
             <HeroSubtitle>2024 제주도 자유여행 가볼만한 곳 추천</HeroSubtitle>
           </HeroTextContainer>
         </HeroOverlay>
+        <IconButton
+          onClick={handlePrevClick}
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '10px',
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
+          }}
+        >
+          <ArrowBackIos />
+        </IconButton>
+        <IconButton
+          onClick={handleNextClick}
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            right: '10px',
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
+          }}
+        >
+          <ArrowForwardIos />
+        </IconButton>
       </HeroSection>
-      
+
       <Container>
         <SectionTitle>관광지</SectionTitle>
         <GridContainer>
@@ -148,9 +194,9 @@ const Jeju = () => {
             </Card>
           ))}
         </GridContainer>
-        
+
         <Divider />
-    
+
         <SectionTitle>축제</SectionTitle>
         <GridContainer>
           {festivals.map((festival, index) => (
@@ -162,9 +208,9 @@ const Jeju = () => {
             </Card>
           ))}
         </GridContainer>
-    
+
         <Divider />
-    
+
         <SectionTitle>음식</SectionTitle>
         <GridContainer>
           {foods.map((food, index) => (
