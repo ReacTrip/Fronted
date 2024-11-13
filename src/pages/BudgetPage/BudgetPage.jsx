@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -177,6 +178,11 @@ const PlanDetail = () => {
 
 //페이지 컴포넌트
 const BudgetPage = () => {
+
+  const location = useLocation();
+  const { detail } = location.state || {}; // `detail`에 전달된 데이터가 없을 때를 대비한 안전 처리
+  console.log(detail);
+
   const [startDate, endDate] = previewData[0].date.split(" - "); // 시작 날짜와 종료 날짜를 가져옴
   
   // 날짜 배열 생성
