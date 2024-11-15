@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -10,6 +11,7 @@ import {
 import { styled } from '@mui/material/styles';
 import Navbar from '@/components/common/Navbar/Navbar';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import {detailData} from '@/data/tripDataDetail'
 
 const StyledContainer = styled(Container)({
   maxWidth: '1200px !important',
@@ -89,9 +91,16 @@ import trip5 from '@/assets/images/main/trip5.png';
 import trip6 from '@/assets/images/main/trip6.png';
 
 // *************************************************************************
+
 // *************************************************************************
 
 const MyTripPage = () => {
+
+  const navigate = useNavigate();
+  //detail페이지로 이동하는 함수
+  const handleClick = () => {
+    navigate('/budget', { state: { detail: detailData[0] }  });
+  };
   const [trips, setTrips] = useState([]);
 
   useEffect(() => {
@@ -110,7 +119,7 @@ const MyTripPage = () => {
         </Typography>
         <List>
           {trips.map((trip) => (
-            <PreviewCard elevation={2}>
+            <PreviewCard elevation={2} onClick={handleClick}>
               <ImageSection>
                 <img src={trip.image} alt={trip.title} />
               </ImageSection>

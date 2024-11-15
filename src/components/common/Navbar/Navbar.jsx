@@ -64,9 +64,9 @@ const Navbar = () => {
   const navItems = [
     { text: '여행지', path: '/trip-place' },
     { text: '내 여행', path: '/my-trip' },
-    { text: '고객지원', path: '/support' },
-    { text: '이용방법', path: '/guide' },
-    { text: '로그인', path: '/login' }
+    { text: '스마트 체크리스트', path: '/support' },
+    { text: '여행 취향 테스트', path: '/budget' },
+    { text: '로그인', path: '/auth/login' }
   ];
 
   return (
