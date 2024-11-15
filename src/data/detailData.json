@@ -1,0 +1,97 @@
+[
+    {
+      "id": 1,
+      "title": "부산 여행",
+      "startDate": "2024-05-01",
+      "endDate": "2024-05-10",
+      "AuthorId": "abc",
+      "mainImage": "trip2.jpg",
+      "dailyItinerary": {
+        "2024-05-01": [
+          {
+            "name": "광안리 해수욕장",
+            "city": "Busan",
+            "time": "12:00",
+            "notes": "수영복 가져가기",
+            "placeImage": "trip1.jpg",
+            "images": ["trip3.jpg", "trip4.jpg"]
+          },
+          {
+            "name": "조개구이 가게",
+            "city": "Busan",
+            "time": "15:00",
+            "notes": "",
+            "placeImage": "trip2.jpg",
+            "images": ["trip5.jpg", "trip6.jpg"]
+          }
+        ],
+        "2024-05-02": [
+          {
+            "name": "울산 맛집",
+            "city": "울산",
+            "time": "09:00",
+            "notes": "오전 방문",
+            "placeImage": "trip3.jpg",
+            "images": ["trip5.jpg", "trip6.jpg"]
+          },
+          {
+            "name": "울산 해수욕장",
+            "city": "울산",
+            "time": "13:00",
+            "notes": "밥 먹고 방문",
+            "placeImage": "trip4.jpg",
+            "images": ["trip1.jpg", "trip2.jpg"]
+          }
+        ]
+      },
+      "description": "친구랑 함께가는 여행"
+    },
+    {
+      "id": 2,
+      "title": "서울 투어",
+      "startDate": "2024-08-10",
+      "endDate": "2024-08-15",
+      "AuthorId": "def",
+      "mainImage": "trip2.jpg",
+      "dailyItinerary": {
+        "2024-08-10": [
+          {
+            "name": "경복궁",
+            "city": "Seoul",
+            "time": "09:00",
+            "notes": "오전 궁궐 투어, 사진 촬영 예정",
+            "placeImage": "",
+            "images": ["trip1.jpg", "trip5.jpg"]
+          },
+          {
+            "name": "북촌 한옥 마을",
+            "city": "Seoul",
+            "time": "13:00",
+            "notes": "전통 한옥 체험",
+            "placeImage": "",
+            "images": ["trip2.jpg", "trip6.jpg"]
+          }
+        ],
+        "2024-08-11": [
+          {
+            "name": "Seoul Tower",
+            "city": "Seoul",
+            "time": "10:00",
+            "notes": "서울 전망 감상 및 케이블카 이용",
+            "placeImage": "",
+            "images": ["trip3.jpg", "trip4.jpg"]
+          },
+          {
+            "name": "Myeongdong",
+            "city": "Seoul",
+            "time": "15:00",
+            "notes": "쇼핑 및 길거리 음식 체험",
+            "placeImage": "",
+            "images": ["trip1.jpg", "trip6.jpg"]
+          }
+        ]
+      },
+      "description": "서울 주요 관광지 중심으로 방문"
+    }
+  ]
+  

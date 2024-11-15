@@ -63,6 +63,7 @@ const NavButton = muiStyled(Button)(({ theme, isLogin }) => ({
 const Navbar = () => {
   const navItems = [
     { text: '여행지', path: '/trip-place' },
+    { text: '여행 목록', path: '/all-travels' },
     { text: '내 여행', path: '/my-trip' },
     { text: '스마트 체크리스트', path: '/support' },
     { text: '여행 취향 테스트', path: '/budget' },
