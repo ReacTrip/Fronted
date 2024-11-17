@@ -26,14 +26,18 @@ const TripPlacePage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="container mx-auto py-10">
-
+      <div
+        className="container mx-auto py-10"
+        style={{
+          padding: '0 32px', // 좌우 여백 추가
+        }}
+      >
         <div
           className="grid gap-6"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '24px',
+            gap: '24px', // 이미지 간 간격 유지
           }}
         >
           {cities.map((city, index) => (
@@ -93,7 +97,7 @@ const TripPlacePage = () => {
         </div>
       </div>
     </div>
-  );
+  );  
 };
 
 export default TripPlacePage;
