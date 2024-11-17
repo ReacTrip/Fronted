@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from 'react-router-dom';
 import {
   Container,
@@ -94,6 +94,52 @@ const generateDateArray = (startDate, endDate) => {
   }
 
   return dateArray;
+};
+
+//이동거리, 시간 구하는 함수.
+const calculateTravelTime = async (datePlan) => {
+  const url = "https://apis-navi.kakaomobility.com/v1/waypoints/directions";
+  const apiKey = "ba3ff297979c2d4a8a1705faf318ce23";
+
+  // 첫 번째와 마지막 인덱스를 제외한 waypoints 생성
+  const waypoints = datePlan.slice(1, -1).map((point, index) => ({
+    name: `name${index}`, // 순서대로 이름 지정
+    x: point.x,
+    y: point.y,
+  }));
+
+  const requestBody = {
+    origin: { x: datePlan[0].x, y: datePlan[0].y },
+    destination: { x: datePlan[datePlan.length - 1].x, y: datePlan[datePlan.length - 1].y },
+    waypoints,
+    priority: "RECOMMEND",
+    car_fuel: "GASOLINE",
+    car_hipass: false,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `KakaoAK ${apiKey}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch travel time");
+    }
+
+    const data = await response.json();
+    const allDuration = data.routes[0]?.summary?.duration || 0; // 이동 시간(초 단위) 반환
+    const allDistance = data.routes[0]?.summary?.distance || 0; // 이동 시간(초 단위) 반환
+    const durations = data.routes[0].sections.map(val => ({ distance: val.distance, duration: val.duration }));
+    return { allDuration, allDistance, durations };
+  } catch (error) {
+    console.error("Error calculating travel time:", error);
+    return null;
+  }
 };
 
 
@@ -212,7 +258,27 @@ const PlanDetail = (props) => {
 
 //선택된 날짜의 데이터를 나타내주는 컴포넌트
 const PlanDate = ({ datePlan, date, onDrop }) => {
-  console.log(datePlan);
+
+  const [result, setResult] = useState({ allDuration: 0, allDistance: 0, durations: [] });  //총 시간, 거리
+
+  useEffect(() => {
+    if (!datePlan || datePlan.length < 2) {
+      console.warn("datePlan의 데이터가 부족합니다.");
+      return;
+    }
+    const fetchTravelTimes = async () => {
+      //const times = [];
+
+      const newResult = await calculateTravelTime(datePlan);
+      console.log(newResult);
+      setResult(newResult);
+      //times.push(time);
+
+      //setMove(times);
+    };
+
+    fetchTravelTimes();
+  }, [datePlan]);
 
   const dragItem = useRef();
   const dragOverItem = useRef();
@@ -266,7 +332,14 @@ const PlanDate = ({ datePlan, date, onDrop }) => {
                 bgcolor: 'grey.300',
               }}
             />
-            {datePlan.map((plan, idx) => <PlanDetail key={idx} {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} />)}
+            {datePlan.map((plan, idx) => <div key={idx}>
+              <PlanDetail {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} />
+              {idx < datePlan.length - 1 && result?.durations[idx] !== undefined && (
+                <Typography sx={{ textAlign: "center", color: "grey.500", mt: 1, mb: 1 }}>
+                  이동 시간: {result.durations[idx].duration}초 이동 거리: {result.durations[idx].distance}미터
+                </Typography>
+              )}
+            </div>)}
           </Box>
 
           {/* Add Button */}
@@ -274,6 +347,10 @@ const PlanDate = ({ datePlan, date, onDrop }) => {
             <Button variant="outlined" startIcon={<AddIcon />}>
               추가
             </Button>
+            {result?.allDistance !== undefined && result?.allDuration !== undefined && (
+              <Typography sx={{ textAlign: "center", color: "grey.500", mt: 1, mb: 1 }}>
+              총 이동 시간: {result.allDuration}초 총 이동 거리: {result.allDistance}미터
+            </Typography>)}
           </Box>
         </Box>
       ) : (

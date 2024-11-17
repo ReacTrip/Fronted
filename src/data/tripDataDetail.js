@@ -23,6 +23,8 @@ export const detailData = [
                     notes: "수영복 가져가기",
                     placeImage: trip1,
                     images: [trip3, trip4],
+                    x: "127.11024293202674",
+                    y: "37.394348634049784"
                 },
                 {
                     name: "조개구이 가게",
@@ -31,6 +33,18 @@ export const detailData = [
                     notes: "",
                     placeImage: trip2,
                     images: [trip5, trip6],
+                    x: "127.11341936045922",
+                    y: "37.39639094915999"
+                },
+                {
+                    name: "광안리 해수욕장",
+                    city: "Busan",
+                    time: "12:00",
+                    notes: "수영복 가져가기",
+                    placeImage: trip1,
+                    images: [trip3, trip4],
+                    x: "127.10860518470294",
+                    y: "37.401999820065534"
                 }
             ],
 
@@ -43,6 +57,8 @@ export const detailData = [
                     notes: "오전 방문",
                     placeImage: trip3,
                     images: [trip5, trip6],
+                    x: "127.11341936045922",
+                    y: "37.39639094915999"
                 },
                 {
                     name: "울산 해수욕장",
@@ -51,7 +67,19 @@ export const detailData = [
                     notes: "밥 먹고 방문",
                     placeImage: trip4,
                     images: [trip1, trip2],
-                }
+                    x: "127.10860518470294",
+                    y: "37.401999820065534"
+                },
+                {
+                    name: "울산 맛집",
+                    city: "울산",
+                    time: "09:00",
+                    notes: "오전 방문",
+                    placeImage: trip3,
+                    images: [trip5, trip6],
+                    x: "127.11341936045922",
+                    y: "37.39639094915999"
+                },
             ]
 
         },
