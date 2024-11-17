@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createStore } from 'redux';
 import {
   Container,
   Typography,
   Paper,
   Box,
   List,
-  ListItem
+  ListItem,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import Navbar from '@/components/common/Navbar/Navbar';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import {detailData} from '@/data/tripDataDetail'
+import { previewData } from '@/data/tripData'; // named import 사용
 
 const StyledContainer = styled(Container)({
   maxWidth: '1200px !important',
   padding: '0 20px',
 });
 
-// 미리보기
 const PreviewCard = styled(Paper)({
   height: '280px',
   display: 'flex',
@@ -33,7 +35,6 @@ const PreviewCard = styled(Paper)({
   },
 });
 
-// 미리보기 이미지
 const ImageSection = styled(Box)({
   width: '60%',
   position: 'relative',
@@ -55,90 +56,88 @@ const ContentSection = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  gap: 20
+  gap: 20,
 });
 
-// 추후 무조건 수정해햐 하는 부분 - *임시 데이터 관련*
-// *************************************************************************
-// *************************************************************************
-// 임시 사용자 정보
 const currentUser = {
   id: 1,
   name: "스키매니아",
 };
 
-// 현재 여행 목록의 데이터는 MainPage에서 가져오지 않음
-// 임시 여행 데이터를 사용하고 있음
-// 추후 개선 필요
-// 
-// id     = 여행의 고유 id
-// name   = 여행의 이름
-// userId = 여행 템플릿의 작성자 id
-const tripData = [
-  { id: 1, name: "파리 여행", userId: 1, image: trip1, date: "2024.12.20 - 2024.12.22" },
-  { id: 2, name: "뉴욕 탐험", userId: 1, image: trip2, date: "2024.12.20 - 2024.12.22" },
-  { id: 3, name: "도쿄 투어", userId: 1, image: trip3, date: "2024.12.20 - 2024.12.22" },
-  { id: 4, name: "서울 관광", userId: 1, image: trip4, date: "2024.12.20 - 2024.12.22" },
-  { id: 5, name: "런던 여행", userId: 1, image: trip5, date: "2024.12.20 - 2024.12.22" },
-  { id: 6, name: "보이지 않는 여행", userId: 2, image: trip6, date: "2024.12.20 - 2024.12.22" },
-];
-
-// 이미지 import
-import trip1 from '@/assets/images/main/trip1.png';
-import trip2 from '@/assets/images/main/trip2.png';
-import trip3 from '@/assets/images/main/trip3.png';
-import trip4 from '@/assets/images/main/trip4.png';
-import trip5 from '@/assets/images/main/trip5.png';
-import trip6 from '@/assets/images/main/trip6.png';
-
-// *************************************************************************
-
-// *************************************************************************
-
 const MyTripPage = () => {
-
   const navigate = useNavigate();
-  //detail페이지로 이동하는 함수
-  const handleClick = () => {
-    navigate('/budget', { state: { detail: detailData[0] }  });
-  };
   const [trips, setTrips] = useState([]);
+  const [open, setOpen] = useState(false); // 다이얼로그 상태
+  const [newTripTitle, setNewTripTitle] = useState('');
+  const [newTripDate, setNewTripDate] = useState('');
+  const [newTripTags, setNewTripTags] = useState('');
 
   useEffect(() => {
-    // 현재 사용자의 여행 목록 필터링
-    const userTrips = tripData.filter(trip => trip.userId === currentUser.id);
+    // `previewData`에서 현재 사용자가 작성한 여행 필터링
+    const userTrips = previewData.filter((trip) => trip.author === currentUser.name);
     setTrips(userTrips);
   }, []);
 
+  const handleClick = (trip) => {
+    navigate('/budget', { state: { detail: trip } });
+  };
+
+  const handleAddTrip = () => {
+    if (newTripTitle && newTripDate) {
+      const newTrip = {
+        id: Date.now(),
+        title: newTripTitle,
+        author: currentUser.name,
+        image: '/images/trip1.png', // 기본 이미지
+        date: newTripDate,
+        tags: newTripTags.split(',').map((tag) => tag.trim()), // 태그를 쉼표로 구분
+      };
+      setTrips([...trips, newTrip]); // 여행 추가
+      setOpen(false); // 다이얼로그 닫기
+      setNewTripTitle(''); // 입력 초기화
+      setNewTripDate('');
+      setNewTripTags('');
+    }
+  };
+
   return (
     <StyledContainer>
-      <Navbar />
-
       <Box sx={{ padding: 3 }}>
         <Typography variant="h4" gutterBottom>
           {currentUser.name}님의 여행 목록
         </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpen(true)}
+          sx={{ marginBottom: 2 }}
+        >
+          여행 추가
+        </Button>
         <List>
           {trips.map((trip) => (
-            <PreviewCard elevation={2} onClick={handleClick}>
+            <PreviewCard key={trip.id} elevation={2} onClick={() => handleClick(trip)}>
               <ImageSection>
                 <img src={trip.image} alt={trip.title} />
               </ImageSection>
-              <ListItem key={trip.id} sx={{ borderBottom: '1px solid #ccc' }}>
+              <ListItem sx={{ borderBottom: '1px solid #ccc' }}>
                 <ContentSection>
-                  <Typography variant="h2" component="h2">
-                    {trip.name}
+                  <Typography variant="h5" component="h5">
+                    {trip.title}
                   </Typography>
                   <Box>
-                    O박 O일
+                    <Typography sx={{ fontSize: '14px' }}>{trip.date}</Typography>
                   </Box>
-                  <Box sx={{  display: 'flex', 
-                              alignItems: 'center',
-                              color: '#666'
-                    }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: '#666',
+                    }}
+                  >
                     <CalendarMonthIcon sx={{ fontSize: 18, mr: 1 }} />
                     <Typography sx={{ fontSize: '14px' }}>
-                      {trip.date}
+                      {trip.tags.join(', ')}
                     </Typography>
                   </Box>
                 </ContentSection>
@@ -148,6 +147,41 @@ const MyTripPage = () => {
         </List>
       </Box>
 
+      {/* 여행 추가 다이얼로그 */}
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>새로운 여행 추가</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="여행 이름"
+            value={newTripTitle}
+            onChange={(e) => setNewTripTitle(e.target.value)}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="여행 날짜"
+            value={newTripDate}
+            onChange={(e) => setNewTripDate(e.target.value)}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="여행 태그 (쉼표로 구분)"
+            value={newTripTags}
+            onChange={(e) => setNewTripTags(e.target.value)}
+            fullWidth
+            margin="dense"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddTrip}
+            sx={{ marginTop: 2 }}
+          >
+            추가
+          </Button>
+        </DialogContent>
+      </Dialog>
     </StyledContainer>
   );
 };

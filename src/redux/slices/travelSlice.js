@@ -1,20 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+  myTrips: [], // 빈 배열로 초기화
+};
+
+
 const travelSlice = createSlice({
   name: 'travels',
-  initialState: {
-    myTravels: [], // 내 여행 데이터
-    allTravels: [], // 모든 사용자 여행 데이터
-  },
+  initialState,
   reducers: {
-    addTravel: (state, action) => {
-      state.myTravels.push(action.payload); // 내 여행 추가
-    },
-    publishTravel: (state, action) => {
-      state.allTravels.push(action.payload); // 모든 사용자 여행 목록에 추가
+    addTrip: (state, action) => {
+      state.myTrips.push(action.payload);
     },
   },
 });
 
-export const { addTravel, publishTravel } = travelSlice.actions;
+export const { addTrip } = travelSlice.actions;
 export default travelSlice.reducer;
