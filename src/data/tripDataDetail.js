@@ -5,6 +5,8 @@ import trip4 from '@/assets/images/main/trip4.png';
 import trip5 from '@/assets/images/main/trip5.png';
 import trip6 from '@/assets/images/main/trip6.png';
 
+
+// 시연할 때, 미리 정해둘 데이터
 export const detailData = [
     {
         id: 1,  // 여행 id
