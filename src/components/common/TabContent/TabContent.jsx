@@ -64,6 +64,7 @@ const TabContent = ({ data, onCardClick }) => (
                   <CalendarMonthIcon sx={{ fontSize: 18, mr: 1 }} />
                   <Typography sx={{ fontSize: '14px' }}>{item.date}</Typography>
                 </Box>
+                {item.actions}
               </ContentSection>
             </ListItem>
           </PreviewCard>
