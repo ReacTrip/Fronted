@@ -14,6 +14,7 @@ import { styled } from '@mui/material/styles';
 import Navbar from '@/components/common/Navbar/Navbar';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { detailData } from '@/data/tripDataDetail';
+import TabContent from '@/components/common/TabContent/TabContent';
 
 // 스타일 적용
 const StyledContainer = styled(Container)({
@@ -103,54 +104,26 @@ const MyTripPage = () => {
     setTrips(userTrips);
   }, []);
 
+  const tabData = [
+    { id: 0, label: '내 여행', data: trips },
+    { id: 1, label: '작성한 글', data: [] }, // 작성한 글 데이터 추가 가능
+    { id: 2, label: '좋아요 한 글', data: [] }, // 좋아요 한 글 데이터 추가 가능
+  ];
+
   return (
     <StyledContainer>
       <Navbar />
       <Box sx={{ padding: 3 }}>
         <Typography variant="h4" gutterBottom>
+          {currentUser.name}님의 목록
         </Typography>
-        {/* 탭 추가 */}
-        <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth"
-          sx={{ marginBottom: 3 }}>
-          <Tab label="내 여행" />
-          <Tab label="작성한 글" />
-          <Tab label="좋아요 한 글" />
+        <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ marginBottom: 3 }}>
+          {tabData.map((tab) => (
+            <Tab key={tab.id} label={tab.label} />
+          ))}
         </Tabs>
 
-        {/* 탭 내용 표시 */}
-        {tabValue === 0 && (
-          <List>
-            {trips.map((trip) => (
-              <PreviewCard elevation={2} onClick={handleClick} key={trip.id} sx={{ marginBottom: 1 }}>
-                <ImageSection>
-                  <img src={trip.image} alt={trip.title} />
-                </ImageSection>
-                <ListItem sx={{ borderBottom: '1px solid #ccc' }}>
-                  <ContentSection>
-                    <Typography variant="h6">{trip.name}</Typography>
-                    <Box>O박 O일</Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        color: '#666',
-                      }}
-                    >
-                      <CalendarMonthIcon sx={{ fontSize: 18, mr: 1 }} />
-                      <Typography sx={{ fontSize: '14px' }}>{trip.date}</Typography>
-                    </Box>
-                  </ContentSection>
-                </ListItem>
-              </PreviewCard>
-            ))}
-          </List>
-        )}
-        {tabValue === 1 && (
-          <Typography variant="body1">작성한 글이 없습니다.</Typography>
-        )}
-        {tabValue === 2 && (
-          <Typography variant="body1">좋아요 한 글이 없습니다.</Typography>
-        )}
+        <TabContent data={tabData[tabValue].data} onCardClick={handleClick} />
       </Box>
     </StyledContainer>
   );
