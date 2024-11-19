@@ -10,6 +10,7 @@ import GlobalStyles from './styles/globalStyles';
 import BudgetPage from './pages/BudgetPage/BudgetPage';
 import MainPage from './pages/MainPage/MainPage';
 import MyTripPage from './pages/MyTripPage/MyTripPage';
+import AddTripPage from './pages/MyTripPage/AddTripPage';
 import TripPlacePage from './pages/TripPlacePage/TripPlacePage';
 import LoginPage from './pages/auth/LoginPage/LoginPage';
 import SignupPage from './pages/auth/SignupPage/SignupPage';
@@ -36,6 +37,7 @@ function App() {
             <Route path="/budget" element={<BudgetPage />} />
             <Route path="/preference" element={<MyTripPage />} />
             <Route path="/my-trip" element={<MyTripPage />} />
+            <Route path="/add-trip" element={<AddTripPage />} />
             <Route path="/trip-place" element={<TripPlacePage />} />
             <Route path="/auth/login" element={<LoginPage />} />
             <Route path="/auth/signup" element={<SignupPage />} />
