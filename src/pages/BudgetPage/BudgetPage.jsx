@@ -99,7 +99,7 @@ const generateDateArray = (startDate, endDate) => {
 //이동거리, 시간 구하는 함수.
 const calculateTravelTime = async (datePlan) => {
   const url = "https://apis-navi.kakaomobility.com/v1/waypoints/directions";
-  const apiKey = "ba3ff297979c2d4a8a1705faf318ce23";
+  const apiKey = import.meta.env.VITE_KAKAODEVELOPERS_API_KEY;
 
   // 첫 번째와 마지막 인덱스를 제외한 waypoints 생성
   const waypoints = datePlan.slice(1, -1).map((point, index) => ({

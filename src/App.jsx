@@ -34,6 +34,7 @@ function App() {
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/budget" element={<BudgetPage />} />
+            <Route path="/preference" element={<MyTripPage />} />
             <Route path="/my-trip" element={<MyTripPage />} />
             <Route path="/trip-place" element={<TripPlacePage />} />
             <Route path="/auth/login" element={<LoginPage />} />
