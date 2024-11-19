@@ -10,11 +10,16 @@ import {
   Grid,
   Button,
   Divider,
-  SvgIcon
+  SvgIcon,
+  IconButton,
+  Badge,
+  Modal,
+  Backdrop,
+  Fade,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navbar from '@/components/common/Navbar/Navbar';
-import KoreaMap from '@/components/map/KoreaMap_copy';
+import KakaoRouteMap from '@/components/map/KakaoRouteMap';
 import { previewData } from '@/data/tripData.js'
 import EastIcon from '@mui/icons-material/East';
 import TodayIcon from '@mui/icons-material/Today';
@@ -96,51 +101,7 @@ const generateDateArray = (startDate, endDate) => {
   return dateArray;
 };
 
-//이동거리, 시간 구하는 함수.
-const calculateTravelTime = async (datePlan) => {
-  const url = "https://apis-navi.kakaomobility.com/v1/waypoints/directions";
-  const apiKey = import.meta.env.VITE_KAKAODEVELOPERS_API_KEY;
 
-  // 첫 번째와 마지막 인덱스를 제외한 waypoints 생성
-  const waypoints = datePlan.slice(1, -1).map((point, index) => ({
-    name: `name${index}`, // 순서대로 이름 지정
-    x: point.x,
-    y: point.y,
-  }));
-
-  const requestBody = {
-    origin: { x: datePlan[0].x, y: datePlan[0].y },
-    destination: { x: datePlan[datePlan.length - 1].x, y: datePlan[datePlan.length - 1].y },
-    waypoints,
-    priority: "RECOMMEND",
-    car_fuel: "GASOLINE",
-    car_hipass: false,
-  };
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `KakaoAK ${apiKey}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch travel time");
-    }
-
-    const data = await response.json();
-    const allDuration = data.routes[0]?.summary?.duration || 0; // 이동 시간(초 단위) 반환
-    const allDistance = data.routes[0]?.summary?.distance || 0; // 이동 시간(초 단위) 반환
-    const durations = data.routes[0].sections.map(val => ({ distance: val.distance, duration: val.duration }));
-    return { allDuration, allDistance, durations };
-  } catch (error) {
-    console.error("Error calculating travel time:", error);
-    return null;
-  }
-};
 
 
 
@@ -212,6 +173,26 @@ const DateSelector = ({ dates = [], onDateClick = f => f, selectedDate }) => {
 
 //여행 계획 하나 단위
 const PlanDetail = (props) => {
+
+  const [open, setOpen] = useState(false); // 모달 열기/닫기 상태
+  const [currentImage, setCurrentImage] = useState(0); // 현재 보여줄 이미지의 인덱스
+
+  // 모달 열기
+  const handleOpen = () => setOpen(true);
+
+  // 모달 닫기
+  const handleClose = () => setOpen(false);
+
+  // 이전 이미지로 이동
+  const handlePrev = () => {
+    setCurrentImage((prev) => (prev === 0 ? props.images.length - 1 : prev - 1));
+  };
+
+  // 다음 이미지로 이동
+  const handleNext = () => {
+    setCurrentImage((prev) => (prev === props.images.length - 1 ? 0 : prev + 1));
+  };
+
   return (
     <div  //드래그가 가능하기위해 div로 감싸줌
       onDragStart={props.onDragStart}
@@ -242,6 +223,66 @@ const PlanDetail = (props) => {
                 버릇시장 & 재래시장 | 소요 시간: 1시간 미만
               </Typography>
             </Box>
+            {/* 오른쪽 하단에 추가 아이콘과 이미지 버튼 */}
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 10,
+                right: 10,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              {/* 추가 아이콘 버튼 */}
+              <IconButton
+                onClick={props.onAddImage}
+                sx={{
+                  backgroundColor: 'grey.300',
+                  width: 60,
+                  height: 60,
+                  borderRadius: 1,
+                  border: '1px solid #ddd',
+                }}
+              >
+                <AddIcon sx={{ color: 'grey.600', fontSize: 30 }} />
+              </IconButton>
+
+              {/* 이미지 버튼 */}
+              {props.images.length > 0 && (
+                <Badge
+                  badgeContent={props.images.length}
+                  color="primary"
+                  sx={{
+                    '& .MuiBadge-badge': {
+                      top: 0,
+                      right: 0,
+                      height: 20,
+                      minWidth: 20,
+                      borderRadius: '50%',
+                      backgroundColor: '#0066cc', // 배지 배경색
+                      color: 'white',
+                      fontSize: 12,
+                      fontWeight: 'bold',
+                      border: '2px solid white',
+                    },
+                  }}
+                >
+                  <IconButton
+                    onClick={handleOpen}
+                    sx={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: 1,
+                      border: '1px solid #ddd',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundImage: `url(${props.images[0]})`,
+                    }}
+                  />
+                </Badge>
+              )}
+            </Box>
           </Box>
         </Grid>
         {/* 삭제 버튼 */}
@@ -252,12 +293,114 @@ const PlanDetail = (props) => {
           삭제
         </DeleteButton>
       </Grid>
+
+      {/* 모달 */}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={open}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '80%',
+              maxWidth: '600px',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              borderRadius: 2,
+            }}
+          >
+            {/* 현재 이미지 */}
+            <img
+              src={props.images[currentImage]}
+              alt={`이미지 ${currentImage + 1}`}
+              style={{
+                width: '100%',
+                height: 'auto',
+                borderRadius: 8,
+                marginBottom: 16,
+              }}
+            />
+
+            {/* 이전, 다음 버튼 */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+              <Button variant="outlined" onClick={handlePrev}>
+                이전
+              </Button>
+              <Button variant="outlined" onClick={handleNext}>
+                다음
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
+      </Modal>
+
     </div>
   );
 }
 
 //선택된 날짜의 데이터를 나타내주는 컴포넌트
-const PlanDate = ({ datePlan, date, onDrop, onDelete }) => {
+const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap }) => {
+
+  //이동거리, 시간 구하는 함수.
+  const calculateTravelTime = async (datePlan) => {
+    const url = "https://apis-navi.kakaomobility.com/v1/waypoints/directions";
+    const apiKey = import.meta.env.VITE_KAKAODEVELOPERS_API_KEY;
+
+    // 첫 번째와 마지막 인덱스를 제외한 waypoints 생성
+    const waypoints = datePlan.slice(1, -1).map((point, index) => ({
+      name: `name${index}`, // 순서대로 이름 지정
+      x: point.x,
+      y: point.y,
+    }));
+
+    const requestBody = {
+      origin: { x: datePlan[0].x, y: datePlan[0].y },
+      destination: { x: datePlan[datePlan.length - 1].x, y: datePlan[datePlan.length - 1].y },
+      waypoints,
+      priority: "RECOMMEND",
+      car_fuel: "GASOLINE",
+      car_hipass: false,
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `KakaoAK ${apiKey}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch travel time");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      onChangeMap(data);
+      const allDuration = data.routes[0]?.summary?.duration || 0; // 이동 시간(초 단위) 반환
+      const allDistance = data.routes[0]?.summary?.distance || 0; // 이동 시간(초 단위) 반환
+      const durations = data.routes[0].sections.map(val => ({ distance: val.distance, duration: val.duration }));
+      return { allDuration, allDistance, durations };
+    } catch (error) {
+      console.error("Error calculating travel time:", error);
+      return null;
+    }
+  };
 
   const [result, setResult] = useState({ allDuration: 0, allDistance: 0, durations: [] });  //총 시간, 거리
 
@@ -333,7 +476,7 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete }) => {
               }}
             />
             {datePlan.map((plan, idx) => <div key={idx}>
-              <PlanDetail {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} onDelete={()=>onDelete(idx)} />
+              <PlanDetail {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} onDelete={() => onDelete(idx)} />
               {idx < datePlan.length - 1 && result?.durations[idx] !== undefined && (
                 <Typography sx={{ textAlign: "center", color: "grey.500", mt: 1, mb: 1 }}>
                   이동 시간: {result.durations[idx].duration}초 이동 거리: {result.durations[idx].distance}미터
@@ -347,10 +490,10 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete }) => {
             <Button variant="outlined" startIcon={<AddIcon />}>
               추가
             </Button>
-            {result?.allDistance !== undefined && result?.allDuration !== undefined && (
+            {result?.allDistance !== undefined && result?.allDuration !== undefined && datePlan.length >= 2 && (
               <Typography sx={{ textAlign: "center", color: "grey.500", mt: 1, mb: 1 }}>
-              총 이동 시간: {result.allDuration}초 총 이동 거리: {result.allDistance}미터
-            </Typography>)}
+                총 이동 시간: {result.allDuration}초 총 이동 거리: {result.allDistance}미터
+              </Typography>)}
           </Box>
         </Box>
       ) : (
@@ -373,6 +516,8 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete }) => {
 //페이지 컴포넌트
 const BudgetPage = () => {
 
+  const [routeData, setRouteData] = useState({ routes: [], });
+
   const location = useLocation();
   const [detail, setDetail] = useState(location.state?.detail || {});// `detail`에 전달된 데이터가 없을 때를 대비한 안전 처리
   console.log(detail);
@@ -380,7 +525,7 @@ const BudgetPage = () => {
   useEffect(() => {
     //detail이 변경될때 마다 자동 저장. 로컬스토리지에 자동으로 올리기 위함.
     console.log("지금 저장");
-  },[detail])
+  }, [detail])
 
   //드래그 함수
   const drop = (selectedDate, dragIdx, dragOverIdx) => {
@@ -419,6 +564,10 @@ const BudgetPage = () => {
     setDetail(newDetail);
   }
 
+  const changeMap = (resultData) => {
+    setRouteData(resultData);
+  }
+
 
   // 날짜 배열 생성
   const dates = generateDateArray(detail.startDate, detail.endDate);
@@ -442,7 +591,7 @@ const BudgetPage = () => {
           <Divider sx={{ margin: '20px 0' }} />
           <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} />
           <Divider sx={{ margin: '20px 0' }} />
-          <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx)=>deleteDetail(selectedDate,idx)}/>
+          <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx) => deleteDetail(selectedDate, idx)} onChangeMap={changeMap} />
         </Grid>
 
         {/* 오른쪽 영역 */}
@@ -462,7 +611,11 @@ const BudgetPage = () => {
               backgroundColor: "#f5f5f5",
             }}
           >
-            <KoreaMap />
+            {routeData.routes.length > 0 ? (
+              <KakaoRouteMap routeData={routeData} />
+            ) : (
+              <p>Loading route data...</p>
+            )}
           </Box>
         </Grid>
       </Grid>

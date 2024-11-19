@@ -25,8 +25,8 @@ export const detailData = [
                     notes: "수영복 가져가기",
                     placeImage: trip1,
                     images: [trip3, trip4],
-                    x: "127.11024293202674",
-                    y: "37.394348634049784"
+                    x: "127.0105811",
+                    y: "37.58284829999999"
                 },
                 {
                     name: "조개구이 가게",
@@ -35,8 +35,8 @@ export const detailData = [
                     notes: "",
                     placeImage: trip2,
                     images: [trip5, trip6],
-                    x: "127.11341936045922",
-                    y: "37.39639094915999"
+                    x: "127.066881928111",
+                    y: "37.6226208171943 "
                 },
                 {
                     name: "광안리 해수욕장",
@@ -45,8 +45,8 @@ export const detailData = [
                     notes: "수영복 가져가기",
                     placeImage: trip1,
                     images: [trip3, trip4],
-                    x: "127.10860518470294",
-                    y: "37.401999820065534"
+                    x: "126.9972889",
+                    y: "37.6108694 "
                 }
             ],
 
@@ -79,8 +79,8 @@ export const detailData = [
                     notes: "오전 방문",
                     placeImage: trip3,
                     images: [trip5, trip6],
-                    x: "127.11341936045922",
-                    y: "37.39639094915999"
+                    x: "127.11024293202674",
+                    y: "37.394348634049784"
                 },
             ]
 
