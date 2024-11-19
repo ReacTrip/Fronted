@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';  //상세페이지 가기위함
 import {
   Container,
   Typography,
@@ -55,6 +56,7 @@ const MyTripPage = () => {
   const [tabValue, setTabValue] = useState(0);
   const [open, setOpen] = useState(false); // 모달 상태
   const [newTrip, setNewTrip] = useState({ name: "", date: "", image: null }); // 새 여행 데이터
+  const navigate = useNavigate();//상세페이지 가기위함
 
   // 로컬 스토리지에서 데이터 가져오기
   useEffect(() => {
@@ -202,7 +204,7 @@ const MyTripPage = () => {
           ))}
         </Tabs>
         
-        <TabContent data={tabData[tabValue].data} onCardClick={(item) => console.log(item)} />
+        <TabContent data={tabData[tabValue].data} onCardClick={handleClick} />
       </Box>
 
       {/* 여행 추가 모달 */}

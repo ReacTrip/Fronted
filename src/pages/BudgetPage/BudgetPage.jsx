@@ -257,7 +257,7 @@ const PlanDetail = (props) => {
 }
 
 //선택된 날짜의 데이터를 나타내주는 컴포넌트
-const PlanDate = ({ datePlan, date, onDrop }) => {
+const PlanDate = ({ datePlan, date, onDrop, onDelete }) => {
 
   const [result, setResult] = useState({ allDuration: 0, allDistance: 0, durations: [] });  //총 시간, 거리
 
@@ -333,7 +333,7 @@ const PlanDate = ({ datePlan, date, onDrop }) => {
               }}
             />
             {datePlan.map((plan, idx) => <div key={idx}>
-              <PlanDetail {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} />
+              <PlanDetail {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} onDelete={()=>onDelete(idx)} />
               {idx < datePlan.length - 1 && result?.durations[idx] !== undefined && (
                 <Typography sx={{ textAlign: "center", color: "grey.500", mt: 1, mb: 1 }}>
                   이동 시간: {result.durations[idx].duration}초 이동 거리: {result.durations[idx].distance}미터
@@ -377,6 +377,11 @@ const BudgetPage = () => {
   const [detail, setDetail] = useState(location.state?.detail || {});// `detail`에 전달된 데이터가 없을 때를 대비한 안전 처리
   console.log(detail);
 
+  useEffect(() => {
+    //detail이 변경될때 마다 자동 저장. 로컬스토리지에 자동으로 올리기 위함.
+    console.log("지금 저장");
+  },[detail])
+
   //드래그 함수
   const drop = (selectedDate, dragIdx, dragOverIdx) => {
     // 현재 날짜의 계획을 가져옴
@@ -401,6 +406,19 @@ const BudgetPage = () => {
     console.log("드랍 완료");
   };
 
+  const deleteDetail = (deleteDate, deleteIdx) => {
+    const newDetail = {
+      ...detail, // data는 원본 객체
+      dailyItinerary: {
+        ...detail.dailyItinerary, // dailyItinerary 복사
+        [deleteDate]: detail.dailyItinerary[deleteDate].filter(
+          (item, idx) => idx !== deleteIdx
+        )
+      }
+    };
+    setDetail(newDetail);
+  }
+
 
   // 날짜 배열 생성
   const dates = generateDateArray(detail.startDate, detail.endDate);
@@ -424,7 +442,7 @@ const BudgetPage = () => {
           <Divider sx={{ margin: '20px 0' }} />
           <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} />
           <Divider sx={{ margin: '20px 0' }} />
-          <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} />
+          <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx)=>deleteDetail(selectedDate,idx)}/>
         </Grid>
 
         {/* 오른쪽 영역 */}

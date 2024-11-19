@@ -2,6 +2,7 @@ import React from 'react';
 import { List, ListItem, Typography, Paper, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { detailData } from '@/data/tripDataDetail.js'
 
 const PreviewCard = styled(Paper)({
   height: '180px',
@@ -46,7 +47,7 @@ const TabContent = ({ data, onCardClick }) => (
     {data.length > 0 ? (
       <List>
         {data.map((item) => (
-          <PreviewCard elevation={2} onClick={() => onCardClick(item)} key={item.id} sx={{ marginBottom: 1 }}>
+          <PreviewCard elevation={2} onClick={() => onCardClick(detailData[0])} key={item.id} sx={{ marginBottom: 1 }}>
             <ImageSection>
               <img src={item.image} alt={item.name} />
             </ImageSection>
