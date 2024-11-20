@@ -20,13 +20,14 @@ import {
 import { styled } from '@mui/material/styles';
 import Navbar from '@/components/common/Navbar/Navbar';
 import KakaoRouteMap from '@/components/map/KakaoRouteMap';
-import { previewData } from '@/data/tripData.js'
 import EastIcon from '@mui/icons-material/East';
 import TodayIcon from '@mui/icons-material/Today';
 import HotelIcon from '@mui/icons-material/Hotel';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import Carousel from 'react-material-ui-carousel';
+import { storage } from "@/firebase/firebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // 삭제 버튼 스타일 정의
 const DeleteButton = styled(Button)({
@@ -175,7 +176,6 @@ const DateSelector = ({ dates = [], onDateClick = f => f, selectedDate }) => {
 const PlanDetail = (props) => {
 
   const [open, setOpen] = useState(false); // 모달 열기/닫기 상태
-  const [currentImage, setCurrentImage] = useState(0); // 현재 보여줄 이미지의 인덱스
 
   // 모달 열기
   const handleOpen = () => setOpen(true);
@@ -183,14 +183,32 @@ const PlanDetail = (props) => {
   // 모달 닫기
   const handleClose = () => setOpen(false);
 
-  // 이전 이미지로 이동
-  const handlePrev = () => {
-    setCurrentImage((prev) => (prev === 0 ? props.images.length - 1 : prev - 1));
+  const fileInputRef = useRef(null);
+
+  // 파일 선택 핸들러
+  const handleFileChange = async (event) => {
+    const files = event.target.files; // 선택된 파일 배열
+    if (files.length > 0) {
+      const urls = [];
+      for (const file of files) {
+        const storageRef = ref(storage, `images/${file.name}`);
+        await uploadBytes(storageRef, file); // Firebase Storage로 파일 업로드
+        const url = await getDownloadURL(storageRef); // 업로드된 URL 가져오기
+        urls.push(url);
+      }
+      const newImaegs = props.images.concat(urls);
+      props.onChangeImages(newImaegs);
+    }
   };
 
-  // 다음 이미지로 이동
-  const handleNext = () => {
-    setCurrentImage((prev) => (prev === props.images.length - 1 ? 0 : prev + 1));
+  const onImageDelete = (index) => {
+    const newImages = [...props.images].filter((val,idx)=> idx !== index);
+    props.onChangeImages(newImages);
+  }
+
+  // 버튼 클릭 시 파일 입력창 열기
+  const handleClick = () => {
+    fileInputRef.current.click(); // 숨겨진 파일 입력 트리거
   };
 
   return (
@@ -199,7 +217,7 @@ const PlanDetail = (props) => {
       onDragEnter={props.onDragEnter}
       onDragOver={props.onDragOver}
       onDragEnd={props.onDragEnd}
-      draggable="true" // 이 속성이 있어야 컴포넌트가 드래그 가능해집니다.
+      draggable="true" // 이 속성이 있어야 컴포넌트가 드래그 가능함
       style={{ position: 'relative' }}
     >
       <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
@@ -235,18 +253,31 @@ const PlanDetail = (props) => {
               }}
             >
               {/* 추가 아이콘 버튼 */}
-              <IconButton
-                onClick={props.onAddImage}
-                sx={{
-                  backgroundColor: 'grey.300',
-                  width: 60,
-                  height: 60,
-                  borderRadius: 1,
-                  border: '1px solid #ddd',
-                }}
-              >
-                <AddIcon sx={{ color: 'grey.600', fontSize: 30 }} />
-              </IconButton>
+              <div>
+      {/* 추가 아이콘 버튼 */}
+      <IconButton
+        onClick={handleClick}
+        sx={{
+          backgroundColor: 'grey.300',
+          width: 60,
+          height: 60,
+          borderRadius: 1,
+          border: '1px solid #ddd',
+        }}
+      >
+        <AddIcon sx={{ color: 'grey.600', fontSize: 30 }} />
+      </IconButton>
+
+      {/* 숨겨진 파일 입력 */}
+      <input
+        type="file"
+        ref={fileInputRef} // 파일 입력 요소에 접근하기 위한 ref
+        style={{ display: 'none' }} // 화면에 표시되지 않도록 숨김
+        onChange={handleFileChange} // 파일 선택 시 업로드 처리
+        accept="image/*"
+        multiple // 여러 개의 파일 선택 허용
+      />
+    </div>
 
               {/* 이미지 버튼 */}
               {props.images.length > 0 && (
@@ -296,63 +327,88 @@ const PlanDetail = (props) => {
 
       {/* 모달 */}
       <Modal
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={open}>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '80%',
-              maxWidth: '600px',
-              bgcolor: 'background.paper',
-              boxShadow: 24,
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              borderRadius: 2,
-            }}
+      open={open}
+      onClose={handleClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 500,
+      }}
+    >
+      <Fade in={open}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '80%',
+            maxWidth: '600px',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 2,
+            borderRadius: 2,
+            overflow: 'hidden', // 이미지가 넘치지 않도록 설정
+          }}
+        >
+          {/* Carousel */}
+          <Carousel
+            navButtonsAlwaysVisible={true} // 이전/다음 버튼 항상 보이도록 설정
+            animation="slide" // 슬라이드 애니메이션
+            indicators={true} // 하단의 도트 표시 비활성화
+            cycleNavigation={false} // 무한 루프
+            autoPlay={false}
           >
-            {/* 현재 이미지 */}
-            <img
-              src={props.images[currentImage]}
-              alt={`이미지 ${currentImage + 1}`}
-              style={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: 8,
-                marginBottom: 16,
-              }}
-            />
+            {props.images.map((image, index) => (
+              <Box
+                key={index}
+                sx={{
+                  position: 'relative', // 삭제 버튼 배치를 위해 relative 설정
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <img
+                  src={image}
+                  alt={`이미지 ${index + 1}`}
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: 8,
+                  }}
+                />
+                {/* 삭제 버튼 */}
+                <IconButton
+                  onClick={() => onImageDelete(index)} // 이미지 삭제 이벤트
+                  sx={{
+                    position: 'absolute',
+                    top: 0, // 상단에 위치
+        left: '50%', // 가로 중앙으로 이동
+        transform: 'translateX(-50%)', // 정확히 중앙 정렬
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 투명도 설정
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 1)',
+                    },
+                  }}
+                >
+                  <DeleteIcon sx={{ color: 'grey' }} />
+                </IconButton>
+              </Box>
+            ))}
+          </Carousel>
+        </Box>
+      </Fade>
+    </Modal>
 
-            {/* 이전, 다음 버튼 */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-              <Button variant="outlined" onClick={handlePrev}>
-                이전
-              </Button>
-              <Button variant="outlined" onClick={handleNext}>
-                다음
-              </Button>
-            </Box>
-          </Box>
-        </Fade>
-      </Modal>
 
     </div>
   );
 }
 
 //선택된 날짜의 데이터를 나타내주는 컴포넌트
-const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap }) => {
+const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImages }) => {
 
   //이동거리, 시간 구하는 함수.
   const calculateTravelTime = async (datePlan) => {
@@ -476,7 +532,7 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap }) => {
               }}
             />
             {datePlan.map((plan, idx) => <div key={idx}>
-              <PlanDetail {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} onDelete={() => onDelete(idx)} />
+              <PlanDetail {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} onDelete={() => onDelete(idx)} onChangeImages={(newImages)=>onChangeImages(idx,newImages)}/>
               {idx < datePlan.length - 1 && result?.durations[idx] !== undefined && (
                 <Typography sx={{ textAlign: "center", color: "grey.500", mt: 1, mb: 1 }}>
                   이동 시간: {result.durations[idx].duration}초 이동 거리: {result.durations[idx].distance}미터
@@ -516,7 +572,7 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap }) => {
 //페이지 컴포넌트
 const BudgetPage = () => {
 
-  const [routeData, setRouteData] = useState({ routes: [], });
+  const [routeData, setRouteData] = useState({ routes: [], });  //이동경로api로 받아온 데이터.
 
   const location = useLocation();
   const [detail, setDetail] = useState(location.state?.detail || {});// `detail`에 전달된 데이터가 없을 때를 대비한 안전 처리
@@ -568,6 +624,14 @@ const BudgetPage = () => {
     setRouteData(resultData);
   }
 
+  //이미지 추가, 삭제
+  const changeImages = (date,idx,newImages) => {
+    const newDetail = {...detail};
+    console.log('dddddddd',newDetail);
+    console.log(date, ":", idx, ":", newImages);
+    newDetail.dailyItinerary[date][idx].images = newImages;
+    setDetail(newDetail);
+  }
 
   // 날짜 배열 생성
   const dates = generateDateArray(detail.startDate, detail.endDate);
@@ -591,7 +655,7 @@ const BudgetPage = () => {
           <Divider sx={{ margin: '20px 0' }} />
           <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} />
           <Divider sx={{ margin: '20px 0' }} />
-          <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx) => deleteDetail(selectedDate, idx)} onChangeMap={changeMap} />
+          <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx) => deleteDetail(selectedDate, idx)} onChangeMap={changeMap} onChangeImages={(idx, newImages) => changeImages(selectedDate,idx,newImages)} />
         </Grid>
 
         {/* 오른쪽 영역 */}
