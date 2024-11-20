@@ -135,13 +135,13 @@ const Jeju = () => {
   const festivals = [
     { image: jejuFestival1, title: '정월대보름 들불축제' },
     { image: jejuFestival2, title: '성산일출축제' },
-    { image: jejuFestival3, title: '제주 유채꽃 축제' },
+    { image: jejuFestival3, title: '서귀포 유채꽃 축제' },
   ];
 
   const foods = [
-    { image: jejuFood1, title: '제주 흑돼지' },
-    { image: jejuFood2, title: '제주 은갈치' },
-    { image: jejuFood3, title: '제주 고기국수' },
+    { image: jejuFood1, title: '우진해장국' },
+    { image: jejuFood2, title: '미영이네 식당' },
+    { image: jejuFood3, title: '올래국수' },
   ];
 
   return (

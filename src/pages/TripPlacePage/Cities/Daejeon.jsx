@@ -141,7 +141,7 @@ const Daejeon = () => {
   const foods = [
     { image: daejeonFood1, title: '성심당' },
     { image: daejeonFood2, title: '오씨 칼국수' },
-    { image: daejeonFood3, title: '태평 소국밥' },
+    { image: daejeonFood3, title: '태평소국밥' },
   ];
 
   return (
