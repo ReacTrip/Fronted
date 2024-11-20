@@ -135,7 +135,7 @@ const Daegu = () => {
   const festivals = [
     { image: daeguFestival1, title: '치맥 페스티벌' },
     { image: daeguFestival2, title: '파워풀대구 페스티벌' },
-    { image: daeguFestival3, title: '대구 컬러풀 페스티벌' },
+    { image: daeguFestival3, title: '네이처파크 미라클 크리스마스' },
   ];
 
   const foods = [
