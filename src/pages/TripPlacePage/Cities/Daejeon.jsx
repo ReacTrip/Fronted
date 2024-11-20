@@ -1,16 +1,15 @@
-// Daejeon.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Navbar from '@/components/common/Navbar/Navbar';
-import { IconButton } from '@mui/material';
-import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
+import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import Carousel from 'react-material-ui-carousel';
 
 // 대전 랜드마크 이미지 배열
 import daejeonRandmark1 from '@/assets/images/TripPlace/daejeon/daejeonRandmark1.png';
 import daejeonRandmark2 from '@/assets/images/TripPlace/daejeon/daejeonRandmark2.png';
 import daejeonRandmark3 from '@/assets/images/TripPlace/daejeon/daejeonRandmark3.png';
 
-// 대전 관광지, 축제, 음식 이미지 임포트
+// 대전 관광지, 축제, 음식 이미지 배열
 import daejeonAttraction1 from '@/assets/images/TripPlace/daejeon/daejeonAttraction1.png';
 import daejeonAttraction2 from '@/assets/images/TripPlace/daejeon/daejeonAttraction2.png';
 import daejeonAttraction3 from '@/assets/images/TripPlace/daejeon/daejeonAttraction3.png';
@@ -23,38 +22,24 @@ import daejeonFood1 from '@/assets/images/TripPlace/daejeon/daejeonFood1.png';
 import daejeonFood2 from '@/assets/images/TripPlace/daejeon/daejeonFood2.png';
 import daejeonFood3 from '@/assets/images/TripPlace/daejeon/daejeonFood3.png';
 
-// 랜드마크 이미지 배열
+// 랜드마크 배열
 const landmarkImages = [daejeonRandmark1, daejeonRandmark2, daejeonRandmark3];
 
-// 배경 이미지와 오버레이 텍스트 스타일
-const HeroSection = styled.div`
-  position: relative;
-  height: 400px;
-  background-image: url(${(props) => props.backgroundImage});
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-align: center;
-`;
-
-const HeroOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+// 스타일 컴포넌트
+const StyledContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 `;
 
 const HeroTextContainer = styled.div`
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
 `;
 
 const HeroTitle = styled.h1`
@@ -67,29 +52,18 @@ const HeroSubtitle = styled.p`
   margin-top: 10px;
 `;
 
-// 기타 기존 스타일 컴포넌트 유지
-const Container = styled.div`
-  padding: 20px;
-`;
-
 const SectionTitle = styled.h2`
-  margin-top: 40px;
-  margin-bottom: 20px;
+  margin: 40px 0 20px;
 `;
 
 const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  margin-top: 20px;
-`;
-
-const Divider = styled.hr`
-  border: 1px solid #ccc;
-  margin: 40px 0;
 `;
 
 const Card = styled.div`
+  position: relative;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -111,19 +85,60 @@ const CardContent = styled.div`
   text-align: center;
 `;
 
+const HeartIcon = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  z-index: 10;
+
+  width: 30px; /* 동그라미 크기 */
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white; /* 동그라미 배경색 */
+  border-radius: 50%; /* 동그라미 모양 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+
+  svg {
+    font-size: 1.5rem; /* 하트 크기 */
+    fill: ${(props) => (props.liked ? 'red' : 'rgba(0, 0, 0, 0.2)')}; /* 기본 하트 색상 */
+    color: #ccc; /* 하트 테두리 색상 */
+    transition: fill 0.3s ease; /* 내부 색상 전환 애니메이션 */
+  }
+
+  &:hover svg {
+    fill: red; /* Hover 시 하트 내부 색상만 빨간색 */
+  }
+`;
+
+const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
+  <Card>
+    <HeartIcon liked={liked} onClick={onHeartClick}>
+      {liked ? <Favorite /> : <FavoriteBorder />}
+    </HeartIcon>
+    <CardImage src={image} alt={title} />
+    <CardContent>
+      <h3>{title}</h3>
+    </CardContent>
+  </Card>
+);
+
 const Daejeon = () => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [likes, setLikes] = useState({
+    attractions: new Array(3).fill(false),
+    festivals: new Array(3).fill(false),
+    foods: new Array(3).fill(false),
+  });
 
-  const handlePrevClick = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? landmarkImages.length - 1 : prevIndex - 1
-    );
-  };
-
-  const handleNextClick = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === landmarkImages.length - 1 ? 0 : prevIndex + 1
-    );
+  const toggleLike = (section, index) => {
+    setLikes((prevLikes) => ({
+      ...prevLikes,
+      [section]: prevLikes[section].map((liked, i) =>
+        i === index ? !liked : liked
+      ),
+    }));
   };
 
   const attractions = [
@@ -145,85 +160,84 @@ const Daejeon = () => {
   ];
 
   return (
-    <div>
+    <StyledContainer>
       <Navbar />
-      <HeroSection backgroundImage={landmarkImages[currentImageIndex]}>
-        <HeroOverlay>
-          <HeroTextContainer>
-            <HeroTitle>대전</HeroTitle>
-            <HeroSubtitle>2024 대전 자유여행 가볼만한 곳 추천</HeroSubtitle>
-          </HeroTextContainer>
-        </HeroOverlay>
-        <IconButton
-          onClick={handlePrevClick}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '10px',
-            color: 'white',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
-          }}
+
+      {/* 랜드마크 섹션 */}
+      <div style={{ marginBottom: '32px', padding: '16px 64px' }}>
+        <Carousel
+          navButtonsAlwaysVisible={true}
+          indicators={true}
+          animation="slide"
+          duration={500}
+          autoPlay={true}
+          interval={3000}
         >
-          <ArrowBackIos />
-        </IconButton>
-        <IconButton
-          onClick={handleNextClick}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            right: '10px',
-            color: 'white',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
-          }}
-        >
-          <ArrowForwardIos />
-        </IconButton>
-      </HeroSection>
-
-      <Container>
-        <SectionTitle>관광지</SectionTitle>
-        <GridContainer>
-          {attractions.map((attraction, index) => (
-            <Card key={index}>
-              <CardImage src={attraction.image} alt={attraction.title} />
-              <CardContent>
-                <h3>{attraction.title}</h3>
-              </CardContent>
-            </Card>
+          {landmarkImages.map((image, index) => (
+            <div key={index} style={{ position: 'relative', textAlign: 'center' }}>
+              <img
+                src={image}
+                alt={`랜드마크 ${index + 1}`}
+                style={{
+                  width: '100%',
+                  maxWidth: '800px',
+                  height: '400px',
+                  objectFit: 'cover',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                }}
+              />
+              <HeroTextContainer>
+                <HeroTitle>대전</HeroTitle>
+                <HeroSubtitle>{`랜드마크 ${index + 1}`}</HeroSubtitle>
+              </HeroTextContainer>
+            </div>
           ))}
-        </GridContainer>
+        </Carousel>
+      </div>
 
-        <Divider />
+      {/* 관광지 섹션 */}
+      <SectionTitle>관광지</SectionTitle>
+      <GridContainer>
+        {attractions.map((attraction, index) => (
+          <CardWithHeart
+            key={index}
+            image={attraction.image}
+            title={attraction.title}
+            liked={likes.attractions[index]}
+            onHeartClick={() => toggleLike('attractions', index)}
+          />
+        ))}
+      </GridContainer>
 
-        <SectionTitle>축제</SectionTitle>
-        <GridContainer>
-          {festivals.map((festival, index) => (
-            <Card key={index}>
-              <CardImage src={festival.image} alt={festival.title} />
-              <CardContent>
-                <h3>{festival.title}</h3>
-              </CardContent>
-            </Card>
-          ))}
-        </GridContainer>
+      {/* 축제 섹션 */}
+      <SectionTitle>축제</SectionTitle>
+      <GridContainer>
+        {festivals.map((festival, index) => (
+          <CardWithHeart
+            key={index}
+            image={festival.image}
+            title={festival.title}
+            liked={likes.festivals[index]}
+            onHeartClick={() => toggleLike('festivals', index)}
+          />
+        ))}
+      </GridContainer>
 
-        <Divider />
-
-        <SectionTitle>음식</SectionTitle>
-        <GridContainer>
-          {foods.map((food, index) => (
-            <Card key={index}>
-              <CardImage src={food.image} alt={food.title} />
-              <CardContent>
-                <h3>{food.title}</h3>
-              </CardContent>
-            </Card>
-          ))}
-        </GridContainer>
-      </Container>
-    </div>
+      {/* 음식 섹션 */}
+      <SectionTitle>음식</SectionTitle>
+      <GridContainer>
+        {foods.map((food, index) => (
+          <CardWithHeart
+            key={index}
+            image={food.image}
+            title={food.title}
+            liked={likes.foods[index]}
+            onHeartClick={() => toggleLike('foods', index)}
+          />
+        ))}
+      </GridContainer>
+    </StyledContainer>
   );
 };
 
