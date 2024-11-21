@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/common/Navbar/Navbar';
 import Carousel from 'react-material-ui-carousel';
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
+import CircleSection from '/src/components/common/CircleSection/CircleSection';
 
 const TripPlacePage = () => {
   const navigate = useNavigate();
 
+  // 현재 마우스 오버된 이미지와 텍스트 상태
+  const [hoveredCity, setHoveredCity] = useState(null);
+
+  // 랜드마크 이미지 데이터
   const carouselItems = [
     { name: "서울", image: "/src/assets/images/TripPlace/seoul/seoulRandmark1.png" },
     { name: "제주", image: "/src/assets/images/TripPlace/jeju/jejuRandmark1.png" },
@@ -19,6 +24,7 @@ const TripPlacePage = () => {
     { name: "대전", image: "/src/assets/images/TripPlace/daejeon/daejeonRandmark1.png" },
   ];
 
+  // 도시 이미지 데이터
   const cities = [
     { name: "서울", image: "/src/assets/images/TripPlace/Seoul.png", path: "seoul" },
     { name: "제주", image: "/src/assets/images/TripPlace/Jeju.png", path: "jeju" },
@@ -35,34 +41,23 @@ const TripPlacePage = () => {
     navigate(`/trip/${path}`);
   };
 
-  const maxWidth = '900px';
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+
       {/* Carousel Section */}
-      <div
-        className="carousel-container"
-        style={{
-          padding: '16px 64px',
-          marginBottom: '32px', // Carousel 아래 공간 추가
-        }}
-      >
-        <Carousel
-          navButtonsAlwaysVisible={true}
-          indicators={true}
-          animation="slide"
-        >
+      <Box sx={{ padding: '16px 64px', marginBottom: '32px' }}>
+        <Carousel navButtonsAlwaysVisible indicators animation="slide">
           {carouselItems.map((item, index) => (
-            <div
+            <Box
               key={index}
-              style={{
+              sx={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'column',
-                cursor: 'pointer',
                 position: 'relative',
+                cursor: 'pointer',
               }}
             >
               <img
@@ -79,7 +74,7 @@ const TripPlacePage = () => {
               />
               <Typography
                 variant="h5"
-                style={{
+                sx={{
                   position: 'absolute',
                   bottom: '20px',
                   color: 'white',
@@ -89,82 +84,101 @@ const TripPlacePage = () => {
               >
                 {item.name}
               </Typography>
-            </div>
+            </Box>
           ))}
         </Carousel>
-      </div>
+      </Box>
 
-      {/* 3x3 Grid Section */}
-      <div
-        className="container mx-auto"
-        style={{
-          padding: '16px 64px',
+      {/* Circular Grid Section */}
+      <Box
+        sx={{
+          position: 'relative',
+          margin: '64px auto',
+          width: {
+            xs: '300px', // 모바일
+            sm: '500px', // 작은 화면
+            md: '700px', // 중간 화면
+            lg: '800px', // 큰 화면
+          },
+          height: {
+            xs: '300px',
+            sm: '500px',
+            md: '700px',
+            lg: '800px',
+          },
+          borderRadius: '50%',
+          backgroundColor: 'white',
         }}
       >
-        <div
-          className="grid gap-6"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '32px',
+        {cities.map((city, index) => (
+          <CircleSection
+            key={city.name}
+            city={city}
+            index={index}
+            total={cities.length}
+            onHover={(image, name) => setHoveredCity({ image, name })} // 마우스 오버 이벤트
+            onClick={() => handleCityClick(city.path)}
+          />
+        ))}
+
+        {/* 가운데 빈 원 */}
+        <Box
+          sx={{
+            position: 'absolute',
+            backgroundImage: hoveredCity?.image ? `url(${hoveredCity.image})` : 'none', // 상태에 따라 이미지 표시
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            borderRadius: '50%',
+            width: {
+              xs: '120px', // 모바일 크기
+              sm: '180px',
+              md: '300px',
+              lg: '360px',
+            },
+            height: {
+              xs: '120px',
+              sm: '180px',
+              md: '300px',
+              lg: '360px',
+            },
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: 'white',
+            textShadow: '0 0 5px rgba(0, 0, 0, 0.7)',
+            fontWeight: 'bold',
+            fontSize: {
+              xs: '0.6rem',
+              sm: '0.8rem',
+              md: '1rem',
+              lg: '1.2rem',
+            },
           }}
         >
-          {cities.map((city, index) => (
-            <div
-              key={index}
-              className="relative cursor-pointer"
-              onClick={() => handleCityClick(city.path)}
-              style={{
-                position: 'relative',
-                cursor: 'pointer',
-                overflow: 'hidden',
-                borderRadius: '8px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                transition: 'transform 0.3s ease',
+          {hoveredCity?.name && (
+            <Typography
+              sx={{
+                position: 'absolute',
+                color: 'white',
+                textShadow: '0px 0px 10px rgba(0,0,0,0.8)',
+                fontSize: {
+                  xs: '0.8rem',
+                  sm: '1rem',
+                  md: '1.5rem',
+                  lg: '2rem',
+                },
+                fontWeight: 'bold', // 글씨 두께
+                textAlign: 'center', // 가운데 정렬 
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
             >
-              <img
-                src={city.image}
-                alt={city.name}
-                className="w-full h-full object-cover shadow-md"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                }}
-              />
-              {/* 그라데이션 오버레이 */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: 'linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0))',
-                  borderRadius: '8px',
-                }}
-              ></div>
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '20px',
-                  left: '20px',
-                  color: 'white',
-                  fontSize: 'clamp(1rem, 2vw, 2rem)',
-                  fontWeight: '600',
-                  textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)',
-                }}
-              >
-                {city.name}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+              {hoveredCity.name}
+            </Typography>
+          )}
+        </Box>
+      </Box>
     </div>
   );
 };
