@@ -60,23 +60,15 @@ const LikeButton = styled(IconButton)({
   },
 });
 
-const StyledChip = styled(Chip)({
-  borderRadius: '5px',
-  height: '24px',
-  '& .MuiChip-label': {
-    padding: '0 8px',
-    fontSize: '12px',
-  },
-});
-
 const TripCard = ({ data, isLiked, onLikeClick }) => {
   return (
     <PreviewCard elevation={2}>
       <ImageSection>
-        <img src={data.image} alt={data.title} />
+        <img src={data.mainImage} alt={data.title} />
       </ImageSection>
       <ContentSection>
         <Box>
+          {/* Title */}
           <Typography 
             variant="h6" 
             sx={{ 
@@ -88,6 +80,7 @@ const TripCard = ({ data, isLiked, onLikeClick }) => {
             {data.title}
           </Typography>
 
+          {/* Author */}
           <Box sx={{ 
             display: 'flex', 
             alignItems: 'center', 
@@ -96,25 +89,20 @@ const TripCard = ({ data, isLiked, onLikeClick }) => {
           }}>
             <PersonIcon sx={{ fontSize: 18, mr: 1 }} />
             <Typography sx={{ fontSize: '14px' }}>
-              {data.author}
+              {data.AuthorId}
             </Typography>
           </Box>
 
-          <Box sx={{ 
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            gap: '6px', 
-            mb: 2 
-          }}>
-            {data.tags.map((tag, i) => (
-              <StyledChip 
-                key={i}
-                label={tag}
-                variant="outlined"
-              />
-            ))}
-          </Box>
+          {/* Description */}
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            sx={{ marginBottom: '16px' }}
+          >
+            {data.description}
+          </Typography>
 
+          {/* Dates */}
           <Box sx={{ 
             display: 'flex', 
             alignItems: 'center',
@@ -122,7 +110,7 @@ const TripCard = ({ data, isLiked, onLikeClick }) => {
           }}>
             <CalendarMonthIcon sx={{ fontSize: 18, mr: 1 }} />
             <Typography sx={{ fontSize: '14px' }}>
-              {data.date}
+              {`${data.startDate.replace(/-/g, '.')} ~ ${data.endDate.replace(/-/g, '.')}`}
             </Typography>
           </Box>
         </Box>

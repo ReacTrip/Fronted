@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/common/Navbar/Navbar';
 import TripCard from '@/components/common/TripCard/TripCard';
 import KoreaMap from '@/components/map/KoreaMap';
-import { previewData } from '@/data/tripData';
+import { detailData } from '@/data/tripDataDetail';
 
 const StyledContainer = styled(Container)({
   maxWidth: '1200px !important',
@@ -89,7 +89,7 @@ const MainPage = () => {
         
         <Box sx={{ mt: 6, mb: 6 }}>
           <Grid container spacing={3} sx={{ width: '100%', margin: 0 }}>
-            {previewData.map((preview) => (
+            {detailData.map((preview) => (
               <Grid item xs={6} key={preview.id} sx={{ padding: '12px' }}>
                 <TripCard
                   data={preview}

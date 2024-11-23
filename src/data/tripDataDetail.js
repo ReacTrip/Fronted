@@ -13,7 +13,7 @@ export const detailData = [
         title: "부산 여행",  // 여행 이름
         startDate: "2024-05-01",  // 여행 시작 일자
         endDate: "2024-05-10",  // 여행 종료 일자
-        AuthorId: "abc", //작성자 id
+        AuthorId: "작성자 ID", //작성자 id
         mainImage: trip2,  //메인 이미지
         dailyItinerary: { // 일자별 계획
 
@@ -90,6 +90,7 @@ export const detailData = [
 
     {
         id: 2,
+        title: "서울 여행",  // 여행 이름
         destination: "Seoul Tour",
         startDate: "2024-08-10",
         endDate: "2024-08-15",

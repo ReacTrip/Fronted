@@ -37,19 +37,11 @@ const currentUser = {
 const defaultTrips = [
   { id: 1, name: '파리 여행', userId: 1, image: trip1, date: '2024.12.20 - 2024.12.22' },
   { id: 2, name: '뉴욕 탐험', userId: 1, image: trip2, date: '2024.12.20 - 2024.12.22' },
-  // { id: 3, name: '도쿄 투어', userId: 1, image: trip3, date: '2024.12.20 - 2024.12.22' },
-  // { id: 4, name: '서울 관광', userId: 1, image: trip4, date: '2024.12.20 - 2024.12.22' },
-  // { id: 5, name: '런던 여행', userId: 1, image: trip5, date: '2024.12.20 - 2024.12.22' },
-  // { id: 6, name: '보이지 않는 여행', userId: 2, image: trip6, date: '2024.12.20 - 2024.12.22' },
 ];
 
 // 이미지 import
 import trip1 from '@/assets/images/main/trip1.png';
 import trip2 from '@/assets/images/main/trip2.png';
-import trip3 from '@/assets/images/main/trip3.png';
-import trip4 from '@/assets/images/main/trip4.png';
-import trip5 from '@/assets/images/main/trip5.png';
-import trip6 from '@/assets/images/main/trip6.png';
 
 const MyTripPage = () => {
   const [trips, setTrips] = useState([]);
