@@ -95,7 +95,7 @@ export const detailData = [
         startDate: "2024-08-10",
         endDate: "2024-08-15",
         AuthorId: "def",
-        mainImage: trip2,
+        mainImage: trip3,
         dailyItinerary: {
 
             "2024-08-10": [

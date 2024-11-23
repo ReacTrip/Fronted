@@ -109,12 +109,14 @@ const TripCard = ({ data, isLiked, onLikeClick }) => {
             color: '#666'
           }}>
             <CalendarMonthIcon sx={{ fontSize: 18, mr: 1 }} />
+            {/* 날짜 데이터 형식을 - 에서 . 으로 변경 */}
             <Typography sx={{ fontSize: '14px' }}>
               {`${data.startDate.replace(/-/g, '.')} ~ ${data.endDate.replace(/-/g, '.')}`}
             </Typography>
           </Box>
         </Box>
       </ContentSection>
+      {/* 좋아요 아이콘 */}
       <LikeButton 
         onClick={(e) => {
           e.stopPropagation();
