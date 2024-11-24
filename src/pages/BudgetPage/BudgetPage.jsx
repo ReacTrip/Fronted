@@ -16,6 +16,10 @@ import {
   Modal,
   Backdrop,
   Fade,
+  Card,
+  CardMedia,
+  CardContent,
+  TextField,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navbar from '@/components/common/Navbar/Navbar';
@@ -26,8 +30,18 @@ import HotelIcon from '@mui/icons-material/Hotel';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Carousel from 'react-material-ui-carousel';
+import PlaceIcon from '@mui/icons-material/Place';
+import CloseIcon from "@mui/icons-material/Close";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar'; // 자동차 아이콘 임포트
 import { storage } from "@/firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { placeData } from "../../data/placeData.js"
+import dayjs from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 // 삭제 버튼 스타일 정의
 const DeleteButton = styled(Button)({
@@ -86,7 +100,11 @@ const TitleBox = styled(Box)({
   padding: "50px",
 })
 
-
+const TimeTypography = styled(Typography)(({ theme }) => ({
+  marginLeft: '8px', // 아이콘과 텍스트 사이의 간격
+  fontWeight: 'bold', // 글씨 굵게
+  color: 'black', // 글씨 색상 (필요하면 변경 가능)
+}));
 
 //시작날짜와 끝 날짜로 날짜 배열 생성해주는 함수
 const generateDateArray = (startDate, endDate) => {
@@ -102,8 +120,33 @@ const generateDateArray = (startDate, endDate) => {
   return dateArray;
 };
 
+//시간 포맷 반환 함수.
+function formatTime(seconds) {
+  if (seconds < 60) {
+    return `${seconds}초`; // 1분 미만은 초로 표시
+  }
 
+  const minutes = Math.floor(seconds / 60); // 전체 분
+  const hours = Math.floor(minutes / 60); // 전체 시간
+  const remainingMinutes = minutes % 60; // 시간 제외 나머지 분
 
+  if (hours > 0) {
+    // 시간 단위로 넘어가면 "시간과 분"을 함께 표시
+    return `${hours}시간 ${remainingMinutes}분`;
+  }
+
+  return `${minutes}분`; // 1시간 미만은 분만 표시
+}
+
+//이동거리 포맷 반환 함수
+function formatDistance(meters) {
+  if (meters < 1000) {
+    return `${meters}m`; // 1000m 미만은 미터로 표시
+  }
+
+  const kilometers = (meters / 1000).toFixed(1); // km로 변환 (소수점 1자리까지 표시)
+  return `${kilometers}km`; // 1000m 이상은 km로 표시
+}
 
 
 const StyledContainer = styled(Container)({
@@ -202,7 +245,7 @@ const PlanDetail = (props) => {
   };
 
   const onImageDelete = (index) => {
-    const newImages = [...props.images].filter((val,idx)=> idx !== index);
+    const newImages = [...props.images].filter((val, idx) => idx !== index);
     props.onChangeImages(newImages);
   }
 
@@ -222,23 +265,28 @@ const PlanDetail = (props) => {
     >
       <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
         <Grid item >
-          <LineBox>
-            <HotelIcon sx={{ color: 'white', fontSize: 20 }} /> {/* 아이콘 색상과 크기 */}
-          </LineBox>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* PlaceIcon과 12:00을 한 행에 배치 */}
+            <LineBox>
+              <PlaceIcon sx={{ color: 'white', fontSize: 20 }} /> {/* 아이콘 색상과 크기 */}
+            </LineBox>
+            <TimeTypography variant="h6">
+              {props.time}
+            </TimeTypography>
+          </Box>
         </Grid>
         <Grid item xs>
           <Box sx={{ border: '1px solid #ddd', borderRadius: 2, padding: 2, display: 'flex', alignItems: 'center' }}>
             <img
               src={props.placeImage} // 여기에 실제 이미지 경로를 넣으세요.
-              alt="송도수산물유통센터"
-              style={{ width: '40%', borderRadius: '8px', marginRight: '16px' }}
+              alt={props.name}
+              style={{ width: '200px', height: '200px', borderRadius: '8px', marginRight: '16px', objectFit: 'cover' }}
             />
             <Box sx={{ display: 'flex', flexDirection: 'column' }}> {/* 수직 정렬을 위해 flexDirection을 column으로 설정 */}
               <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                 {props.name}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                버릇시장 & 재래시장 | 소요 시간: 1시간 미만
+                {props.notes}
               </Typography>
             </Box>
             {/* 오른쪽 하단에 추가 아이콘과 이미지 버튼 */}
@@ -254,30 +302,30 @@ const PlanDetail = (props) => {
             >
               {/* 추가 아이콘 버튼 */}
               <div>
-      {/* 추가 아이콘 버튼 */}
-      <IconButton
-        onClick={handleClick}
-        sx={{
-          backgroundColor: 'grey.300',
-          width: 60,
-          height: 60,
-          borderRadius: 1,
-          border: '1px solid #ddd',
-        }}
-      >
-        <AddIcon sx={{ color: 'grey.600', fontSize: 30 }} />
-      </IconButton>
+                {/* 추가 아이콘 버튼 */}
+                <IconButton
+                  onClick={handleClick}
+                  sx={{
+                    backgroundColor: 'grey.300',
+                    width: 60,
+                    height: 60,
+                    borderRadius: 1,
+                    border: '1px solid #ddd',
+                  }}
+                >
+                  <AddIcon sx={{ color: 'grey.600', fontSize: 30 }} />
+                </IconButton>
 
-      {/* 숨겨진 파일 입력 */}
-      <input
-        type="file"
-        ref={fileInputRef} // 파일 입력 요소에 접근하기 위한 ref
-        style={{ display: 'none' }} // 화면에 표시되지 않도록 숨김
-        onChange={handleFileChange} // 파일 선택 시 업로드 처리
-        accept="image/*"
-        multiple // 여러 개의 파일 선택 허용
-      />
-    </div>
+                {/* 숨겨진 파일 입력 */}
+                <input
+                  type="file"
+                  ref={fileInputRef} // 파일 입력 요소에 접근하기 위한 ref
+                  style={{ display: 'none' }} // 화면에 표시되지 않도록 숨김
+                  onChange={handleFileChange} // 파일 선택 시 업로드 처리
+                  accept="image/*"
+                  multiple // 여러 개의 파일 선택 허용
+                />
+              </div>
 
               {/* 이미지 버튼 */}
               {props.images.length > 0 && (
@@ -327,80 +375,80 @@ const PlanDetail = (props) => {
 
       {/* 모달 */}
       <Modal
-      open={open}
-      onClose={handleClose}
-      closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500,
-      }}
-    >
-      <Fade in={open}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '80%',
-            maxWidth: '600px',
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 2,
-            borderRadius: 2,
-            overflow: 'hidden', // 이미지가 넘치지 않도록 설정
-          }}
-        >
-          {/* Carousel */}
-          <Carousel
-            navButtonsAlwaysVisible={true} // 이전/다음 버튼 항상 보이도록 설정
-            animation="slide" // 슬라이드 애니메이션
-            indicators={true} // 하단의 도트 표시 비활성화
-            cycleNavigation={false} // 무한 루프
-            autoPlay={false}
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={open}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '80%',
+              maxWidth: '600px',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 2,
+              borderRadius: 2,
+              overflow: 'hidden', // 이미지가 넘치지 않도록 설정
+            }}
           >
-            {props.images.map((image, index) => (
-              <Box
-                key={index}
-                sx={{
-                  position: 'relative', // 삭제 버튼 배치를 위해 relative 설정
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <img
-                  src={image}
-                  alt={`이미지 ${index + 1}`}
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                    borderRadius: 8,
-                  }}
-                />
-                {/* 삭제 버튼 */}
-                <IconButton
-                  onClick={() => onImageDelete(index)} // 이미지 삭제 이벤트
+            {/* Carousel */}
+            <Carousel
+              navButtonsAlwaysVisible={true} // 이전/다음 버튼 항상 보이도록 설정
+              animation="slide" // 슬라이드 애니메이션
+              indicators={true} // 하단의 도트 표시 비활성화
+              cycleNavigation={false} // 무한 루프
+              autoPlay={false}
+            >
+              {props.images.map((image, index) => (
+                <Box
+                  key={index}
                   sx={{
-                    position: 'absolute',
-                    top: 0, // 상단에 위치
-        left: '50%', // 가로 중앙으로 이동
-        transform: 'translateX(-50%)', // 정확히 중앙 정렬
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 투명도 설정
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 1)',
-                    },
+                    position: 'relative', // 삭제 버튼 배치를 위해 relative 설정
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}
                 >
-                  <DeleteIcon sx={{ color: 'grey' }} />
-                </IconButton>
-              </Box>
-            ))}
-          </Carousel>
-        </Box>
-      </Fade>
-    </Modal>
+                  <img
+                    src={image}
+                    alt={`이미지 ${index + 1}`}
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      borderRadius: 8,
+                    }}
+                  />
+                  {/* 삭제 버튼 */}
+                  <IconButton
+                    onClick={() => onImageDelete(index)} // 이미지 삭제 이벤트
+                    sx={{
+                      position: 'absolute',
+                      top: 0, // 상단에 위치
+                      left: '50%', // 가로 중앙으로 이동
+                      transform: 'translateX(-50%)', // 정확히 중앙 정렬
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 투명도 설정
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 1)',
+                      },
+                    }}
+                  >
+                    <DeleteIcon sx={{ color: 'grey' }} />
+                  </IconButton>
+                </Box>
+              ))}
+            </Carousel>
+          </Box>
+        </Fade>
+      </Modal>
 
 
     </div>
@@ -408,7 +456,7 @@ const PlanDetail = (props) => {
 }
 
 //선택된 날짜의 데이터를 나타내주는 컴포넌트
-const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImages }) => {
+const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImages, onAddPlace }) => {
 
   //이동거리, 시간 구하는 함수.
   const calculateTravelTime = async (datePlan) => {
@@ -459,6 +507,39 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
   };
 
   const [result, setResult] = useState({ allDuration: 0, allDistance: 0, durations: [] });  //총 시간, 거리
+  const [isModalOpen, setIsModalOpen] = useState(false);  //모달창
+  const [currentView, setCurrentView] = useState("list"); // "list" 또는 "note"
+  const [selectedPlace, setSelectedPlace] = useState(null); // 선택된 카드 데이터
+  const [note, setNote] = useState(""); // 메모 내용
+  const [time, setTime] = useState(dayjs()); //장소 추가시 시간
+
+  const openModal = () => {  //모달 열기
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {  //모달 닫기
+    setIsModalOpen(false);
+    setCurrentView("list");
+    setNote(""); // 메모 초기화
+  };
+
+  // 카드 클릭 시 메모 작성 화면으로 이동
+  const handleCardClick = (place) => {
+    setSelectedPlace(place);
+    setCurrentView("note");
+  };
+
+  // 뒤로가기 버튼 클릭 시 리스트 화면으로 돌아감
+  const handleBack = () => {
+    setCurrentView("list");
+    setSelectedPlace(null);
+    setNote(""); // 메모 초기화
+  };
+
+  const saveClick = () => {
+    onAddPlace(selectedPlace, note, time.format("HH:mm"));
+    closeModal();
+  }
 
   useEffect(() => {
     if (!datePlan || datePlan.length < 2) {
@@ -532,25 +613,38 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
               }}
             />
             {datePlan.map((plan, idx) => <div key={idx}>
-              <PlanDetail {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} onDelete={() => onDelete(idx)} onChangeImages={(newImages)=>onChangeImages(idx,newImages)}/>
+              <PlanDetail {...plan} onDragStart={() => dragStart(idx)} onDragEnter={() => dragEnter(idx)} onDragOver={e => e.preventDefault()} onDragEnd={drop} onDelete={() => onDelete(idx)} onChangeImages={(newImages) => onChangeImages(idx, newImages)} />
               {idx < datePlan.length - 1 && result?.durations[idx] !== undefined && (
-                <Typography sx={{ textAlign: "center", color: "grey.500", mt: 1, mb: 1 }}>
-                  이동 시간: {result.durations[idx].duration}초 이동 거리: {result.durations[idx].distance}미터
-                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center", // 세로 가운데 정렬
+                    color: "grey.500", // 텍스트와 아이콘 색상
+                    mt: 1,
+                    mb: 1,
+                  }}
+                >
+                  <LineBox>
+                    {/* 자동차 아이콘 */}
+                    <DirectionsCarIcon sx={{ color: "white", fontSize: 24 }} /> {/* 텍스트와 간격 조정 */}
+                  </LineBox>
+                  {/* 이동 시간과 거리 텍스트 */}
+                  <TimeTypography variant="h6">
+                    이동 시간: {formatTime(result.durations[idx].duration)}, 이동 거리: {formatDistance(result.durations[idx].distance)}
+                  </TimeTypography>
+                </Box>
               )}
             </div>)}
           </Box>
 
           {/* Add Button */}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-            <Button variant="outlined" startIcon={<AddIcon />}>
+            <Button variant="outlined" startIcon={<AddIcon />} onClick={openModal}>
               추가
             </Button>
             {result?.allDistance !== undefined && result?.allDuration !== undefined && datePlan.length >= 2 && (
-              <Typography sx={{ textAlign: "center", color: "grey.500", mt: 1, mb: 1 }}>
-                총 이동 시간: {result.allDuration}초 총 이동 거리: {result.allDistance}미터
-              </Typography>)}
-          </Box>
+              <TimeTypography variant="h6">
+                총 이동 시간: {formatTime(result.allDuration)}, 총 이동 거리: {formatDistance(result.allDistance)}
+              </TimeTypography>)}
         </Box>
       ) : (
         <>
@@ -558,12 +652,178 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
             계획을 추가해보세요
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-            <Button variant="outlined" startIcon={<AddIcon />}>
+            <Button variant="outlined" startIcon={<AddIcon />} onClick={openModal}>
               추가
             </Button>
           </Box>
         </>
       )}
+
+      <Modal open={isModalOpen} onClose={closeModal}>
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            height: "100%",
+            width: "33%",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 3,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {/* 메모 작성 화면 */}
+          {currentView === "note" && selectedPlace && (
+            <>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "20px",
+                }}
+              >
+                <IconButton onClick={handleBack}>
+                  <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h6" component="h2" sx={{ marginLeft: "10px" }}>
+                  메모 작성
+                </Typography>
+              </Box>
+              <Card
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  boxShadow: "none",
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  marginBottom: "20px",
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  sx={{
+                    width: "160px",
+                    height: "160px",
+                    borderRadius: "8px",
+                    objectFit: "cover",
+                  }}
+                  image={selectedPlace.image}
+                  alt={selectedPlace.name}
+                />
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    {selectedPlace.name}
+                  </Typography>
+                </CardContent>
+              </Card>
+              <Typography variant="h6" sx={{fontWeight: "bold"}}>메모</Typography>
+              <TextField
+                fullWidth
+                multiline
+                rows={6}
+                variant="outlined"
+                placeholder="메모를 작성하세요."
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                sx={{ marginBottom: "20px", marginTop:"10px" }}
+              />
+              {/* 시간 입력 필드 */}
+              <Typography variant="h6" sx={{fontWeight: "bold"}}>시간</Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={['TimePicker']} sx={{ mb: 3 }}>
+                  <TimePicker value={time}
+                    onChange={(newValue) => setTime(newValue)} />
+                </DemoContainer>
+              </LocalizationProvider>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={saveClick}
+              >
+                저장
+              </Button>
+            </>
+          )}
+
+          {/* 리스트 화면 */}
+          {currentView === "list" && (
+            <>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "20px",
+                }}
+              >
+                <Typography variant="h6" component="h2">
+                  숙박시설 추가하기
+                </Typography>
+                <IconButton onClick={closeModal}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                  overflowY: "auto",
+                }}
+              >
+                {placeData.map((place, idx) => (
+                  <Card
+                    key={idx}
+                    onClick={() => handleCardClick(place)}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      boxShadow: "none",
+                      border: "1px solid #ddd",
+                      borderRadius: "8px",
+                      padding: "10px",
+                      flexShrink: 0,
+                      cursor: "pointer",
+                      "&:hover": { backgroundColor: "#f5f5f5" },
+                    }}
+                  >
+                    <CardMedia
+                      component="img"
+                      sx={{
+                        width: "130px",
+                        height: "130px",
+                        borderRadius: "8px",
+                        objectFit: "cover",
+                      }}
+                      image={place.image}
+                      alt={place.name}
+                    />
+                    <CardContent>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: "bold",
+                          fontSize: "16px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {place.name}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            </>
+          )}
+        </Box>
+      </Modal>
+
     </>
   );
 }
@@ -625,11 +885,26 @@ const BudgetPage = () => {
   }
 
   //이미지 추가, 삭제
-  const changeImages = (date,idx,newImages) => {
-    const newDetail = {...detail};
-    console.log('dddddddd',newDetail);
+  const changeImages = (date, idx, newImages) => {
+    const newDetail = { ...detail };
+    console.log('dddddddd', newDetail);
     console.log(date, ":", idx, ":", newImages);
     newDetail.dailyItinerary[date][idx].images = newImages;
+    setDetail(newDetail);
+  }
+
+  const addPlace = (date, place, notes, time) => {
+    const newDetail = { ...detail };
+    newDetail.dailyItinerary[date] = [...newDetail.dailyItinerary[date], {
+      name: place.name,
+      city: "",
+      time: time,
+      notes: notes,
+      placeImage: place.image,
+      images: [],
+      x: place.x,
+      y: place.y
+    }];
     setDetail(newDetail);
   }
 
@@ -655,7 +930,8 @@ const BudgetPage = () => {
           <Divider sx={{ margin: '20px 0' }} />
           <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} />
           <Divider sx={{ margin: '20px 0' }} />
-          <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx) => deleteDetail(selectedDate, idx)} onChangeMap={changeMap} onChangeImages={(idx, newImages) => changeImages(selectedDate,idx,newImages)} />
+          <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx) => deleteDetail(selectedDate, idx)} onChangeMap={changeMap} onChangeImages={(idx, newImages) => changeImages(selectedDate, idx, newImages)}
+            onAddPlace={(place, notes, time) => addPlace(selectedDate, place, notes, time)} />
         </Grid>
 
         {/* 오른쪽 영역 */}

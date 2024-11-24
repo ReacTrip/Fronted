@@ -124,8 +124,8 @@ export const placeData = [
   {
     name: "서울 빛초롱 축제",
     image: seoulFestival3,
-    x: "126.9786692",
-    y: "37.5691015"
+    x: "126.9773517",
+    y: "37.56521290000001"
   },
   {
     name: "정식당",
