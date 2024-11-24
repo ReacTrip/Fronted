@@ -156,6 +156,8 @@ const TripPlacePage = () => {
               md: '1rem',
               lg: '1.2rem',
             },
+            transition: 'background-image 1s ease, opacity 1s ease', // 이미지 트랜지션 효과
+            opacity: hoveredCity?.image ? 1 : 0, // 이미지가 없을 때는 투명하게 처리
           }}
         >
           {hoveredCity?.name && (

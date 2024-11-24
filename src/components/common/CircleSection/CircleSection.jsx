@@ -3,8 +3,8 @@ import { Box, Typography } from '@mui/material';
 
 const CircleSection = ({ city, index, total, onHover, onClick }) => {
   const angle = (index * 360) / total; // 각 섹션의 각도
-  const translateX = 35 * Math.cos((angle * Math.PI) / 180); // X 좌표 계산
-  const translateY = 35 * Math.sin((angle * Math.PI) / 180); // Y 좌표 계산
+  const translateX = 45 * Math.cos((angle * Math.PI) / 180); // X 좌표 계산
+  const translateY = 45 * Math.sin((angle * Math.PI) / 180); // Y 좌표 계산
 
   return (
     <Box
