@@ -60,7 +60,7 @@ const LikeButton = styled(IconButton)({
   },
 });
 
-const TripCard = ({ data, isLiked, onLikeClick }) => {
+const TripCard = ({ data, onLikeClick }) => {
   return (
     <PreviewCard elevation={2}>
       <ImageSection>
@@ -127,7 +127,7 @@ const TripCard = ({ data, isLiked, onLikeClick }) => {
           onLikeClick(data.id);
         }}
       >
-        {isLiked ? (
+        {data.like ? (
           <FavoriteIcon sx={{ color: '#ff1744' }} />
         ) : (
           <FavoriteBorderIcon />

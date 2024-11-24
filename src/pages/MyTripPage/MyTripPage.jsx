@@ -46,12 +46,8 @@ const MyTripPage = () => {
     const storedTrips = JSON.parse(localStorage.getItem("trips")) || defaultTrips;
     const userTrips = storedTrips.filter((trip) => trip.AuthorId === currentUser.id);
     setTrips(userTrips);
-
-    // 좋아요 상태 가져오기
-    // const storedLikes = JSON.parse(localStorage.getItem("likes")) || {};
-    // const likedTripIds = Object.keys(storedLikes).filter((id) => storedLikes[id]);
-    // const liked = storedTrips.filter((trip) => likedTripIds.includes(String(trip.id)));
-    // setLikedTrips(liked);
+    const likedTrips = storedTrips.filter((trip) => trip.like === 1);
+    setLikedTrips(likedTrips);
   }, []);
 
   // 탭 변경

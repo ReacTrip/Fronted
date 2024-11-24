@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/common/Navbar/Navbar';
 import TripCard from '@/components/common/TripCard/TripCard';
 import KoreaMap from '@/components/map/KoreaMap';
-import { detailData } from '@/data/tripDataDetail'; // 초기 데이터 import
 
 const StyledContainer = styled(Container)({
   maxWidth: '1200px !important',
@@ -31,7 +30,6 @@ const StartButton = styled(Button)({
 const MainPage = () => {
   const navigate = useNavigate();
   const [trips, setTrips] = useState([]); // 여행 데이터
-  const [likes, setLikes] = useState({}); // 좋아요 상태
 
   useEffect(() => {
     // 로컬 스토리지에서 데이터 로드
@@ -41,16 +39,9 @@ const MainPage = () => {
 
   // 좋아요 클릭 핸들러
   const handleLikeClick = (id) => {
-    const updatedLikes = {
-      ...likes,
-      [id]: !likes[id], // 좋아요 상태 토글
-    };
-    setLikes(updatedLikes);
-    localStorage.setItem("likes", JSON.stringify(updatedLikes)); // 좋아요 상태 저장
-
     // 여행 데이터 업데이트
     const updatedTrips = trips.map((trip) =>
-      trip.id === id ? { ...trip, isLiked: !likes[id] } : trip
+      trip.id === id ? { ...trip, like: trip.like === 1 ? 0 : 1 } : trip
     );
     setTrips(updatedTrips);
     localStorage.setItem("trips", JSON.stringify(updatedTrips)); // 업데이트된 여행 데이터 저장
@@ -110,7 +101,6 @@ const MainPage = () => {
               <Grid item xs={6} key={trip.id}>
                 <TripCard
                   data={trip}
-                  isLiked={likes[trip.id]}
                   onLikeClick={handleLikeClick}
                 />
               </Grid>
