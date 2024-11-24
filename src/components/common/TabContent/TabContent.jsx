@@ -49,12 +49,17 @@ const TabContent = ({ data, onCardClick }) => (
         {data.map((item) => (
           <PreviewCard elevation={2} onClick={() => onCardClick(detailData[0])} key={item.id} sx={{ marginBottom: 1 }}>
             <ImageSection>
-              <img src={item.image} alt={item.name} />
+              <img src={item.mainImage} alt={item.name} />
             </ImageSection>
             <ListItem sx={{ borderBottom: '1px solid #ccc' }}>
               <ContentSection>
-                <Typography variant="h6">{item.name}</Typography>
-                <Box>O박 O일</Box>
+                <Typography variant="h5">{item.title}</Typography>
+
+                <Box>{item.startDate && item.endDate
+                ? `${item.startDate.replace(/-/g, '.')} ~ ${item.endDate.replace(/-/g, '.')}`
+                : '날짜 정보 없음'}
+                </Box>
+
                 <Box
                   sx={{
                     display: 'flex',

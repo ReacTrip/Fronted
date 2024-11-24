@@ -15,6 +15,7 @@ export const detailData = [
         endDate: "2024-05-10",  // 여행 종료 일자
         AuthorId: "das", //작성자 id
         mainImage: trip2,  //메인 이미지
+        like: 0,
         dailyItinerary: { // 일자별 계획
 
             "2024-05-01": [  // 이동할 장소 정보
@@ -96,6 +97,7 @@ export const detailData = [
         endDate: "2024-08-15",
         AuthorId: "def",
         mainImage: trip3,
+        like: 0,
         dailyItinerary: {
 
             "2024-08-10": [
@@ -147,6 +149,7 @@ export const detailData = [
         endDate: "2024-12-3",  // 여행 종료 일자
         AuthorId: "das", //작성자 id
         mainImage: trip4,  //메인 이미지
+        like: 1,
         dailyItinerary: { // 일자별 계획
 
             "2024-12-01": [  // 이동할 장소 정보
