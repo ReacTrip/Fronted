@@ -110,9 +110,13 @@ const TripCard = ({ data, isLiked, onLikeClick }) => {
           }}>
             <CalendarMonthIcon sx={{ fontSize: 18, mr: 1 }} />
             {/* 날짜 데이터 형식을 - 에서 . 으로 변경 */}
+
             <Typography sx={{ fontSize: '14px' }}>
-              {`${data.startDate.replace(/-/g, '.')} ~ ${data.endDate.replace(/-/g, '.')}`}
+              {data.startDate && data.endDate
+                ? `${data.startDate.replace(/-/g, '.')} ~ ${data.endDate.replace(/-/g, '.')}`
+                : '날짜 정보 없음'}
             </Typography>
+
           </Box>
         </Box>
       </ContentSection>
