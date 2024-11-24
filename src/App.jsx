@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from "react";
+import { detailData } from "@/data/tripDataDetail";
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -26,6 +27,11 @@ import Ulsan from './pages/TripPlacePage/Cities/Ulsan';
 import Pocheon from './pages/TripPlacePage/Cities/Pocheon';
 
 function App() {
+  useEffect(() => {
+    // 항상 새로운 detailData로 덮어쓰기
+    localStorage.setItem("trips", JSON.stringify(detailData));
+  }, []);
+  
   return (
     <MuiThemeProvider theme={muiTheme}>
       <StyledThemeProvider theme={muiTheme}>

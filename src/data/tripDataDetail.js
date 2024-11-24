@@ -13,8 +13,9 @@ export const detailData = [
         title: "부산 여행",  // 여행 이름
         startDate: "2024-05-01",  // 여행 시작 일자
         endDate: "2024-05-10",  // 여행 종료 일자
-        AuthorId: "abc", //작성자 id
+        AuthorId: "das", //작성자 id
         mainImage: trip2,  //메인 이미지
+        like: 0,
         dailyItinerary: { // 일자별 계획
 
             "2024-05-01": [  // 이동할 장소 정보
@@ -90,11 +91,13 @@ export const detailData = [
 
     {
         id: 2,
+        title: "서울 여행",  // 여행 이름
         destination: "Seoul Tour",
         startDate: "2024-08-10",
         endDate: "2024-08-15",
         AuthorId: "def",
-        mainImage: trip2,
+        mainImage: trip3,
+        like: 0,
         dailyItinerary: {
 
             "2024-08-10": [
@@ -138,5 +141,118 @@ export const detailData = [
 
         },
         description: "서울 주요 관광지 중심으로 방문"
-    }
+    }, 
+    {
+        id: 3,  // 여행 id
+        title: "대구 여행",  // 여행 이름
+        startDate: "2024-12-01",  // 여행 시작 일자
+        endDate: "2024-12-3",  // 여행 종료 일자
+        AuthorId: "das", //작성자 id
+        mainImage: trip4,  //메인 이미지
+        like: 1,
+        dailyItinerary: { // 일자별 계획
+
+            "2024-12-01": [  // 이동할 장소 정보
+                {
+                    name: "광안리 해수욕장",
+                    city: "Busan",
+                    time: "12:00",
+                    notes: "수영복 가져가기",
+                    placeImage: trip1,
+                    images: [trip3, trip4],
+                    x: "127.0105811",
+                    y: "37.58284829999999"
+                },
+                {
+                    name: "조개구이 가게",
+                    city: "Busan",
+                    time: "15:00",
+                    notes: "",
+                    placeImage: trip2,
+                    images: [trip5, trip6],
+                    x: "127.066881928111",
+                    y: "37.6226208171943 "
+                },
+                {
+                    name: "광안리 해수욕장",
+                    city: "Busan",
+                    time: "12:00",
+                    notes: "수영복 가져가기",
+                    placeImage: trip1,
+                    images: [trip3, trip4],
+                    x: "126.9972889",
+                    y: "37.6108694 "
+                }
+            ],
+
+
+            "2024-12-02": [  // 이동할 장소 정보
+                {
+                    name: "울산 맛집",
+                    city: "울산",
+                    time: "09:00",
+                    notes: "오전 방문",
+                    placeImage: trip3,
+                    images: [trip5, trip6],
+                    x: "127.11341936045922",
+                    y: "37.39639094915999"
+                },
+                {
+                    name: "울산 해수욕장",
+                    city: "울산",
+                    time: "13:00",
+                    notes: "밥 먹고 방문",
+                    placeImage: trip4,
+                    images: [trip1, trip2],
+                    x: "127.10860518470294",
+                    y: "37.401999820065534"
+                },
+                {
+                    name: "울산 맛집",
+                    city: "울산",
+                    time: "09:00",
+                    notes: "오전 방문",
+                    placeImage: trip3,
+                    images: [trip5, trip6],
+                    x: "127.11024293202674",
+                    y: "37.394348634049784"
+                },
+            ],
+
+            "2024-12-03": [  // 이동할 장소 정보
+                {
+                    name: "울산 맛집",
+                    city: "울산",
+                    time: "09:00",
+                    notes: "오전 방문",
+                    placeImage: trip3,
+                    images: [trip5, trip6],
+                    x: "127.11341936045922",
+                    y: "37.39639094915999"
+                },
+                {
+                    name: "울산 해수욕장",
+                    city: "울산",
+                    time: "13:00",
+                    notes: "밥 먹고 방문",
+                    placeImage: trip4,
+                    images: [trip1, trip2],
+                    x: "127.10860518470294",
+                    y: "37.401999820065534"
+                },
+                {
+                    name: "울산 맛집",
+                    city: "울산",
+                    time: "09:00",
+                    notes: "오전 방문",
+                    placeImage: trip3,
+                    images: [trip5, trip6],
+                    x: "127.11024293202674",
+                    y: "37.394348634049784"
+                },
+            ],
+
+        },
+        description: "친구랑 함께가는 여행" // 메모
+    },
 ];

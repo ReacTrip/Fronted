@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Typography, 
@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/common/Navbar/Navbar';
 import TripCard from '@/components/common/TripCard/TripCard';
 import KoreaMap from '@/components/map/KoreaMap';
-import { previewData } from '@/data/tripData';
 
 const StyledContainer = styled(Container)({
   maxWidth: '1200px !important',
@@ -30,17 +29,26 @@ const StartButton = styled(Button)({
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const [likes, setLikes] = useState({});
+  const [trips, setTrips] = useState([]); // 여행 데이터
+
+  useEffect(() => {
+    // 로컬 스토리지에서 데이터 로드
+    const storedTrips = JSON.parse(localStorage.getItem("trips")) || [];
+    setTrips(storedTrips);
+  }, []);
+
+  // 좋아요 클릭 핸들러
+  const handleLikeClick = (id) => {
+    // 여행 데이터 업데이트
+    const updatedTrips = trips.map((trip) =>
+      trip.id === id ? { ...trip, like: trip.like === 1 ? 0 : 1 } : trip
+    );
+    setTrips(updatedTrips);
+    localStorage.setItem("trips", JSON.stringify(updatedTrips)); // 업데이트된 여행 데이터 저장
+  };
 
   const handleMoreClick = () => {
     navigate('/trips');
-  };
-
-  const handleLikeClick = (id) => {
-    setLikes(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
   };
 
   return (
@@ -88,12 +96,11 @@ const MainPage = () => {
         </Box>
         
         <Box sx={{ mt: 6, mb: 6 }}>
-          <Grid container spacing={3} sx={{ width: '100%', margin: 0 }}>
-            {previewData.map((preview) => (
-              <Grid item xs={6} key={preview.id} sx={{ padding: '12px' }}>
+          <Grid container spacing={3}>
+            {trips.map((trip) => (
+              <Grid item xs={6} key={trip.id}>
                 <TripCard
-                  data={preview}
-                  isLiked={likes[preview.id]}
+                  data={trip}
                   onLikeClick={handleLikeClick}
                 />
               </Grid>

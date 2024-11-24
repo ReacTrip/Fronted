@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';  //상세페이지 가기위함
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -29,40 +29,25 @@ const StyledContainer = styled(Container)({
 
 // 임시 사용자 정보
 const currentUser = {
-  id: 1,
+  id: "das",
   name: '스키매니아',
 };
 
-// 여행 데이터
-const defaultTrips = [
-  { id: 1, name: '파리 여행', userId: 1, image: trip1, date: '2024.12.20 - 2024.12.22' },
-  { id: 2, name: '뉴욕 탐험', userId: 1, image: trip2, date: '2024.12.20 - 2024.12.22' },
-  // { id: 3, name: '도쿄 투어', userId: 1, image: trip3, date: '2024.12.20 - 2024.12.22' },
-  // { id: 4, name: '서울 관광', userId: 1, image: trip4, date: '2024.12.20 - 2024.12.22' },
-  // { id: 5, name: '런던 여행', userId: 1, image: trip5, date: '2024.12.20 - 2024.12.22' },
-  // { id: 6, name: '보이지 않는 여행', userId: 2, image: trip6, date: '2024.12.20 - 2024.12.22' },
-];
-
-// 이미지 import
-import trip1 from '@/assets/images/main/trip1.png';
-import trip2 from '@/assets/images/main/trip2.png';
-import trip3 from '@/assets/images/main/trip3.png';
-import trip4 from '@/assets/images/main/trip4.png';
-import trip5 from '@/assets/images/main/trip5.png';
-import trip6 from '@/assets/images/main/trip6.png';
-
 const MyTripPage = () => {
-  const [trips, setTrips] = useState([]);
-  const [tabValue, setTabValue] = useState(0);
+  const [trips, setTrips] = useState([]); // 사용자의 여행 데이터
+  const [likedTrips, setLikedTrips] = useState([]); // 좋아요된 여행 데이터
+  const [tabValue, setTabValue] = useState(0); // 현재 탭 상태
   const [open, setOpen] = useState(false); // 모달 상태
   const [newTrip, setNewTrip] = useState({ name: "", date: "", image: null }); // 새 여행 데이터
-  const navigate = useNavigate();//상세페이지 가기위함
+  const navigate = useNavigate(); //상세페이지 가기위함
 
-  // 로컬 스토리지에서 데이터 가져오기
+  // 로컬 스토리지에서 여행 데이터 및 좋아요 상태 가져오기
   useEffect(() => {
     const storedTrips = JSON.parse(localStorage.getItem("trips")) || defaultTrips;
-    const userTrips = storedTrips.filter((trip) => trip.userId === currentUser.id);
+    const userTrips = storedTrips.filter((trip) => trip.AuthorId === currentUser.id);
     setTrips(userTrips);
+    const likedTrips = storedTrips.filter((trip) => trip.like === 1);
+    setLikedTrips(likedTrips);
   }, []);
 
   // 탭 변경
@@ -125,48 +110,11 @@ const MyTripPage = () => {
 
   // 여행 삭제
   const handleDeleteTrip = (id) => {
-    // 해당 id를 제외한 나머지 여행 데이터로 필터링
     const updatedTrips = trips.filter((trip) => trip.id !== id);
     setTrips(updatedTrips); // 상태 업데이트
     localStorage.setItem("trips", JSON.stringify(updatedTrips)); // 로컬 스토리지 업데이트
   };
 
-  const handleImageUploaded = (url) => {
-    const newTrip = {
-      id: Date.now(),
-      name: "새로운 여행",
-      userId: currentUser.id,
-      image: url,
-      date: "2025.01.01 - 2025.01.03",
-    };
-
-    const updatedTrips = [...trips, newTrip];
-    setTrips(updatedTrips);
-    localStorage.setItem("trips", JSON.stringify([...trips, newTrip])); // 로컬 스토리지에 저장
-  };
-
-  // 로컬 저장된 데이터를 가져오는 함수
-  const loadTripsFromLocalStorage = () => {
-    const storedTrips = localStorage.getItem('trips');
-    if (storedTrips) {
-      return JSON.parse(storedTrips);
-    }
-    return defaultTrips; // 초기 기본 데이터
-  };
-
-  // 여행 데이터를 로컬에 저장
-  const saveTripsToLocalStorage = (trips) => {
-    localStorage.setItem('trips', JSON.stringify(trips));
-  };
-
-  // // 여행 정보 가져오기
-  // useEffect(() => {
-  //   // 현재 사용자의 여행만 가져오기
-  //   const userTrips = loadTripsFromLocalStorage().filter((trip) => trip.userId === currentUser.id);
-  //   setTrips(userTrips);
-  // }, []);
-
-  // 탭 목록
   const tabData = [
     {
       id: 0,
@@ -177,7 +125,7 @@ const MyTripPage = () => {
           <IconButton
             aria-label="delete"
             color="error"
-            onClick={() => handleDeleteTrip(trip.id)} // 삭제 핸들러 호출
+            onClick={() => handleDeleteTrip(trip.id)}
           >
             <DeleteIcon />
           </IconButton>
@@ -185,7 +133,7 @@ const MyTripPage = () => {
       })),
     },
     { id: 1, label: "작성한 글", data: [] },
-    { id: 2, label: "좋아요 한 글", data: [] },
+    { id: 2, label: "좋아요 한 글", data: likedTrips }, // 좋아요한 글만 표시
   ];
 
   return (
@@ -261,5 +209,3 @@ const MyTripPage = () => {
 };
 
 export default MyTripPage;
-
-// 상세 페이지로 넘어가지 않음 - 임시데이터로 넘겼었어서.
