@@ -15,7 +15,9 @@ import AddTripPage from './pages/MyTripPage/AddTripPage';
 import TripPlacePage from './pages/TripPlacePage/TripPlacePage';
 import LoginPage from './pages/auth/LoginPage/LoginPage';
 import SignupPage from './pages/auth/SignupPage/SignupPage';
-//각 여행지
+import InterestTestPage from './pages/InterestTestPage/InterestTestPage';
+
+// 각 여행지
 import Jeju from './pages/TripPlacePage/Cities/Jeju';
 import Seoul from './pages/TripPlacePage/Cities/Seoul';
 import Busan from './pages/TripPlacePage/Cities/Busan';
@@ -26,7 +28,7 @@ import Incheon from './pages/TripPlacePage/Cities/Incheon';
 import Ulsan from './pages/TripPlacePage/Cities/Ulsan';
 import Pocheon from './pages/TripPlacePage/Cities/Pocheon';
 
-function App() {
+const App = () => {
   useEffect(() => {
     // 항상 새로운 detailData로 덮어쓰기
     localStorage.setItem("trips", JSON.stringify(detailData));
@@ -39,15 +41,21 @@ function App() {
         <GlobalStyles />
         <Router>
           <Routes>
+            {/* 메인 페이지 */}
             <Route path="/" element={<MainPage />} />
+            
+            {/* 기능 페이지 */}
             <Route path="/budget" element={<BudgetPage />} />
-            <Route path="/preference" element={<MyTripPage />} />
+            <Route path="/interest-test" element={<InterestTestPage />} />
             <Route path="/my-trip" element={<MyTripPage />} />
             <Route path="/add-trip" element={<AddTripPage />} />
             <Route path="/trip-place" element={<TripPlacePage />} />
+            
+            {/* 인증 페이지 */}
             <Route path="/auth/login" element={<LoginPage />} />
             <Route path="/auth/signup" element={<SignupPage />} />
-            {/* 도시 페이지 경로 추가 */}
+            
+            {/* 도시 페이지 */}
             <Route path="/trip/jeju" element={<Jeju />} />
             <Route path="/trip/seoul" element={<Seoul />} />
             <Route path="/trip/busan" element={<Busan />} />
@@ -62,6 +70,6 @@ function App() {
       </StyledThemeProvider>
     </MuiThemeProvider>
   );
-}
+};
 
 export default App;

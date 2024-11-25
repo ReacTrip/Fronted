@@ -30,24 +30,24 @@ const LogoImage = styled.img`
   display: block;
 `;
 
-// 네비게이션 버튼 커스터마이징
-const NavButton = muiStyled(Button)(({ theme, isLogin }) => ({
+// 일반 네비게이션 버튼
+const NavButtonBase = muiStyled(Button)(({ theme }) => ({
   marginLeft: '35px',
   fontSize: '1.1rem',
   fontWeight: 500,
-  padding: isLogin ? '8px 20px' : '5px 0',
-  borderRadius: isLogin ? '20px' : 0,
-  color: isLogin ? 'white' : theme.palette.text.primary,
-  backgroundColor: isLogin ? theme.palette.primary.main : 'transparent',
+  padding: '5px 0',
+  borderRadius: 0,
+  color: theme.palette.text.primary,
+  backgroundColor: 'transparent',
   '&:hover': {
-    backgroundColor: isLogin ? theme.palette.primary.dark : 'transparent',
-    color: isLogin ? 'white' : theme.palette.primary.main,
-    '&::after': !isLogin ? {
+    backgroundColor: 'transparent',
+    color: theme.palette.primary.main,
+    '&::after': {
       width: '100%'
-    } : {},
+    },
   },
   position: 'relative',
-  '&::after': !isLogin ? {
+  '&::after': {
     content: '""',
     position: 'absolute',
     width: 0,
@@ -57,16 +57,30 @@ const NavButton = muiStyled(Button)(({ theme, isLogin }) => ({
     backgroundColor: theme.palette.primary.main,
     transition: 'all 0.3s ease',
     transform: 'translateX(-50%)'
-  } : {},
+  },
+}));
+
+// 로그인 버튼
+const LoginButton = muiStyled(Button)(({ theme }) => ({
+  marginLeft: '35px',
+  fontSize: '1.1rem',
+  fontWeight: 500,
+  padding: '8px 20px',
+  borderRadius: '20px',
+  color: 'white',
+  backgroundColor: theme.palette.primary.main,
+  '&:hover': {
+    backgroundColor: theme.palette.primary.dark,
+  },
 }));
 
 const Navbar = () => {
   const navItems = [
-    { text: '여행지', path: '/trip-place' },
-    { text: '내 여행', path: '/my-trip' },
-    { text: '스마트 체크리스트', path: '/support' },
-    { text: '여행 취향 테스트', path: '/preference' },
-    { text: '로그인', path: '/auth/login' }
+    { text: '여행지', path: '/trip-place', isLogin: false },
+    { text: '내 여행', path: '/my-trip', isLogin: false },
+    { text: '스마트 체크리스트', path: '/support', isLogin: false },
+    { text: '여행 취향 테스트', path: '/interest-test', isLogin: false },
+    { text: '로그인', path: '/auth/login', isLogin: true }
   ];
 
   return (
@@ -75,19 +89,30 @@ const Navbar = () => {
         <LogoLink to="/">
           <LogoImage src={logoImage} alt="Reactrip 로고" />
         </LogoLink>
-        <Box sx={{ flexGrow: 1 }} /> {/* 빈 공간을 만들어 오른쪽 정렬 */}
+        <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {navItems.map((item, index) => (
-            <NavButton
-              key={index}
-              component={Link}
-              to={item.path}
-              isLogin={item.text === '로그인'}
-              variant={item.text === '로그인' ? 'contained' : 'text'}
-              disableRipple={true}
-            >
-              {item.text}
-            </NavButton>
+            item.isLogin ? (
+              <LoginButton
+                key={index}
+                component={Link}
+                to={item.path}
+                variant="contained"
+                disableRipple={true}
+              >
+                {item.text}
+              </LoginButton>
+            ) : (
+              <NavButtonBase
+                key={index}
+                component={Link}
+                to={item.path}
+                variant="text"
+                disableRipple={true}
+              >
+                {item.text}
+              </NavButtonBase>
+            )
           ))}
         </Box>
       </Toolbar>
