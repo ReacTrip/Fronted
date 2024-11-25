@@ -5,9 +5,28 @@ import path from 'path'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5173,
-    open: false,
-    host: true
+    proxy: {
+      '/api': {
+        target: 'https://apis.data.go.kr',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        secure: false,
+        headers: {
+          'Accept': 'application/xml'
+        },
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('proxy error', err);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log('Sending Request to the Target:', req.method, req.url);
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
+          });
+        }
+      }
+    }
   },
   resolve: {
     alias: [
@@ -18,7 +37,6 @@ export default defineConfig({
       { find: '@styles', replacement: path.resolve(__dirname, 'src/styles') }
     ]
   },
-  // 이미지 및 기타 assets 처리를 위한 설정
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
   build: {
     outDir: 'dist',
@@ -36,4 +54,4 @@ export default defineConfig({
     }
   },
   base: './'
-})
+});
