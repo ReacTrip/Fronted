@@ -60,9 +60,9 @@ const LikeButton = styled(IconButton)({
   },
 });
 
-const TripCard = ({ data, onLikeClick }) => {
+const TripCard = ({ data, onLikeClick, onCardClick }) => {
   return (
-    <PreviewCard elevation={2}>
+    <PreviewCard elevation={2} onClick={onCardClick}>
       <ImageSection>
         <img src={data.mainImage} alt={data.title} />
       </ImageSection>

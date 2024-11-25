@@ -47,7 +47,7 @@ const TabContent = ({ data, onCardClick }) => (
     {data.length > 0 ? (
       <List>
         {data.map((item) => (
-          <PreviewCard elevation={2} onClick={() => onCardClick(detailData[0])} key={item.id} sx={{ marginBottom: 1 }}>
+          <PreviewCard elevation={2} onClick={() => onCardClick(item)} key={item.id} sx={{ marginBottom: 1 }}>
             <ImageSection>
               <img src={item.mainImage} alt={item.name} />
             </ImageSection>

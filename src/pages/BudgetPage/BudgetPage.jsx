@@ -20,6 +20,7 @@ import {
   CardMedia,
   CardContent,
   TextField,
+  CircularProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navbar from '@/components/common/Navbar/Navbar';
@@ -220,11 +221,16 @@ const PlanDetail = (props) => {
 
   const [open, setOpen] = useState(false); // 모달 열기/닫기 상태
 
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+
+  const [currentIndex, setCurrentIndex] = useState(0); // 현재 Carousel 인덱스
+
+
   // 모달 열기
   const handleOpen = () => setOpen(true);
 
   // 모달 닫기
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {setOpen(false); setCurrentIndex(0);}
 
   const fileInputRef = useRef(null);
 
@@ -232,21 +238,35 @@ const PlanDetail = (props) => {
   const handleFileChange = async (event) => {
     const files = event.target.files; // 선택된 파일 배열
     if (files.length > 0) {
-      const urls = [];
-      for (const file of files) {
-        const storageRef = ref(storage, `images/${file.name}`);
-        await uploadBytes(storageRef, file); // Firebase Storage로 파일 업로드
-        const url = await getDownloadURL(storageRef); // 업로드된 URL 가져오기
-        urls.push(url);
+      setIsLoading(true); // 로딩 시작
+      try {
+        const urls = [];
+        for (const file of files) {
+          const storageRef = ref(storage, `images/${file.name}`);
+          await uploadBytes(storageRef, file); // Firebase Storage로 파일 업로드
+          const url = await getDownloadURL(storageRef); // 업로드된 URL 가져오기
+          urls.push(url);
+        }
+        const newImages = props.images.concat(urls);
+        props.onChangeImages(newImages); // 업로드 완료 후 부모 컴포넌트에 전달
+      } catch (error) {
+        console.error("파일 업로드 중 오류 발생:", error);
+      } finally {
+        setIsLoading(false); // 로딩 종료
       }
-      const newImaegs = props.images.concat(urls);
-      props.onChangeImages(newImaegs);
     }
   };
 
   const onImageDelete = (index) => {
     const newImages = [...props.images].filter((val, idx) => idx !== index);
     props.onChangeImages(newImages);
+
+    // 인덱스 조정: 삭제된 이미지가 마지막 이미지라면 이전 이미지로 이동
+    if (index === currentIndex && newImages.length > 0) {
+      setCurrentIndex(Math.max(0, index - 1));
+  } else if (newImages.length === 0) {
+      handleClose();
+  }
   }
 
   // 버튼 클릭 시 파일 입력창 열기
@@ -406,6 +426,8 @@ const PlanDetail = (props) => {
               indicators={true} // 하단의 도트 표시 비활성화
               cycleNavigation={false} // 무한 루프
               autoPlay={false}
+              index={currentIndex} // 현재 활성화된 인덱스
+              onChange={(index) => setCurrentIndex(index)} // 인덱스 변경 추적
             >
               {props.images.map((image, index) => (
                 <Box
@@ -422,9 +444,10 @@ const PlanDetail = (props) => {
                     src={image}
                     alt={`이미지 ${index + 1}`}
                     style={{
-                      width: '100%',
-                      height: 'auto',
+                      width: '700px',
+                      height: '700px',
                       borderRadius: 8,
+                      objectFit: 'contain'
                     }}
                   />
                   {/* 삭제 버튼 */}
@@ -449,8 +472,10 @@ const PlanDetail = (props) => {
           </Box>
         </Fade>
       </Modal>
-
-
+      {/* 이미지 업로드 로딩 스피너 */}
+      <Backdrop open={isLoading} style={{ zIndex: 1200 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }
@@ -536,6 +561,7 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
     setNote(""); // 메모 초기화
   };
 
+  //장소 추가 저장버튼
   const saveClick = () => {
     onAddPlace(selectedPlace, note, time.format("HH:mm"));
     closeModal();
@@ -582,7 +608,6 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
 
   return (
     <>
-      <Box sx={{ marginTop: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 0 }}>
             {new Date(date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}
@@ -590,11 +615,8 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
           <Typography variant="h5" sx={{ textDecoration: 'underline', cursor: 'pointer', marginLeft: 2 }}>
             장소 추가하기
           </Typography>
-        </Box>
         {/* 작성자이면 보이게 설정. 아니면 안보이게 */}
-        {true ? <Button variant="contained" sx={{ backgroundColor: 'black', color: 'white', '&:hover': { backgroundColor: '#333' } }}>
-          수정
-        </Button> : ''}
+        
       </Box>
       {/* 여행 계획이 있으면 계획을 표시하고, 없으면 안내 문구 표시 */}
       {datePlan !== undefined ? (
@@ -638,13 +660,13 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
           </Box>
 
           {/* Add Button */}
-            <Button variant="outlined" startIcon={<AddIcon />} onClick={openModal}>
-              추가
-            </Button>
-            {result?.allDistance !== undefined && result?.allDuration !== undefined && datePlan.length >= 2 && (
-              <TimeTypography variant="h6">
-                총 이동 시간: {formatTime(result.allDuration)}, 총 이동 거리: {formatDistance(result.allDistance)}
-              </TimeTypography>)}
+          <Button variant="outlined" startIcon={<AddIcon />} onClick={openModal}>
+            추가
+          </Button>
+          {result?.allDistance !== undefined && result?.allDuration !== undefined && datePlan.length >= 2 && (
+            <TimeTypography variant="h6">
+              총 이동 시간: {formatTime(result.allDuration)}, 총 이동 거리: {formatDistance(result.allDistance)}
+            </TimeTypography>)}
         </Box>
       ) : (
         <>
@@ -719,7 +741,7 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
                   </Typography>
                 </CardContent>
               </Card>
-              <Typography variant="h6" sx={{fontWeight: "bold"}}>메모</Typography>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>메모</Typography>
               <TextField
                 fullWidth
                 multiline
@@ -728,10 +750,10 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
                 placeholder="메모를 작성하세요."
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                sx={{ marginBottom: "20px", marginTop:"10px" }}
+                sx={{ marginBottom: "20px", marginTop: "10px" }}
               />
               {/* 시간 입력 필드 */}
-              <Typography variant="h6" sx={{fontWeight: "bold"}}>시간</Typography>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>시간</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={['TimePicker']} sx={{ mb: 3 }}>
                   <TimePicker value={time}
@@ -841,6 +863,13 @@ const BudgetPage = () => {
   useEffect(() => {
     //detail이 변경될때 마다 자동 저장. 로컬스토리지에 자동으로 올리기 위함.
     console.log("지금 저장");
+    const storedTrips = JSON.parse(localStorage.getItem("trips"));
+    const updatedTrips = storedTrips.map(item =>
+      item.id === detail.id
+        ? { ...item, ...detail } // 일치하면 업데이트
+        : item                      // 일치하지 않으면 그대로 유지
+    );
+    localStorage.setItem("trips", JSON.stringify(updatedTrips));
   }, [detail])
 
   //드래그 함수
@@ -908,6 +937,22 @@ const BudgetPage = () => {
     setDetail(newDetail);
   }
 
+  const postTrip = () => {
+    const newDetail = {...detail};
+    if (newDetail.post) {
+      if(confirm("게시물을 삭제하시겠습니까?")){
+      newDetail.post = 0; // 값 변경
+      alert("게시물이 삭제되었습니다.");
+    }else{
+        return;
+      }
+  } else {
+      newDetail.post = 1; // 값 변경
+      alert("게시물 작성을 완료하였습니다.");
+  }
+    setDetail(newDetail);
+  }
+
   // 날짜 배열 생성
   const dates = generateDateArray(detail.startDate, detail.endDate);
 
@@ -924,9 +969,16 @@ const BudgetPage = () => {
         {/* 왼쪽 영역 */}
         <Grid item xs={8} sx={{ padding: "0 16px 16px" }}>
           <ImageWithTextOverlay startDate={detail.startDate} endDate={detail.endDate} mainImage={detail.mainImage} title={detail.title} />
-          <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', mt: 3 }}>
+          <Box sx={{ marginTop: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
             여행 일정
           </Typography>
+          {!detail.post ? <Button variant="contained" onClick={postTrip} startIcon={<AddIcon />} sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}>
+          게시물 올리기
+        </Button> : <Button variant="contained" onClick={postTrip} startIcon={<DeleteIcon />} sx={{ backgroundColor: 'red', color: 'white', '&:hover': { backgroundColor: 'darkred' } }}>
+          게시물 삭제
+        </Button>}
+        </Box>
           <Divider sx={{ margin: '20px 0' }} />
           <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} />
           <Divider sx={{ margin: '20px 0' }} />
