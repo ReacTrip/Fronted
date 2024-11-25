@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Grid, 
-  Box, 
-  Button 
+import {
+  Container,
+  Typography,
+  Grid,
+  Box,
+  Button
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -51,15 +51,22 @@ const MainPage = () => {
     navigate('/trips');
   };
 
+  // 상세 페이지로 이동
+  const handleClick = (item) => {
+    const { actions, ...data } = item;
+
+    navigate('/budget', { state: { detail: data } });
+  };
+
   return (
     <StyledContainer>
       <Navbar />
-      
+
       <Box component="main" sx={{ textAlign: 'left', position: 'relative' }}>
         <Box sx={{ maxWidth: '600px' }}>
-          <Typography 
-            variant="h1" 
-            sx={{ 
+          <Typography
+            variant="h1"
+            sx={{
               fontSize: '48px',
               marginBottom: '20px',
               fontWeight: 'bold',
@@ -70,9 +77,9 @@ const MainPage = () => {
             새로운 여행 플래너
           </Typography>
 
-          <Typography 
-            variant="body1" 
-            sx={{ 
+          <Typography
+            variant="body1"
+            sx={{
               fontSize: '18px',
               color: '#666',
               marginBottom: '30px'
@@ -86,7 +93,7 @@ const MainPage = () => {
           </StartButton>
         </Box>
 
-        <Box sx={{ 
+        <Box sx={{
           position: 'absolute',
           top: 0,
           right: 0,
@@ -94,7 +101,7 @@ const MainPage = () => {
         }}>
           <KoreaMap />
         </Box>
-        
+
         <Box sx={{ mt: 6, mb: 6 }}>
           <Grid container spacing={3}>
             {trips.map((trip) => (
@@ -102,21 +109,22 @@ const MainPage = () => {
                 <TripCard
                   data={trip}
                   onLikeClick={handleLikeClick}
+                  onCardClick={()=>handleClick(trip)}
                 />
               </Grid>
             ))}
           </Grid>
 
-          <Box sx={{ 
-            display: 'flex', 
+          <Box sx={{
+            display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'column',
-            mt: 5 
+            mt: 5
           }}>
-            <Typography 
-              variant="body1" 
-              sx={{ 
+            <Typography
+              variant="body1"
+              sx={{
                 fontSize: '16px',
                 color: '#666',
                 mb: 2

@@ -74,7 +74,9 @@ const MyTripPage = () => {
 
   // 상세 페이지로 이동
   const handleClick = (item) => {
-    navigate('/budget', { state: { detail: item } });
+    const { actions, ...data } = item;
+
+    navigate('/budget', { state: { detail: data } });
   };
 
   // 여행 추가
@@ -132,7 +134,7 @@ const MyTripPage = () => {
         ),
       })),
     },
-    { id: 1, label: "작성한 글", data: [] },
+    { id: 1, label: "작성한 글", data: trips.filter((trip) => trip.post === 1) },
     { id: 2, label: "좋아요 한 글", data: likedTrips }, // 좋아요한 글만 표시
   ];
 
