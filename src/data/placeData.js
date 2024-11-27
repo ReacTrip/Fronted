@@ -92,6 +92,7 @@ import daejeonFood3 from '@/assets/images/TripPlace/daejeon/daejeonFood3.png';
 export const placeData = [
   // 서울
   {
+    category : "touristAttraction",
     place: "서울",
     name: "경복궁",
     image: seoulAttraction1,
@@ -99,6 +100,7 @@ export const placeData = [
     y: "37.579617"
   },
   {
+    category : "touristAttraction",
     place: "서울",
     name: "남산타워",
     image: seoulAttraction2,
@@ -106,6 +108,7 @@ export const placeData = [
     y: "37.5511694"
   },
   {
+    category : "touristAttraction",
     place: "서울",
     name: "별마당 도서관",
     image: seoulAttraction3,
@@ -113,6 +116,7 @@ export const placeData = [
     y: "37.5100586"
   },
   {
+    category : "festival",
     place: "서울",
     name: "여의도 불꽃 축제",
     image: seoulFestival1,
@@ -120,6 +124,7 @@ export const placeData = [
     y: "37.5267106"
   },
   {
+    category : "festival",
     place: "서울",
     name: "드론 라이트 쇼",
     image: seoulFestival2,
@@ -127,6 +132,7 @@ export const placeData = [
     y: "37.52935069999999"
   },
   {
+    category : "festival",
     place: "서울",
     name: "서울 빛초롱 축제",
     image: seoulFestival3,
@@ -134,6 +140,7 @@ export const placeData = [
     y: "37.56521290000001"
   },
   {
+    category : "restaurant",
     place: "서울",
     name: "정식당",
     image: seoulFood1,
@@ -141,6 +148,7 @@ export const placeData = [
     y: "37.5256734"
   },
   {
+    category : "restaurant",
     place: "서울",
     name: "뚝배기집",
     image: seoulFood2,
@@ -148,6 +156,7 @@ export const placeData = [
     y: "37.5695341"
   },
   {
+    category : "restaurant",
     place: "서울",
     name: "한공간",
     image: seoulFood3,
@@ -156,6 +165,7 @@ export const placeData = [
   },
   // 제주
   {
+    category : "touristAttraction",
     place: "제주",
     name: "에코랜드 테마파크",
     image: jejuAttraction1,
@@ -163,6 +173,7 @@ export const placeData = [
     y: "33.4465682"
   },
   {
+    category : "touristAttraction",
     place: "제주",
     name: "대포해안주상절리대",
     image: jejuAttraction2,
@@ -170,6 +181,7 @@ export const placeData = [
     y: "33.2377549"
   },
   {
+    category : "touristAttraction",
     place: "제주",
     name: "동문재래시장",
     image: jejuAttraction3,
@@ -177,6 +189,7 @@ export const placeData = [
     y: "33.5120448"
   },
   {
+    category : "festival",
     place: "제주",
     name: "정월대보름 들불축제",
     image: jejuFestival1,
@@ -184,6 +197,7 @@ export const placeData = [
     y: "33.3659432"
   },
   {
+    category : "festival",
     place: "제주",
     name: "성산일출축제",
     image: jejuFestival2,
@@ -191,6 +205,7 @@ export const placeData = [
     y: "33.45805600000001"
   },
   {
+    category : "festival",
     place: "제주",
     name: "서귀포 유채꽃축제",
     image: jejuFestival3,
@@ -198,6 +213,7 @@ export const placeData = [
     y: "33.38203865768668"
   },
   {
+    category : "restaurant",
     place: "제주",
     name: "우진해장국",
     image: jejuFood1,
@@ -205,6 +221,7 @@ export const placeData = [
     y: "33.511505"
   },
   {
+    category : "restaurant",
     place: "제주",
     name: "미영이네식당",
     image: jejuFood2,
@@ -212,6 +229,7 @@ export const placeData = [
     y: "126.2498976"
   },
   {
+    category : "restaurant",
     place: "제주",
     name: "올래국수",
     image: jejuFood3,
@@ -220,6 +238,7 @@ export const placeData = [
   },
   // 광주
   {
+    category : "touristAttraction",
     place: "광주",
     name: "무등산",
     image: gwangjuAttraction1,
@@ -227,6 +246,7 @@ export const placeData = [
     y: "35.134134"
   },
   {
+    category : "touristAttraction",
     place: "광주",
     name: "광주사직공원 전망타워",
     image: gwangjuAttraction2,
@@ -234,6 +254,7 @@ export const placeData = [
     y: ""
   },
   {
+    category : "touristAttraction",
     place: "광주",
     name: "양림동 역사문화마을",
     image: gwangjuAttraction3,
@@ -241,6 +262,7 @@ export const placeData = [
     y: "35.141854"
   },
   {
+    category : "festival",
     place: "광주",
     name: "광주 비엔날레",
     image: gwangjuFestival1,
@@ -248,6 +270,7 @@ export const placeData = [
     y: "35.1830982815456"
   },
   {
+    category : "festival",
     place: "광주",
     name: "프린지 페스티벌",
     image: gwangjuFestival2,
@@ -255,6 +278,7 @@ export const placeData = [
     y: "126.8493338"
   },
   {
+    category : "festival",
     place: "광주",
     name: "충장 축제",
     image: gwangjuFestival3,
@@ -262,6 +286,7 @@ export const placeData = [
     y: "126.9193263"
   },
   {
+    category : "restaurant",
     place: "광주",
     name: "나주식당",
     image: gwangjuFood1,
@@ -269,6 +294,7 @@ export const placeData = [
     y: "126.9180276"
   },
   {
+    category : "restaurant",
     place: "광주",
     name: "미미원",
     image: gwangjuFood2,
@@ -276,6 +302,7 @@ export const placeData = [
     y: "126.9264769"
   },
   {
+    category : "restaurant",
     place: "광주",
     name: "궁전제과 충장점",
     image: gwangjuFood3,
@@ -284,6 +311,7 @@ export const placeData = [
   },
   // 포천
   {
+    category : "touristAttraction",
     place: "포천",
     name: "아트밸리",
     image: pocheonAttraction1,
@@ -291,6 +319,7 @@ export const placeData = [
     y: "37.9291171"
   },
   {
+    category : "touristAttraction",
     place: "포천",
     name: "산정호수",
     image: pocheonAttraction2,
@@ -298,6 +327,7 @@ export const placeData = [
     y: "38.0706266"
   },
   {
+    category : "touristAttraction",
     place: "포천",
     name: "허브아일랜드",
     image: pocheonAttraction3,
@@ -305,6 +335,7 @@ export const placeData = [
     y: "127.131773"
   },
   {
+    category : "festival",
     place: "포천",
     name: "산정호수 썰매축제",
     image: pocheonFestival1,
@@ -312,6 +343,7 @@ export const placeData = [
     y: "38.0706266"
   },
   {
+    category : "festival",
     place: "포천",
     name: "불빛 동화 축제",
     image: pocheonFestival2,
@@ -319,6 +351,7 @@ export const placeData = [
     y: "127.131773"
   },
   {
+    category : "festival",
     place: "포천",
     name: "동장군 축제",
     image: pocheonFestival3,
@@ -326,6 +359,7 @@ export const placeData = [
     y: "38.0677801"
   },
   {
+    category : "restaurant",
     place: "포천",
     name: "금강산 매운갈비찜",
     image: pocheonFood1,
@@ -333,6 +367,7 @@ export const placeData = [
     y: "37.995976"
   },
   {
+    category : "restaurant",
     place: "포천",
     name: "갈비 1987",
     image: pocheonFood2,
@@ -340,6 +375,7 @@ export const placeData = [
     y: "38.0320419"
   },
   {
+    category : "restaurant",
     place: "포천",
     name: "곰터먹촌",
     image: pocheonFood3,
@@ -348,6 +384,7 @@ export const placeData = [
   },
   // 울산
   {
+    category : "touristAttraction",
     place: "울산",
     name: "태화강 국가정원",
     image: ulsanAttraction1,
@@ -355,6 +392,7 @@ export const placeData = [
     y: "35.54777"
   },
   {
+    category : "touristAttraction",
     place: "울산",
     name: "간절곶",
     image: ulsanAttraction2,
@@ -362,6 +400,7 @@ export const placeData = [
     y: "35.3630615691108"
   },
   {
+    category : "touristAttraction",
     place: "울산",
     name: "고래박물관",
     image: ulsanAttraction3,
@@ -369,6 +408,7 @@ export const placeData = [
     y: "35.5027252"
   },
   {
+    category : "festival",
     place: "울산",
     name: "고래 축제",
     image: ulsanFestival1,
@@ -376,6 +416,7 @@ export const placeData = [
     y: "35.5130847"
   },
   {
+    category : "festival",
     place: "울산",
     name: "공업 축제",
     image: ulsanFestival2,
@@ -383,6 +424,7 @@ export const placeData = [
     y: "35.532239"
   },
   {
+    category : "festival",
     place: "울산",
     name: "조선해양 축제",
     image: ulsanFestival3,
@@ -390,6 +432,7 @@ export const placeData = [
     y: "35.4959363"
   },
   {
+    category : "restaurant",
     place: "울산",
     name: "본가어탕",
     image: ulsanFood1,
@@ -397,6 +440,7 @@ export const placeData = [
     y: "35.5398795740854"
   },
   {
+    category : "restaurant",
     place: "울산",
     name: "언양 기와집 불고기",
     image: ulsanFood2,
@@ -404,6 +448,7 @@ export const placeData = [
     y: "35.5653402998602 "
   },
   {
+    category : "restaurant",
     place: "울산",
     name: "하동식당",
     image: ulsanFood3,
@@ -412,6 +457,7 @@ export const placeData = [
   },
   // 대구
   {
+    category : "touristAttraction",
     place: "대구",
     name: "83타워",
     image: daeguAttraction1,
@@ -419,6 +465,7 @@ export const placeData = [
     y: "35.8533043"
   },
   {
+    category : "touristAttraction",
     place: "대구",
     name: "수성못",
     image: daeguAttraction2,
@@ -426,6 +473,7 @@ export const placeData = [
     y: "35.827639"
   },
   {
+    category : "touristAttraction",
     place: "대구",
     name: "앞산전망대",
     image: daeguAttraction3,
@@ -433,6 +481,7 @@ export const placeData = [
     y: "35.8247849"
   },
   {
+    category : "festival",
     place: "대구",
     name: "치맥 페스티벌",
     image: daeguFestival1,
@@ -440,6 +489,7 @@ export const placeData = [
     y: "35.8490831"
   },
   {
+    category : "festival",
     place: "대구",
     name: "파워풀대구 페스티벌",
     image: daeguFestival2,
@@ -447,6 +497,7 @@ export const placeData = [
     y: "35.8700746"
   },
   {
+    category : "festival",
     place: "대구",
     name: "네이처파크 미라클 크리스마스",
     image: daeguFestival3,
@@ -454,6 +505,7 @@ export const placeData = [
     y: "35.7880124158823"
   },
   {
+    category : "restaurant",
     place: "대구",
     name: "왕거미식당",
     image: daeguFood1,
@@ -461,6 +513,7 @@ export const placeData = [
     y: "35.8685297"
   },
   {
+    category : "restaurant",
     place: "대구",
     name: "원조북성로 우동불고기",
     image: daeguFood2,
@@ -468,6 +521,7 @@ export const placeData = [
     y: "35.8727618"
   },
   {
+    category : "restaurant",
     place: "대구",
     name: "약전골목 원조국수",
     image: daeguFood3,
@@ -476,6 +530,7 @@ export const placeData = [
   },
   // 부산
   {
+    category : "touristAttraction",
     place: "부산",
     name: "감천문화마을",
     image: busanAttraction1,
@@ -483,6 +538,7 @@ export const placeData = [
     y: "35.0973904"
   },
   {
+    category : "touristAttraction",
     place: "부산",
     name: "해운대 해수욕장",
     image: busanAttraction2,
@@ -490,6 +546,7 @@ export const placeData = [
     y: "35.1586975"
   },
   {
+    category : "touristAttraction",
     place: "부산",
     name: "송도 해상 케이블카",
     image: busanAttraction3,
@@ -497,6 +554,7 @@ export const placeData = [
     y: "35.0615784"
   },
   {
+    category : "festival",
     place: "부산",
     name: "해운대 빛축제",
     image: busanFestival1,
@@ -504,6 +562,7 @@ export const placeData = [
     y: "35.1586975"
   },
   {
+    category : "festival",
     place: "부산",
     name: "부산불꽃축제",
     image: busanFestival2,
@@ -511,6 +570,7 @@ export const placeData = [
     y: "35.1531696"
   },
   {
+    category : "festival",
     place: "부산",
     name: "해운대 모래축제",
     image: busanFestival3,
@@ -518,6 +578,7 @@ export const placeData = [
     y: "35.1586975"
   },
   {
+    category : "restaurant",
     place: "부산",
     name: "초량밀면",
     image: busanFood1,
@@ -525,6 +586,7 @@ export const placeData = [
     y: "35.117359"
   },
   {
+    category : "restaurant",
     place: "부산",
     name: "수변최고 돼지국밥",
     image: busanFood2,
@@ -532,6 +594,7 @@ export const placeData = [
     y: "35.1567627 "
   },
   {
+    category : "restaurant",
     place: "부산",
     name: "해운대 씨앗호떡",
     image: busanFood3,
@@ -540,6 +603,7 @@ export const placeData = [
   },
   // 인천
   {
+    category : "touristAttraction",
     place: "인천",
     name: "월미도",
     image: incheonAttraction1,
@@ -547,6 +611,7 @@ export const placeData = [
     y: "37.4754003"
   },
   {
+    category : "touristAttraction",
     place: "인천",
     name: "송도 센트럴파크",
     image: incheonAttraction2,
@@ -554,6 +619,7 @@ export const placeData = [
     y: "37.3922621"
   },
   {
+    category : "touristAttraction",
     place: "인천",
     name: "차이나타운",
     image: incheonAttraction3,
@@ -561,6 +627,7 @@ export const placeData = [
     y: "37.475589"
   },
   {
+    category : "festival",
     place: "인천",
     name: "송도 불꽃축제",
     image: incheonFestival1,
@@ -568,6 +635,7 @@ export const placeData = [
     y: "37.3860959"
   },
   {
+    category : "festival",
     place: "인천",
     name: "차이나타운 문화축제",
     image: incheonFestival2,
@@ -575,6 +643,7 @@ export const placeData = [
     y: "37.475589"
   },
   {
+    category : "festival",
     place: "인천",
     name: "인천 펜타포트 록 페스티벌",
     image: incheonFestival3,
@@ -582,6 +651,7 @@ export const placeData = [
     y: "37.4064278"
   },
   {
+    category : "restaurant",
     place: "인천",
     name: "금문도",
     image: incheonFood1,
@@ -589,6 +659,7 @@ export const placeData = [
     y: ""
   },
   {
+    category : "restaurant",
     place: "인천",
     name: "선녀풍",
     image: incheonFood2,
@@ -596,6 +667,7 @@ export const placeData = [
     y: "37.5278356974005"
   },
   {
+    category : "restaurant",
     place: "인천",
     name: "온센 신포",
     image: incheonFood3,
@@ -604,6 +676,7 @@ export const placeData = [
   },
   // 대전
   {
+    category : "touristAttraction",
     place: "대전",
     name: "한밭수목원",
     image: daejeonAttraction1,
@@ -611,6 +684,7 @@ export const placeData = [
     y: "36.3683723"
   },
   {
+    category : "touristAttraction",
     place: "대전",
     name: "대전 엑스포다리",
     image: daejeonAttraction2,
@@ -618,6 +692,7 @@ export const placeData = [
     y: "36.37271490000001"
   },
   {
+    category : "touristAttraction",
     place: "대전",
     name: "뿌리공원",
     image: daejeonAttraction3,
@@ -625,6 +700,7 @@ export const placeData = [
     y: "36.2854419"
   },
   {
+    category : "festival",
     place: "대전",
     name: "대전 사이언스 페스티벌",
     image: daejeonFestival1,
@@ -632,6 +708,7 @@ export const placeData = [
     y: "36.3749012"
   },
   {
+    category : "festival",
     place: "대전",
     name: "대전국제 와인 EXPO",
     image: daejeonFestival2,
@@ -639,6 +716,7 @@ export const placeData = [
     y: "36.3749012"
   },
   {
+    category : "festival",
     place: "대전",
     name: "대전 힐링 아트 페스티벌",
     image: daejeonFestival3,
@@ -646,6 +724,7 @@ export const placeData = [
     y: "36.3550674046594"
   },
   {
+    category : "restaurant",
     place: "대전",
     name: "성심당",
     image: daejeonFood1,
@@ -653,6 +732,7 @@ export const placeData = [
     y: "36.3276832"
   },
   {
+    category : "restaurant",
     place: "대전",
     name: "오씨 칼국수",
     image: daejeonFood2,
@@ -660,6 +740,7 @@ export const placeData = [
     y: "36.3419729"
   },
   {
+    category : "restaurant",
     place: "대전",
     name: "태평소국밥",
     image: daejeonFood3,
