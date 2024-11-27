@@ -7,11 +7,6 @@ import {
   Tabs,
   Tab,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
   IconButton,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -20,6 +15,9 @@ import TabContent from "@/components/common/TabContent/TabContent";
 import { storage } from "@/firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import DeleteIcon from "@mui/icons-material/Delete";
+import TripDialog from "@/components/TripDialog";
+import LoadingAnimation from '@/components/common/Animation/LoadingAnimation'; // Lottie 로딩 컴포넌트 가져오기
+import { format } from "date-fns";
 
 // 스타일 적용
 const StyledContainer = styled(Container)({
@@ -38,7 +36,12 @@ const MyTripPage = () => {
   const [likedTrips, setLikedTrips] = useState([]); // 좋아요된 여행 데이터
   const [tabValue, setTabValue] = useState(0); // 현재 탭 상태
   const [open, setOpen] = useState(false); // 모달 상태
-  const [newTrip, setNewTrip] = useState({ name: "", date: "", image: null }); // 새 여행 데이터
+  const [newTrip, setNewTrip] = useState({ title: "", dateRange: {
+    startDate: new Date(),
+    endDate: new Date(),
+    key: "selection",
+  }, image: null }); // 새 여행 데이터
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
   const navigate = useNavigate(); //상세페이지 가기위함
 
   // 로컬 스토리지에서 여행 데이터 및 좋아요 상태 가져오기
@@ -67,6 +70,7 @@ const MyTripPage = () => {
 
   // 이미지 업로드 핸들러
   const handleImageUpload = async (file) => {
+    setIsLoading(true); // 로딩 애니메이션 표시 시작
     const storageRef = ref(storage, `images/${file.name}`);
     await uploadBytes(storageRef, file);
     return await getDownloadURL(storageRef); // 업로드된 이미지 URL 반환
@@ -81,34 +85,40 @@ const MyTripPage = () => {
 
   // 여행 추가
   const handleAddTrip = async () => {
-    if (!newTrip.name || !newTrip.date) {
-      alert("모든 필드를 입력하세요.");
+
+    if (!newTrip.title) {
+      alert("여행 제목을 입력하세요");
+      return;
+    } else if ( !newTrip.startDate || !newTrip.endDate ) {
+      alert("날짜를 모두 지정해주세요");
       return;
     }
 
-    try {
-      let imageUrl = "";
-      if (newTrip.image) {
-        imageUrl = await handleImageUpload(newTrip.image); // 이미지 업로드
-      }
-
-      const updatedTrip = {
-        id: Date.now(),
-        name: newTrip.name,
-        date: newTrip.date,
-        image: imageUrl || "default.png", // 이미지가 없으면 기본값 사용
-        userId: currentUser.id,
-      };
-
-      const updatedTrips = [...trips, updatedTrip];
-      setTrips(updatedTrips); // 상태 업데이트
-      localStorage.setItem("trips", JSON.stringify(updatedTrips)); // 로컬 스토리지 저장
-      handleClose(); // 모달 닫기
-      setNewTrip({ name: "", date: "", image: null }); // 입력값 초기화
-    } catch (error) {
-      console.error("여행 추가 중 오류:", error);
+    let imageUrl = "";
+    if (newTrip.image) {
+      imageUrl = await handleImageUpload(newTrip.image); // 이미지 업로드
+      setIsLoading(false); // 로딩 애니메이션 표시 시작
     }
-  };
+
+    const updatedTrips = [
+      ...trips,
+      {
+        title: newTrip.title,
+        startDate: format(new Date(newTrip.startDate), "yyyy-MM-dd"), // YYYY-MM-DD 형식으로 변환
+        endDate: format(new Date(newTrip.endDate), "yyyy-MM-dd"),     // YYYY-MM-DD 형식으로 변환
+        mainImage: newTrip.image ? URL.createObjectURL(newTrip.image) : null, // 이미지 URL 생성,
+        AuthorId: currentUser.id,
+        like: 0,
+        post: 0,
+      },
+    ];
+
+    setTrips(updatedTrips); // 여행 상태 업데이트
+    localStorage.setItem("trips", JSON.stringify(updatedTrips)); // 로컬 스토리지 저장
+
+    setOpen(false);
+  }
+
 
   // 여행 삭제
   const handleDeleteTrip = (id) => {
@@ -140,6 +150,7 @@ const MyTripPage = () => {
 
   return (
     <StyledContainer>
+      {isLoading && <LoadingAnimation />} {/* 로딩 애니메이션 표시 */}
       <Navbar />
       <Box sx={{ padding: 3 }}>
         <Typography variant="h4" gutterBottom>
@@ -158,54 +169,13 @@ const MyTripPage = () => {
       </Box>
 
       {/* 여행 추가 모달 */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>여행 추가</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            name="name"
-            label="여행 이름"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newTrip.name}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="date"
-            label="여행 날짜"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newTrip.date}
-            onChange={handleChange}
-          />
-          <Button
-            variant="outlined"
-            component="label"
-            sx={{ mt: 2 }}
-          >
-            대표 이미지 업로드
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              onChange={(e) => setNewTrip({ ...newTrip, image: e.target.files[0] })}
-            />
-          </Button>
-          {newTrip.image && <Typography sx={{ mt: 1 }}>{newTrip.image.name}</Typography>}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="secondary">
-            취소
-          </Button>
-          <Button onClick={handleAddTrip} color="primary">
-            추가
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <TripDialog
+        open={open}
+        onClose={handleClose}
+        onAddTrip={handleAddTrip}
+        newTrip={newTrip}
+        setNewTrip={setNewTrip}
+      />
     </StyledContainer>
   );
 };
