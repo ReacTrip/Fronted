@@ -78,7 +78,7 @@ const Navbar = () => {
   const navItems = [
     { text: '여행지', path: '/trip-place', isLogin: false },
     { text: '내 여행', path: '/my-trip', isLogin: false },
-    { text: '스마트 체크리스트', path: '/support', isLogin: false },
+    { text: '포토스팟 가이드', path: '/photo-spot', isLogin: false },
     { text: '여행 취향 테스트', path: '/interest-test', isLogin: false },
     { text: '로그인', path: '/auth/login', isLogin: true }
   ];

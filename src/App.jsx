@@ -15,6 +15,8 @@ import TripPlacePage from './pages/TripPlacePage/TripPlacePage';
 import LoginPage from './pages/auth/LoginPage/LoginPage';
 import SignupPage from './pages/auth/SignupPage/SignupPage';
 import InterestTestPage from './pages/InterestTestPage/InterestTestPage';
+import PhotoSpotPage from './pages/PhotoSpotPage/PhotoSpotPage';
+import SpotDetail from './pages/PhotoSpotPage/SpotDetail';
 
 // 각 여행지
 import Jeju from './pages/TripPlacePage/Cities/Jeju';
@@ -28,46 +30,47 @@ import Ulsan from './pages/TripPlacePage/Cities/Ulsan';
 import Pocheon from './pages/TripPlacePage/Cities/Pocheon';
 
 const App = () => {
-  useEffect(() => {
-    // 항상 새로운 detailData로 덮어쓰기
-    localStorage.setItem("trips", JSON.stringify(detailData));
-  }, []);
-  
-  return (
-    <MuiThemeProvider theme={muiTheme}>
-      <StyledThemeProvider theme={muiTheme}>
-        <CssBaseline />
-        <GlobalStyles />
-        <Router>
-          <Routes>
-            {/* 메인 페이지 */}
-            <Route path="/" element={<MainPage />} />
-            
-            {/* 기능 페이지 */}
-            <Route path="/budget" element={<BudgetPage />} />
-            <Route path="/interest-test" element={<InterestTestPage />} />
-            <Route path="/my-trip" element={<MyTripPage />} />
-            <Route path="/trip-place" element={<TripPlacePage />} />
-            
-            {/* 인증 페이지 */}
-            <Route path="/auth/login" element={<LoginPage />} />
-            <Route path="/auth/signup" element={<SignupPage />} />
-            
-            {/* 도시 페이지 */}
-            <Route path="/trip/jeju" element={<Jeju />} />
-            <Route path="/trip/seoul" element={<Seoul />} />
-            <Route path="/trip/busan" element={<Busan />} />
-            <Route path="/trip/daegu" element={<Daegu />} />
-            <Route path="/trip/gwangju" element={<Gwangju />} />
-            <Route path="/trip/daejeon" element={<Daejeon />} />
-            <Route path="/trip/incheon" element={<Incheon />} />
-            <Route path="/trip/ulsan" element={<Ulsan />} />
-            <Route path="/trip/pocheon" element={<Pocheon />} />
-          </Routes>
-        </Router>
-      </StyledThemeProvider>
-    </MuiThemeProvider>
-  );
+ useEffect(() => {
+   localStorage.setItem("trips", JSON.stringify(detailData));
+ }, []);
+ 
+ return (
+   <MuiThemeProvider theme={muiTheme}>
+     <StyledThemeProvider theme={muiTheme}>
+       <CssBaseline />
+       <GlobalStyles />
+       <Router>
+         <Routes>
+           {/* 메인 페이지 */}
+           <Route path="/" element={<MainPage />} />
+           
+           {/* 기능 페이지 */}
+           <Route path="/budget" element={<BudgetPage />} />
+           <Route path="/interest-test" element={<InterestTestPage />} />
+           <Route path="/my-trip" element={<MyTripPage />} />
+           <Route path="/trip-place" element={<TripPlacePage />} />
+           <Route path="/photo-spot" element={<PhotoSpotPage />} />
+           <Route path="/photo-spot/:cityId/:spotId" element={<SpotDetail />} />
+           
+           {/* 인증 페이지 */}
+           <Route path="/auth/login" element={<LoginPage />} />
+           <Route path="/auth/signup" element={<SignupPage />} />
+           
+           {/* 도시 페이지 */}
+           <Route path="/trip/jeju" element={<Jeju />} />
+           <Route path="/trip/seoul" element={<Seoul />} />
+           <Route path="/trip/busan" element={<Busan />} />
+           <Route path="/trip/daegu" element={<Daegu />} />
+           <Route path="/trip/gwangju" element={<Gwangju />} />
+           <Route path="/trip/daejeon" element={<Daejeon />} />
+           <Route path="/trip/incheon" element={<Incheon />} />
+           <Route path="/trip/ulsan" element={<Ulsan />} />
+           <Route path="/trip/pocheon" element={<Pocheon />} />
+         </Routes>
+       </Router>
+     </StyledThemeProvider>
+   </MuiThemeProvider>
+ );
 };
 
 export default App;
