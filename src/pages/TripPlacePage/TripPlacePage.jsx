@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/common/Navbar/Navbar';
-import Carousel from 'react-material-ui-carousel';
 import { Typography, Box } from '@mui/material';
 import CircleSection from '/src/components/common/CircleSection/CircleSection';
 
@@ -10,19 +9,6 @@ const TripPlacePage = () => {
 
   // 현재 마우스 오버된 이미지와 텍스트 상태
   const [hoveredCity, setHoveredCity] = useState(null);
-
-  // 랜드마크 이미지 데이터
-  const carouselItems = [
-    { name: "서울", image: "/src/assets/images/TripPlace/seoul/seoulRandmark1.png" },
-    { name: "제주", image: "/src/assets/images/TripPlace/jeju/jejuRandmark1.png" },
-    { name: "광주", image: "/src/assets/images/TripPlace/gwangju/gwangjuRandmark1.png" },
-    { name: "포천", image: "/src/assets/images/TripPlace/pocheon/pocheonRandmark1.png" },
-    { name: "울산", image: "/src/assets/images/TripPlace/ulsan/ulsanRandmark1.png" },
-    { name: "대구", image: "/src/assets/images/TripPlace/daegu/daeguRandmark1.png" },
-    { name: "부산", image: "/src/assets/images/TripPlace/busan/busanRandmark1.png" },
-    { name: "인천", image: "/src/assets/images/TripPlace/incheon/incheonRandmark1.png" },
-    { name: "대전", image: "/src/assets/images/TripPlace/daejeon/daejeonRandmark1.png" },
-  ];
 
   // 도시 이미지 데이터
   const cities = [
@@ -44,50 +30,6 @@ const TripPlacePage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-
-      {/* Carousel Section */}
-      <Box sx={{ padding: '16px 64px', marginBottom: '32px' }}>
-        <Carousel navButtonsAlwaysVisible indicators animation="slide">
-          {carouselItems.map((item, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                position: 'relative',
-                cursor: 'pointer',
-              }}
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                style={{
-                  width: '100%',
-                  maxWidth: '800px',
-                  height: '400px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                }}
-              />
-              <Typography
-                variant="h5"
-                sx={{
-                  position: 'absolute',
-                  bottom: '20px',
-                  color: 'white',
-                  textShadow: '1px 1px 4px rgba(0, 0, 0, 0.8)',
-                  fontWeight: '600',
-                }}
-              >
-                {item.name}
-              </Typography>
-            </Box>
-          ))}
-        </Carousel>
-      </Box>
 
       {/* Circular Grid Section */}
       <Box
