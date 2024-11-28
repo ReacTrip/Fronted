@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -60,30 +60,38 @@ const StyledContainer = styled(Container)({
 });
 
 
+// 임시 사용자 정보
+const currentUser = {
+  id: "das",
+  name: '스키매니아',
+};
 
 
 //페이지 컴포넌트
 const BudgetPage = () => {
 
+  const navigate = useNavigate();
+
   //시작날짜와 끝 날짜로 날짜 배열 생성해주는 함수
-const generateDateArray = (startDate, endDate) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const dateArray = [];
+  const generateDateArray = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const dateArray = [];
 
-  for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
-    const formattedDate = date.toISOString().split("T")[0]; // 'yyyy-mm-dd' 형식으로 변환
-    dateArray.push(formattedDate);
-  }
+    for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
+      const formattedDate = date.toISOString().split("T")[0]; // 'yyyy-mm-dd' 형식으로 변환
+      dateArray.push(formattedDate);
+    }
 
-  return dateArray;
-};
+    return dateArray;
+  };
 
   const [routeData, setRouteData] = useState({ routes: [], });  //이동경로api로 받아온 데이터.
 
   const location = useLocation();
   const [detail, setDetail] = useState(location.state?.detail || {});// `detail`에 전달된 데이터가 없을 때를 대비한 안전 처리
   console.log(detail);
+  const isAuthor = (detail.AuthorId === currentUser.id);  //작성자인지 확인
 
   useEffect(() => {
     //detail이 변경될때 마다 자동 저장. 로컬스토리지에 자동으로 올리기 위함.
@@ -188,28 +196,53 @@ const generateDateArray = (startDate, endDate) => {
     setSelectedDate(dates);
   };
 
+  const copyTrip = () => {
+    if(confirm("여행 계획을 내 여행에 생성하시겠습니까?")){
+      const storedTrips = JSON.parse(localStorage.getItem("trips"));
+      let newDetail = {...detail};
+      // 이미지 배열을 빈 배열로 변경
+      for (const date in newDetail.dailyItinerary) {
+        newDetail.dailyItinerary[date].forEach(location => {
+          location.images = [];
+        });
+      }
+      newDetail = {...newDetail, id: (storedTrips.length+1), AuthorId: currentUser.id, like: 0, post:  0 };
+      const updatedTrips = [ ...storedTrips, newDetail];
+      localStorage.setItem("trips", JSON.stringify(updatedTrips));
+      if(confirm("가져오기 완료! \n내 여행에서 확인하시겠습니까?"))
+        navigate('/my-trip');
+    }
+  }
+
+  const changeLike = (like) => {
+    const newDetail = {...detail, like};
+    setDetail(newDetail);
+  }
+
   return (
     <StyledContainer>
       <Navbar />
       <Grid container>
         {/* 왼쪽 영역 */}
         <Grid item xs={8} sx={{ padding: "0 16px 16px" }}>
-          <ImageWithTextOverlay startDate={detail.startDate} endDate={detail.endDate} mainImage={detail.mainImage} title={detail.title} />
+          <ImageWithTextOverlay startDate={detail.startDate} endDate={detail.endDate} mainImage={detail.mainImage} title={detail.title} isLike={detail.like} onChangeLike={changeLike} />
           <Box sx={{ marginTop: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
               여행 일정
             </Typography>
-            {!detail.post ? <Button variant="contained" onClick={postTrip} startIcon={<AddIcon />} sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}>
+            {!isAuthor ? (<Button variant="contained" onClick={copyTrip} startIcon={<AddIcon />} sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}>
+              가져오기
+            </Button>) : (!detail.post ? <Button variant="contained" onClick={postTrip} startIcon={<AddIcon />} sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}>
               게시물 올리기
             </Button> : <Button variant="contained" onClick={postTrip} startIcon={<DeleteIcon />} sx={{ backgroundColor: 'red', color: 'white', '&:hover': { backgroundColor: 'darkred' } }}>
               게시물 삭제
-            </Button>}
+            </Button>)}
           </Box>
           <Divider sx={{ margin: '20px 0' }} />
           <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} />
           <Divider sx={{ margin: '20px 0' }} />
           <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx) => deleteDetail(selectedDate, idx)} onChangeMap={changeMap} onChangeImages={(idx, newImages) => changeImages(selectedDate, idx, newImages)}
-            onAddPlace={(place, notes, time) => addPlace(selectedDate, place, notes, time)} />
+            onAddPlace={(place, notes, time) => addPlace(selectedDate, place, notes, time)} isAuthor={isAuthor} />
         </Grid>
 
         {/* 오른쪽 영역 */}

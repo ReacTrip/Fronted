@@ -197,7 +197,7 @@ const PlanDetail = (props) => {
                             }}
                         >
                             {/* 추가 아이콘 버튼 */}
-                            <div>
+                            {props.isAuthor && <div>
                                 {/* 추가 아이콘 버튼 */}
                                 <IconButton
                                     onClick={handleClick}
@@ -221,7 +221,7 @@ const PlanDetail = (props) => {
                                     accept="image/*"
                                     multiple // 여러 개의 파일 선택 허용
                                 />
-                            </div>
+                            </div>}
 
                             {/* 이미지 버튼 */}
                             {props.images.length > 0 && (
@@ -261,12 +261,12 @@ const PlanDetail = (props) => {
                     </Box>
                 </Grid>
                 {/* 삭제 버튼 */}
-                <DeleteButton
+                {props.isAuthor && <DeleteButton
                     onClick={props.onDelete}
                     variant="outlined"
                 >
                     삭제
-                </DeleteButton>
+                </DeleteButton>}
             </Grid>
 
             {/* 모달 */}
@@ -329,7 +329,7 @@ const PlanDetail = (props) => {
                                         }}
                                     />
                                     {/* 삭제 버튼 */}
-                                    <IconButton
+                                    {props.isAuthor && <IconButton
                                         onClick={() => onImageDelete(index)} // 이미지 삭제 이벤트
                                         sx={{
                                             position: 'absolute',
@@ -343,7 +343,7 @@ const PlanDetail = (props) => {
                                         }}
                                     >
                                         <DeleteIcon sx={{ color: 'grey' }} />
-                                    </IconButton>
+                                    </IconButton>}
                                 </Box>
                             ))}
                         </Carousel>
