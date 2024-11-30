@@ -52,6 +52,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import DateSelector from "../../components/tripDetail/DateSelector.jsx";
 import ImageWithTextOverlay from "../../components/tripDetail/ImageWithTextOverlay.jsx";
 import PlanDate from "../../components/tripDetail/PlanDate.jsx";
+import UserInfo from "@/components/common/UserInfo"; // 사용자 정보
 
 
 const StyledContainer = styled(Container)({
@@ -62,8 +63,8 @@ const StyledContainer = styled(Container)({
 
 // 임시 사용자 정보
 const currentUser = {
-  id: "das",
-  name: '스키매니아',
+  id: "@TripLover",
+  name: '여행매니아',
 };
 
 
@@ -206,7 +207,7 @@ const BudgetPage = () => {
           location.images = [];
         });
       }
-      newDetail = {...newDetail, id: (storedTrips.length+1), AuthorId: currentUser.id, like: 0, post:  0 };
+      newDetail = {...newDetail, title: `[가져온 여행] ${newDetail.title}`, id: (storedTrips.length+1), AuthorId: UserInfo.id, like: 0, post:  0 };
       const updatedTrips = [ ...storedTrips, newDetail];
       localStorage.setItem("trips", JSON.stringify(updatedTrips));
       if(confirm("가져오기 완료! \n내 여행에서 확인하시겠습니까?"))

@@ -32,9 +32,10 @@ const MainPage = () => {
   const [trips, setTrips] = useState([]); // 여행 데이터
 
   useEffect(() => {
-    // 로컬 스토리지에서 데이터 로드
+    // 로컬 스토리지에서 데이터 로드 및 필터링
     const storedTrips = JSON.parse(localStorage.getItem("trips")) || [];
-    setTrips(storedTrips);
+    const filteredTrips = storedTrips.filter(trip => trip.post === 1); // post 값이 1인 데이터만 필터링
+    setTrips(filteredTrips);
   }, []);
 
   // 좋아요 클릭 핸들러
@@ -88,7 +89,7 @@ const MainPage = () => {
             고민만 하던 여행 계획을 Reactrip를 통해 몇 분 만에 스케줄링 해보세요.
           </Typography>
 
-          <StartButton variant="contained" disableElevation>
+          <StartButton variant="contained" disableElevation onClick={() => navigate('/my-trip')} >
             여행 계획 세우기
           </StartButton>
         </Box>

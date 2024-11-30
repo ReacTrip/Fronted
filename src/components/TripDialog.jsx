@@ -34,9 +34,9 @@ const TripDialog = ({ open, onClose, onAddTrip, newTrip, setNewTrip }) => {
   };
 
   const handleAdd = () => {
+    onAddTrip();
     setNewTrip(initialNewTripState); // 상태 초기화
     onClose();
-    onAddTrip();
   };
 
   const handleClose = () => {
