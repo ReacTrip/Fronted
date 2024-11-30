@@ -44,15 +44,6 @@ const MyTripPage = () => {
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
   const navigate = useNavigate(); //상세페이지 가기위함
 
-  // 로컬 스토리지에서 여행 데이터 및 좋아요 상태 가져오기
-  useEffect(() => {
-    const storedTrips = JSON.parse(localStorage.getItem("trips")) || defaultTrips;
-    const userTrips = storedTrips.filter((trip) => trip.AuthorId === currentUser.id);
-    setTrips(userTrips);
-    const likedTrips = storedTrips.filter((trip) => trip.like === 1);
-    setLikedTrips(likedTrips);
-  }, []);
-
   // 탭 변경
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -61,12 +52,6 @@ const MyTripPage = () => {
   // 모달 열기/닫기
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  // 입력값 변경
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewTrip({ ...newTrip, [name]: value });
-  };
 
   // 이미지 업로드 핸들러
   const handleImageUpload = async (file) => {
@@ -82,6 +67,17 @@ const MyTripPage = () => {
 
     navigate('/budget', { state: { detail: data } });
   };
+
+  // ************************LocalStorage 조작 부분************************
+
+  // 로컬 스토리지에서 여행 데이터 및 좋아요 상태 가져오기
+  useEffect(() => {
+    const storedTrips = JSON.parse(localStorage.getItem("trips")) || defaultTrips;
+    const userTrips = storedTrips.filter((trip) => trip.AuthorId === currentUser.id);
+    setTrips(userTrips);
+    const likedTrips = storedTrips.filter((trip) => trip.like === 1);
+    setLikedTrips(likedTrips);
+  }, []);
 
   // 여행 추가
   const handleAddTrip = async () => {
@@ -100,6 +96,28 @@ const MyTripPage = () => {
       setIsLoading(false); // 로딩 애니메이션 표시 시작
     }
 
+    // 여행 일자별 배열 생성
+    // 초기값을 설정하는 데 필요
+    const generateDateArray = (startDate, endDate) => {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const dateArray = [];
+
+      for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
+        const formattedDate = format(new Date(date), "yyyy-MM-dd");
+        dateArray.push(formattedDate);
+      }
+
+      return dateArray;
+    };
+
+    // dailyItinerary 초기화: 날짜별 빈 배열
+    const dates = generateDateArray(newTrip.dateRange.startDate, newTrip.dateRange.endDate);
+    const dailyItinerary = dates.reduce((acc, date) => {
+      acc[date] = []; // 날짜별 빈 배열 추가
+      return acc;
+    }, {});
+
     const updatedTrips = [
       ...trips,
       {
@@ -107,6 +125,7 @@ const MyTripPage = () => {
         startDate: format(new Date(newTrip.startDate), "yyyy-MM-dd"), // YYYY-MM-DD 형식으로 변환
         endDate: format(new Date(newTrip.endDate), "yyyy-MM-dd"),     // YYYY-MM-DD 형식으로 변환
         mainImage: newTrip.image ? URL.createObjectURL(newTrip.image) : null, // 이미지 URL 생성,
+        dailyItinerary,
         AuthorId: currentUser.id,
         like: 0,
         post: 0,
