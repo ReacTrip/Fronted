@@ -13,7 +13,7 @@ export const detailData = [
         title: "부산 여행",  // 여행 이름
         startDate: "2024-05-01",  // 여행 시작 일자
         endDate: "2024-05-10",  // 여행 종료 일자
-        AuthorId: "das", //작성자 id
+        AuthorId: "TripLover", //작성자 id
         mainImage: trip2,  //메인 이미지
         like: 0,
         post: 1,
@@ -96,7 +96,7 @@ export const detailData = [
         destination: "Seoul Tour",
         startDate: "2024-08-10",
         endDate: "2024-08-15",
-        AuthorId: "def",
+        AuthorId: "TripLover",
         mainImage: trip3,
         like: 0,
         post: 1,
@@ -149,7 +149,7 @@ export const detailData = [
         title: "대구 여행",  // 여행 이름
         startDate: "2024-12-01",  // 여행 시작 일자
         endDate: "2024-12-03",  // 여행 종료 일자
-        AuthorId: "das", //작성자 id
+        AuthorId: "TripLover", //작성자 id
         mainImage: trip4,  //메인 이미지
         like: 1,
         post: 1,
@@ -268,7 +268,7 @@ export const detailData = [
         AuthorId: "Bbomo", //작성자 id
         mainImage: trip5,  //메인 이미지
         like: 0,
-        post: 0,
+        post: 1,
         dailyItinerary: { // 일자별 계획
 
             "2025-03-01": [  // 이동할 장소 정보

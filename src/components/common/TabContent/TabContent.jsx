@@ -73,13 +73,6 @@ const TabContent = ({ data, onCardClick }) => (
                 <ContentSection>
                   <Typography variant="h5">{item.title}</Typography>
 
-                  {/* 시작일 ~ 종료일 표시 */}
-                  <Box>
-                    {item.startDate && item.endDate
-                      ? `${formatDate(item.startDate)} ~ ${formatDate(item.endDate)}`
-                      : '날짜 정보 없음'}
-                  </Box>
-
                   {/* 일정 정보 */}
                   <Box
                     sx={{
@@ -89,11 +82,10 @@ const TabContent = ({ data, onCardClick }) => (
                     }}
                   >
                     <CalendarMonthIcon sx={{ fontSize: 18, mr: 1 }} />
-                    <Typography sx={{ fontSize: '14px' }}>
-                      {item.date || '일정 정보 없음'}
-                    </Typography>
+                    {item.startDate && item.endDate
+                      ? `${formatDate(item.startDate)} ~ ${formatDate(item.endDate)}`
+                      : '날짜 정보 없음'}
                   </Box>
-                  {item.actions}
                 </ContentSection>
               </ListItem>
             </PreviewCard>

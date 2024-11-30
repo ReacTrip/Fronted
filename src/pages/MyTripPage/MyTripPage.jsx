@@ -9,6 +9,7 @@ import {
   Button,
   IconButton,
 } from "@mui/material";
+import UserInfo from "@/components/common/UserInfo"; // 사용자 정보
 import { styled } from "@mui/material/styles";
 import Navbar from "@/components/common/Navbar/Navbar";
 import TabContent from "@/components/common/TabContent/TabContent";
@@ -24,12 +25,6 @@ const StyledContainer = styled(Container)({
   maxWidth: '1200px !important',
   padding: '0 20px',
 });
-
-// 임시 사용자 정보
-const currentUser = {
-  id: "das",
-  name: '스키매니아',
-};
 
 const MyTripPage = () => {
   const [trips, setTrips] = useState([]); // 사용자의 여행 데이터
@@ -73,7 +68,7 @@ const MyTripPage = () => {
   // 로컬 스토리지에서 여행 데이터 및 좋아요 상태 가져오기
   useEffect(() => {
     const storedTrips = JSON.parse(localStorage.getItem("trips")) || defaultTrips;
-    const userTrips = storedTrips.filter((trip) => trip.AuthorId === currentUser.id);
+    const userTrips = storedTrips.filter((trip) => trip.AuthorId === UserInfo.id);
     setTrips(userTrips);
     const likedTrips = storedTrips.filter((trip) => trip.like === 1);
     setLikedTrips(likedTrips);
@@ -121,7 +116,7 @@ const MyTripPage = () => {
       endDate: format(new Date(newTrip.endDate), "yyyy-MM-dd"),
       mainImage: newTrip.image ? imageUrl : null,
       dailyItinerary,
-      AuthorId: currentUser.id,
+      AuthorId: UserInfo.id,
       like: 0,
       post: 0,
     };
@@ -180,7 +175,7 @@ const MyTripPage = () => {
       <Navbar />
       <Box sx={{ padding: 3 }}>
         <Typography variant="h4" gutterBottom>
-          {currentUser.name}님의 목록
+          {UserInfo.name}님의 여행 목록
         </Typography>
         <Button variant="contained" color="primary" onClick={handleOpen} sx={{ marginBottom: 3 }}>
           여행 만들기

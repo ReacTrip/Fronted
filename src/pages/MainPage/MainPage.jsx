@@ -89,7 +89,7 @@ const MainPage = () => {
             고민만 하던 여행 계획을 Reactrip를 통해 몇 분 만에 스케줄링 해보세요.
           </Typography>
 
-          <StartButton variant="contained" disableElevation>
+          <StartButton variant="contained" disableElevation onClick={() => navigate('/my-trip')} >
             여행 계획 세우기
           </StartButton>
         </Box>
