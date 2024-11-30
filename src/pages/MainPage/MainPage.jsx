@@ -32,9 +32,10 @@ const MainPage = () => {
   const [trips, setTrips] = useState([]); // 여행 데이터
 
   useEffect(() => {
-    // 로컬 스토리지에서 데이터 로드
+    // 로컬 스토리지에서 데이터 로드 및 필터링
     const storedTrips = JSON.parse(localStorage.getItem("trips")) || [];
-    setTrips(storedTrips);
+    const filteredTrips = storedTrips.filter(trip => trip.post === 1); // post 값이 1인 데이터만 필터링
+    setTrips(filteredTrips);
   }, []);
 
   // 좋아요 클릭 핸들러
