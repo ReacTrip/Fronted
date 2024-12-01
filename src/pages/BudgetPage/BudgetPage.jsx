@@ -53,6 +53,7 @@ import DateSelector from "../../components/tripDetail/DateSelector.jsx";
 import ImageWithTextOverlay from "../../components/tripDetail/ImageWithTextOverlay.jsx";
 import PlanDate from "../../components/tripDetail/PlanDate.jsx";
 import UserInfo from "@/components/common/UserInfo"; // 사용자 정보
+import {useTripDetail} from "../../hooks/usePlanPage.js"
 
 
 const StyledContainer = styled(Container)({
@@ -70,6 +71,18 @@ const currentUser = {
 
 //페이지 컴포넌트
 const BudgetPage = () => {
+
+  const location = useLocation();
+
+  const {
+    detail,
+    setDetail,
+    drop,
+    deleteDetail,
+    changeImages,
+    addPlace,
+    postTrip
+} = useTripDetail(location.state?.detail || {});
 
   const navigate = useNavigate();
 
@@ -89,10 +102,7 @@ const BudgetPage = () => {
 
   const [routeData, setRouteData] = useState({ routes: [], });  //이동경로api로 받아온 데이터.
 
-  const location = useLocation();
-  const [detail, setDetail] = useState(location.state?.detail || {});// `detail`에 전달된 데이터가 없을 때를 대비한 안전 처리
-  console.log(detail);
-  const isAuthor = (detail.AuthorId === currentUser.id);  //작성자인지 확인
+  const isAuthor = (detail.AuthorId === UserInfo.id);  //작성자인지 확인
 
   useEffect(() => {
     //detail이 변경될때 마다 자동 저장. 로컬스토리지에 자동으로 올리기 위함.
@@ -104,89 +114,12 @@ const BudgetPage = () => {
         : item                      // 일치하지 않으면 그대로 유지
     );
     localStorage.setItem("trips", JSON.stringify(updatedTrips));
-  }, [detail])
-
-  //드래그 함수
-  const drop = (selectedDate, dragIdx, dragOverIdx) => {
-    // 현재 날짜의 계획을 가져옴
-    const copyDailyItinerary = { ...detail.dailyItinerary };
-    const copyListItems = [...copyDailyItinerary[selectedDate]];
-
-    // 드래그한 항목을 이동
-    const dragItemContent = copyListItems[dragIdx];
-    copyListItems.splice(dragIdx, 1);
-    copyListItems.splice(dragOverIdx, 0, dragItemContent);
-
-    // 업데이트된 날짜의 계획을 다시 할당
-    copyDailyItinerary[selectedDate] = copyListItems;
-
-    // 상태 업데이트
-    setDetail((prevDetail) => ({
-      ...prevDetail,
-      dailyItinerary: copyDailyItinerary,
-    }));
-
-
-    console.log("드랍 완료");
-  };
-
-  const deleteDetail = (deleteDate, deleteIdx) => {
-    const newDetail = {
-      ...detail, // data는 원본 객체
-      dailyItinerary: {
-        ...detail.dailyItinerary, // dailyItinerary 복사
-        [deleteDate]: detail.dailyItinerary[deleteDate].filter(
-          (item, idx) => idx !== deleteIdx
-        )
-      }
-    };
-    setDetail(newDetail);
-  }
+  }, [detail]);
 
   const changeMap = (resultData) => {
     setRouteData(resultData);
   }
 
-  //이미지 추가, 삭제
-  const changeImages = (date, idx, newImages) => {
-    const newDetail = { ...detail };
-    console.log('dddddddd', newDetail);
-    console.log(date, ":", idx, ":", newImages);
-    newDetail.dailyItinerary[date][idx].images = newImages;
-    setDetail(newDetail);
-  }
-
-  const addPlace = (date, place, notes, time) => {
-    const newDetail = { ...detail };
-    newDetail.dailyItinerary[date] = [...newDetail.dailyItinerary[date], {
-      name: place.name,
-      city: "",
-      time: time,
-      notes: notes,
-      placeImage: place.image,
-      images: [],
-      x: place.x,
-      y: place.y,
-      category: place.category
-    }];
-    setDetail(newDetail);
-  }
-
-  const postTrip = () => {
-    const newDetail = { ...detail };
-    if (newDetail.post) {
-      if (confirm("게시물을 삭제하시겠습니까?")) {
-        newDetail.post = 0; // 값 변경
-        alert("게시물이 삭제되었습니다.");
-      } else {
-        return;
-      }
-    } else {
-      newDetail.post = 1; // 값 변경
-      alert("게시물 작성을 완료하였습니다.");
-    }
-    setDetail(newDetail);
-  }
 
   // 날짜 배열 생성
   const dates = generateDateArray(detail.startDate, detail.endDate);
@@ -266,7 +199,7 @@ const BudgetPage = () => {
             {routeData.routes.length > 0 ? (
               <KakaoRouteMap routeData={routeData} />
             ) : (
-              <p>Loading route data...</p>
+              <p>장소를 2개 이상 추가해보세요.</p>
             )}
           </Box>
         </Grid>

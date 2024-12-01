@@ -34,6 +34,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import { storage } from "@/firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Carousel from 'react-material-ui-carousel';
+import { useModal, useImageUpload, useCarousel } from '../../hooks/usePlanDetail'
 
 
 
@@ -79,53 +80,131 @@ const TimeTypography = styled(Typography)(({ theme }) => ({
     color: 'black', // 글씨 색상 (필요하면 변경 가능)
 }));
 
+const StyledImageBox = styled(Box)({
+    border: "1px solid #ddd",
+    borderRadius: 8,
+    padding: 16,
+    display: "flex",
+    alignItems: "center",
+    position: "relative",
+});
+
+const StyledImage = styled("img")({
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+    marginRight: 16,
+    objectFit: "cover",
+});
+
+const StyledContentBox = styled(Box)({
+    display: "flex",
+    flexDirection: "column",
+});
+
+const StyledAddButton = styled(IconButton)(({ theme }) => ({
+    backgroundColor: theme.palette.grey[300],
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    border: "1px solid #ddd",
+    "&:hover": {
+        backgroundColor: theme.palette.grey[400],
+    },
+}));
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+    "& .MuiBadge-badge": {
+        top: 0,
+        right: 0,
+        height: 20,
+        minWidth: 20,
+        borderRadius: "50%",
+        backgroundColor: theme.palette.primary.main,
+        color: "white",
+        fontSize: 12,
+        fontWeight: "bold",
+        border: "2px solid white",
+    },
+}));
+
+const StyledDeleteButton = styled(IconButton)(({ theme }) => ({
+    position: "absolute",
+    top: 0,
+    left: "50%",
+    transform: "translateX(-50%)",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    "&:hover": {
+        backgroundColor: "rgba(255, 255, 255, 1)",
+    },
+}));
+
+const StyledLineBox = styled(Box)({
+    width: 36,
+    height: 36,
+    borderRadius: "50%",
+    backgroundColor: "black",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "2px solid white",
+    position: "relative",
+});
+
+const StyledModalBox = styled(Box)({
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    maxWidth: 600,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 2,
+    borderRadius: 8,
+    overflow: "hidden",
+});
+
+const StyledLoadingBox = styled(Box)({
+    position: "fixed",
+    bottom: 0,
+    right: 20,
+    width: 300,
+    height: 100,
+    bgcolor: "background.paper",
+    boxShadow: 3,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    p: 2,
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    zIndex: 1200,
+    padding: 30
+});
+
+
 
 //여행 계획 하나 단위
 const PlanDetail = (props) => {
 
-    const [open, setOpen] = useState(false); // 모달 열기/닫기 상태
-
-    const [isLoading, setIsLoading] = useState(false); // 로딩 상태
-    const [isComplete, setIsComplete] = useState(false); // 완료 상태
-
-    const [currentIndex, setCurrentIndex] = useState(0); // 현재 Carousel 인덱스
+    const { open, handleOpen, handleClose } = useModal();
 
 
-    // 모달 열기
-    const handleOpen = () => setOpen(true);
+    const { isLoading,
+        isComplete,
+        fileInputRef,
+        handleFileChange,
+        triggerFileInput } = useImageUpload(props.images, props.onChangeImages)
+
+    const { currentIndex, handleIndexChange, resetIndex } = useCarousel();
+
+
+
 
     // 모달 닫기
-    const handleClose = () => { setOpen(false); setCurrentIndex(0); }
+    const handleCloseResetIndex = () => { handleClose(); resetIndex(0); }
 
-    const fileInputRef = useRef(null);
-
-    // 파일 선택 핸들러
-    const handleFileChange = async (event) => {
-        const files = event.target.files; // 선택된 파일 배열
-        if (files.length > 0) {
-            setIsLoading(true); // 로딩 시작
-            try {
-                const urls = [];
-                for (const file of files) {
-                    const storageRef = ref(storage, `images/${file.name}`);
-                    await uploadBytes(storageRef, file); // Firebase Storage로 파일 업로드
-                    const url = await getDownloadURL(storageRef); // 업로드된 URL 가져오기
-                    urls.push(url);
-                }
-                const newImages = props.images.concat(urls);
-                props.onChangeImages(newImages); // 업로드 완료 후 부모 컴포넌트에 전달
-            } catch (error) {
-                console.error("파일 업로드 중 오류 발생:", error);
-            } finally {
-                setIsLoading(false); // 로딩 종료
-                setIsComplete(true); // 완료 상태로 변경
-                // 1초 후 완료 메시지 숨기기
-                setTimeout(() => {
-                    setIsComplete(false);
-                }, 2500);
-            }
-        }
-    };
 
     const onImageDelete = (index) => {
         const newImages = [...props.images].filter((val, idx) => idx !== index);
@@ -133,16 +212,12 @@ const PlanDetail = (props) => {
 
         // 인덱스 조정: 삭제된 이미지가 마지막 이미지라면 이전 이미지로 이동
         if (index === currentIndex && newImages.length > 0) {
-            setCurrentIndex(Math.max(0, index - 1));
+            handleIndexChange(Math.max(0, index - 1));
         } else if (newImages.length === 0) {
             handleClose();
         }
     }
 
-    // 버튼 클릭 시 파일 입력창 열기
-    const handleClick = () => {
-        fileInputRef.current.click(); // 숨겨진 파일 입력 트리거
-    };
 
     return (
         <div  //드래그가 가능하기위해 div로 감싸줌
@@ -171,20 +246,19 @@ const PlanDetail = (props) => {
                     </Box>
                 </Grid>
                 <Grid item xs>
-                    <Box sx={{ border: '1px solid #ddd', borderRadius: 2, padding: 2, display: 'flex', alignItems: 'center' }}>
-                        <img
+                    <StyledImageBox >
+                        <StyledImage
                             src={props.placeImage} // 여기에 실제 이미지 경로를 넣으세요.
                             alt={props.name}
-                            style={{ width: '200px', height: '200px', borderRadius: '8px', marginRight: '16px', objectFit: 'cover' }}
                         />
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}> {/* 수직 정렬을 위해 flexDirection을 column으로 설정 */}
+                        <StyledContentBox> {/* 수직 정렬을 위해 flexDirection을 column으로 설정 */}
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                                 {props.name}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 {props.notes}
                             </Typography>
-                        </Box>
+                        </StyledContentBox>
                         {/* 오른쪽 하단에 추가 아이콘과 이미지 버튼 */}
                         <Box
                             sx={{
@@ -199,18 +273,9 @@ const PlanDetail = (props) => {
                             {/* 추가 아이콘 버튼 */}
                             {props.isAuthor && <div>
                                 {/* 추가 아이콘 버튼 */}
-                                <IconButton
-                                    onClick={handleClick}
-                                    sx={{
-                                        backgroundColor: 'grey.300',
-                                        width: 60,
-                                        height: 60,
-                                        borderRadius: 1,
-                                        border: '1px solid #ddd',
-                                    }}
-                                >
+                                <StyledAddButton onClick={triggerFileInput} >
                                     <AddIcon sx={{ color: 'grey.600', fontSize: 30 }} />
-                                </IconButton>
+                                </StyledAddButton >
 
                                 {/* 숨겨진 파일 입력 */}
                                 <input
@@ -225,24 +290,7 @@ const PlanDetail = (props) => {
 
                             {/* 이미지 버튼 */}
                             {props.images.length > 0 && (
-                                <Badge
-                                    badgeContent={props.images.length}
-                                    color="primary"
-                                    sx={{
-                                        '& .MuiBadge-badge': {
-                                            top: 0,
-                                            right: 0,
-                                            height: 20,
-                                            minWidth: 20,
-                                            borderRadius: '50%',
-                                            backgroundColor: '#0066cc', // 배지 배경색
-                                            color: 'white',
-                                            fontSize: 12,
-                                            fontWeight: 'bold',
-                                            border: '2px solid white',
-                                        },
-                                    }}
-                                >
+                                <StyledBadge badgeContent={props.images.length} >
                                     <IconButton
                                         onClick={handleOpen}
                                         sx={{
@@ -255,10 +303,10 @@ const PlanDetail = (props) => {
                                             backgroundImage: `url(${props.images[0]})`,
                                         }}
                                     />
-                                </Badge>
+                                </StyledBadge>
                             )}
                         </Box>
-                    </Box>
+                    </StyledImageBox>
                 </Grid>
                 {/* 삭제 버튼 */}
                 {props.isAuthor && <DeleteButton
@@ -272,7 +320,7 @@ const PlanDetail = (props) => {
             {/* 모달 */}
             <Modal
                 open={open}
-                onClose={handleClose}
+                onClose={handleCloseResetIndex}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{
@@ -280,21 +328,19 @@ const PlanDetail = (props) => {
                 }}
             >
                 <Fade in={open}>
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: '80%',
-                            maxWidth: '600px',
-                            bgcolor: 'background.paper',
-                            boxShadow: 24,
-                            p: 2,
-                            borderRadius: 2,
-                            overflow: 'hidden', // 이미지가 넘치지 않도록 설정
-                        }}
-                    >
+                    <Box sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: "80%",
+                        maxWidth: 600,
+                        bgcolor: "background.paper",
+                        boxShadow: 24,
+                        p: 2,
+                        borderRadius: 8,
+                        overflow: "hidden",
+                    }}>
                         {/* Carousel */}
                         <Carousel
                             navButtonsAlwaysVisible={true} // 이전/다음 버튼 항상 보이도록 설정
@@ -303,7 +349,7 @@ const PlanDetail = (props) => {
                             cycleNavigation={false} // 무한 루프
                             autoPlay={false}
                             index={currentIndex} // 현재 활성화된 인덱스
-                            onChange={(index) => setCurrentIndex(index)} // 인덱스 변경 추적
+                            onChange={handleIndexChange} // 인덱스 변경 추적
                         >
                             {props.images.map((image, index) => (
                                 <Box
@@ -329,21 +375,11 @@ const PlanDetail = (props) => {
                                         }}
                                     />
                                     {/* 삭제 버튼 */}
-                                    {props.isAuthor && <IconButton
+                                    {props.isAuthor && <StyledDeleteButton
                                         onClick={() => onImageDelete(index)} // 이미지 삭제 이벤트
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 0, // 상단에 위치
-                                            left: '50%', // 가로 중앙으로 이동
-                                            transform: 'translateX(-50%)', // 정확히 중앙 정렬
-                                            backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 투명도 설정
-                                            '&:hover': {
-                                                backgroundColor: 'rgba(255, 255, 255, 1)',
-                                            },
-                                        }}
                                     >
                                         <DeleteIcon sx={{ color: 'grey' }} />
-                                    </IconButton>}
+                                    </StyledDeleteButton >}
                                 </Box>
                             ))}
                         </Carousel>
@@ -351,25 +387,8 @@ const PlanDetail = (props) => {
                 </Fade>
             </Modal>
             {/* 이미지 업로드 로딩 스피너 */}
-            {(isLoading || isComplete) && <Box
-                sx={{
-                    position: "fixed",
-                    bottom: 0,
-                    right: "20px",
-                    width: "300px",
-                    height: "100px",
-                    bgcolor: "background.paper",
-                    boxShadow: 3,
-                    borderTopLeftRadius: "8px", // 좌측 상단 모서리
-                    borderTopRightRadius: "8px", // 우측 상단 모서리
-                    borderBottomLeftRadius: "0", // 좌측 하단 모서리
-                    borderBottomRightRadius: "0", // 우측 하단 모서리
-                    p: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    zIndex: 1200,
-                }}
+            {(isLoading || isComplete) && <StyledLoadingBox 
+              sx={{boxShadow: 3}}
             >
                 {isLoading ? (<><CircularProgress />
                     <Typography variant="body1" sx={{ fontWeight: "bold", color: "grey" }}>
@@ -379,7 +398,7 @@ const PlanDetail = (props) => {
                         이미지 업로드 완료!
                     </Typography>
                 )}
-            </Box>}
+            </StyledLoadingBox >}
 
         </div>
     );
