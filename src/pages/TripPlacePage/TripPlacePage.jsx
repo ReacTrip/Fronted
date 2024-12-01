@@ -23,8 +23,9 @@ const TripPlacePage = () => {
     { name: "대전", image: "/src/assets/images/TripPlace/Daejeon.png", path: "daejeon" },
   ];
 
-  const handleCityClick = (path) => {
-    navigate(`/trip/${path}`);
+  const handleCityClick = (city) => {
+    // 클릭 시 항상 /city 경로로 이동하며, 선택된 도시의 이름을 state로 전달
+    navigate(`/city`, { state: { cityName: city.name } });
   };
 
   return (
@@ -59,7 +60,7 @@ const TripPlacePage = () => {
             index={index}
             total={cities.length}
             onHover={(image, name) => setHoveredCity({ image, name })} // 마우스 오버 이벤트
-            onClick={() => handleCityClick(city.path)}
+            onClick={() => handleCityClick(city)}
           />
         ))}
 

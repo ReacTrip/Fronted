@@ -3,29 +3,22 @@ import styled from 'styled-components';
 import Navbar from '@/components/common/Navbar/Navbar';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import { Grid, Box, Typography, Button, Card as MuiCard, CardMedia, CardContent } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // React Router의 useNavigate 훅
+import { useNavigate, useLocation } from 'react-router-dom'; // React Router의 useNavigate 훅
 import { usePlaceInfo } from '@/hooks/usePlaceInfo';
 import { ResultSection } from '@/components/InterestTest/ResultSection';
+import { placeData } from '@/data/placeData';
 
 import backgroundImage from "@/assets/images/background.jpg"; // 배경 이미지
 import hotAirBalloonImage from "@/assets/images/hot-air-balloon.png"; // 열기구 이미지
 import anniversaryLogo from "@/assets/images/Timmerman.png"; 
-
-// 추가된 이미지
 import koreaImage from '@/assets/images/TripPlace/Korea.png';
 
-// 관광지, 축제, 음식 이미지 배열
-import busanAttraction1 from '@/assets/images/TripPlace/busan/busanAttraction1.png';
-import busanAttraction2 from '@/assets/images/TripPlace/busan/busanAttraction2.png';
-import busanAttraction3 from '@/assets/images/TripPlace/busan/busanAttraction3.png';
-
-import busanFestival1 from '@/assets/images/TripPlace/busan/busanFestival1.png';
-import busanFestival2 from '@/assets/images/TripPlace/busan/busanFestival2.png';
-import busanFestival3 from '@/assets/images/TripPlace/busan/busanFestival3.png';
-
-import busanFood1 from '@/assets/images/TripPlace/busan/busanFood1.png';
-import busanFood2 from '@/assets/images/TripPlace/busan/busanFood2.png';
-import busanFood3 from '@/assets/images/TripPlace/busan/busanFood3.png';
+// 스타일 컴포넌트
+const StyledContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+`;
 
 // "어디로 갈까요?" 스타일 추가
 const SearchContainer = styled.div`
@@ -110,13 +103,6 @@ const HotAirBalloon = styled.img`
   width: 150px;
 `;
 
-// 스타일 컴포넌트
-const StyledContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-`;
-
 const SectionTitle = styled.h2`
   margin: 40px 0 20px;
 `;
@@ -146,7 +132,7 @@ const CardImage = styled.img`
   object-fit: cover;
 `;
 
-const StyledCardContent = styled.div` /* 이름 변경 */
+const StyledCardContent = styled.div` 
   padding: 15px;
   text-align: center;
 `;
@@ -179,7 +165,6 @@ const HeartIcon = styled.div`
   }
 `;
 
-// CardWithHeart 컴포넌트에서 liked 속성을 $liked로 변경
 const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
   <StyledCard>
     <HeartIcon $liked={liked} onClick={onHeartClick}>
@@ -192,24 +177,26 @@ const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
   </StyledCard>
 );
 
-const Busan = () => {
+const City = () => {
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
+  const location = useLocation();
+  const { cityName } = location.state || {};
   const [hoveredIndex, setHoveredIndex] = useState(null); // 인기 여행지 상태 관리
   const [searchInput, setSearchInput] = useState('');
   const { placeInfo, isLoading, error, activeCategory, setActiveCategory, fetchPlaceInfo, resetPlaceInfo } = usePlaceInfo();
-  
+
   const [likedPlaces, setLikedPlaces] = useState(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likedPlaces')) || [];
     return savedLikes;
   });
   
   const [likes, setLikes] = useState(() => {
-    const savedLikes = JSON.parse(localStorage.getItem('likes')) || {
-      attractions: new Array(3).fill(false),
-      festivals: new Array(3).fill(false),
-      foods: new Array(3).fill(false),
+    const savedLikes = JSON.parse(localStorage.getItem('likes')) || {};
+    return savedLikes[cityName] || {
+      attractions: new Array(attractions.length).fill(false),
+      festivals: new Array(festivals.length).fill(false),
+      foods: new Array(foods.length).fill(false),
     };
-    return savedLikes;
   });
 
   useEffect(() => {
@@ -217,18 +204,18 @@ const Busan = () => {
   }, [likedPlaces]);
   
   useEffect(() => {
-    localStorage.setItem('likes', JSON.stringify(likes));
-  }, [likes]);
+    const savedLikes = JSON.parse(localStorage.getItem('likes')) || {};
+    savedLikes[cityName] = likes; // 현재 도시의 'likes' 상태 저장
+    localStorage.setItem('likes', JSON.stringify(savedLikes));
+  }, [likes, cityName]);
 
+  // toggleLike 함수 수정
   const toggleLike = (section, index, title) => {
     setLikes((prevLikes) => {
       const updatedLikes = {
         ...prevLikes,
-        [section]: prevLikes[section].map((liked, i) =>
-          i === index ? !liked : liked
-        ),
+        [section]: prevLikes[section].map((liked, i) => (i === index ? !liked : liked)),
       };
-      localStorage.setItem('likes', JSON.stringify(updatedLikes)); // 로컬 스토리지 업데이트
       return updatedLikes;
     });
   
@@ -239,7 +226,6 @@ const Busan = () => {
       } else {
         updatedLikedPlaces = [...prevLikedPlaces, title];
       }
-      localStorage.setItem('likedPlaces', JSON.stringify(updatedLikedPlaces)); // 로컬 스토리지에 바로 저장
       return updatedLikedPlaces;
     });
   };
@@ -260,31 +246,16 @@ const Busan = () => {
     }
   };
 
-  const attractions = [
-    { image: busanAttraction1, title: '감천문화마을' },
-    { image: busanAttraction2, title: '해운대 해수욕장' },
-    { image: busanAttraction3, title: '송도 해상 케이블카' },
-  ];
+  // 선택된 도시에 따라 placeData 필터링
+  const attractions = placeData.filter((place) => place.place === cityName && place.category === 'touristAttraction');
+  const festivals = placeData.filter((place) => place.place === cityName && place.category === 'festival');
+  const foods = placeData.filter((place) => place.place === cityName && place.category === 'restaurant');
 
-  const festivals = [
-    { image: busanFestival1, title: '해운대 빛축제' },
-    { image: busanFestival2, title: '부산불꽃축제' },
-    { image: busanFestival3, title: '해운대 모래축제' },
-  ];
-
-  const foods = [
-    { image: busanFood1, title: '초량밀면' },
-    { image: busanFood2, title: '수변최고 돼지국밥' },
-    { image: busanFood3, title: '해운대 씨앗호떡' },
-  ];
-
-  // 인기 여행지 데이터
+  // 선택된 도시에 따라 인기 여행지 데이터 필터링
   const popularPlaces = [
-    { title: '감천문화마을', image: busanAttraction1 },
-    { title: '해운대 해수욕장', image: busanAttraction2 },
-    { title: '해운대 빛축제', image: busanFestival1 },
-    { title: '초량밀면', image: busanFood1 },
-    { title: '수변최고 돼지국밥', image: busanFood2 },
+    ...attractions.slice(0, 2), // 관광지 첫 번째와 두 번째
+    ...festivals.slice(0, 1), // 축제 첫 번째
+    ...foods.slice(0, 2), // 음식 첫 번째와 두 번째
   ];
 
   return (
@@ -476,9 +447,9 @@ const Busan = () => {
             <CardWithHeart
               key={index}
               image={attraction.image}
-              title={attraction.title}
+              title={attraction.name}
               liked={likes.attractions[index]}
-              onHeartClick={() => toggleLike('attractions', index, attraction.title)}
+              onHeartClick={() => toggleLike('attractions', index, attraction.name)}
             />
           ))}
         </GridContainer>
@@ -490,9 +461,9 @@ const Busan = () => {
             <CardWithHeart
               key={index}
               image={festival.image}
-              title={festival.title}
+              title={festival.name}
               liked={likes.festivals[index]}
-              onHeartClick={() => toggleLike('festivals', index, festival.title)}
+              onHeartClick={() => toggleLike('festivals', index, festival.name)}
             />
           ))}
         </GridContainer>
@@ -504,9 +475,9 @@ const Busan = () => {
             <CardWithHeart
               key={index}
               image={food.image}
-              title={food.title}
+              title={food.name}
               liked={likes.foods[index]}
-              onHeartClick={() => toggleLike('foods', index, food.title)}
+              onHeartClick={() => toggleLike('foods', index, food.name)}
             />
           ))}
         </GridContainer>
@@ -515,4 +486,4 @@ const Busan = () => {
   );
 };
 
-export default Busan;
+export default City;
