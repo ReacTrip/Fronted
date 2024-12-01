@@ -61,13 +61,6 @@ const StyledContainer = styled(Container)({
 });
 
 
-// 임시 사용자 정보
-const currentUser = {
-  id: "@TripLover",
-  name: '여행매니아',
-};
-
-
 //페이지 컴포넌트
 const BudgetPage = () => {
 
@@ -92,7 +85,7 @@ const BudgetPage = () => {
   const location = useLocation();
   const [detail, setDetail] = useState(location.state?.detail || {});// `detail`에 전달된 데이터가 없을 때를 대비한 안전 처리
   console.log(detail);
-  const isAuthor = (detail.AuthorId === currentUser.id);  //작성자인지 확인
+  const isAuthor = (detail.AuthorId === UserInfo.id);  //작성자인지 확인
 
   useEffect(() => {
     //detail이 변경될때 마다 자동 저장. 로컬스토리지에 자동으로 올리기 위함.
