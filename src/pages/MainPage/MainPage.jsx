@@ -39,14 +39,23 @@ const MainPage = () => {
   }, []);
 
   // 좋아요 클릭 핸들러
-  const handleLikeClick = (id) => {
-    // 여행 데이터 업데이트
-    const updatedTrips = trips.map((trip) =>
-      trip.id === id ? { ...trip, like: trip.like === 1 ? 0 : 1 } : trip
-    );
-    setTrips(updatedTrips);
-    localStorage.setItem("trips", JSON.stringify(updatedTrips)); // 업데이트된 여행 데이터 저장
-  };
+const handleLikeClick = (id) => {
+  // 여행 데이터 업데이트
+  const updatedTrips = trips.map((trip) => {
+    if (trip.id === id) {
+      const isLiked = trip.like === 1; // 현재 좋아요 여부 확인
+      return {
+        ...trip,
+        like: isLiked ? 0 : 1, // like 상태 토글
+        totalLike: isLiked ? trip.totalLike - 1 : trip.totalLike + 1, // totalLike 업데이트
+      };
+    }
+    return trip;
+  });
+
+  setTrips(updatedTrips);
+  localStorage.setItem("trips", JSON.stringify(updatedTrips)); // 업데이트된 여행 데이터 저장
+};
 
   const handleMoreClick = () => {
     navigate('/trips');
@@ -105,14 +114,16 @@ const MainPage = () => {
 
         <Box sx={{ mt: 6, mb: 6 }}>
           <Grid container spacing={3}>
-            {trips.map((trip) => (
-              <Grid item xs={6} key={trip.id}>
-                <TripCard
-                  data={trip}
-                  onLikeClick={handleLikeClick}
-                  onCardClick={()=>handleClick(trip)}
-                />
-              </Grid>
+            {[...trips]
+              .sort((a, b) => b.totalLike - a.totalLike)
+              .map((trip) => (
+                <Grid item xs={6} key={trip.id}>
+                  <TripCard
+                    data={trip}
+                    onLikeClick={handleLikeClick}
+                    onCardClick={() => handleClick(trip)}
+                  />
+                </Grid>
             ))}
           </Grid>
 
