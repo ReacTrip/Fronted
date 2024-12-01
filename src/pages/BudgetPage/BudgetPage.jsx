@@ -198,22 +198,45 @@ const BudgetPage = () => {
   };
 
   const copyTrip = () => {
-    if(confirm("여행 계획을 내 여행에 생성하시겠습니까?")){
+    if (confirm("여행 계획을 내 여행에 생성하시겠습니까?")) {
       const storedTrips = JSON.parse(localStorage.getItem("trips"));
-      let newDetail = {...detail};
-      // 이미지 배열을 빈 배열로 변경
-      for (const date in newDetail.dailyItinerary) {
-        newDetail.dailyItinerary[date].forEach(location => {
-          location.images = [];
-        });
+      let newDetail = { ...detail };
+  
+      // 현재 날짜를 startDate로 설정
+      const startDate = new Date();
+      const dailyItineraryKeys = Object.keys(newDetail.dailyItinerary);
+  
+      // endDate 계산: startDate + dailyItinerary의 객체 개수
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + dailyItineraryKeys.length - 1);
+  
+      // dailyItinerary 재구성: startDate와 endDate 사이의 일자만큼 생성
+      const newDailyItinerary = {};
+      for (let i = 0; i < dailyItineraryKeys.length; i++) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+        const formattedDate = date.toISOString().split("T")[0]; // YYYY-MM-DD 형식
+        newDailyItinerary[formattedDate] = newDetail.dailyItinerary[dailyItineraryKeys[i]];
       }
-      newDetail = {...newDetail, title: `[가져온 여행] ${newDetail.title}`, id: (storedTrips.length+1), AuthorId: UserInfo.id, like: 0, post:  0 };
-      const updatedTrips = [ ...storedTrips, newDetail];
+  
+      newDetail = {
+        ...newDetail,
+        title: `[가져온 여행] ${newDetail.title}`,
+        id: storedTrips.length + 1,
+        AuthorId: UserInfo.id,
+        like: 0,
+        post: 0,
+        startDate: startDate.toISOString().split("T")[0], // YYYY-MM-DD 형식
+        endDate: endDate.toISOString().split("T")[0], // YYYY-MM-DD 형식
+        dailyItinerary: newDailyItinerary, // 업데이트된 일정
+      };
+  
+      const updatedTrips = [...storedTrips, newDetail];
       localStorage.setItem("trips", JSON.stringify(updatedTrips));
-      if(confirm("가져오기 완료! \n내 여행에서 확인하시겠습니까?"))
+      if (confirm("가져오기 완료! \n내 여행에서 확인하시겠습니까?"))
         navigate('/my-trip');
     }
-  }
+  };
 
   const changeLike = (like) => {
     const newDetail = {...detail, like};
