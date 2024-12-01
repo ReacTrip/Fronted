@@ -89,6 +89,9 @@ import daejeonFood1 from '@/assets/images/TripPlace/daejeon/daejeonFood1.png';
 import daejeonFood2 from '@/assets/images/TripPlace/daejeon/daejeonFood2.png';
 import daejeonFood3 from '@/assets/images/TripPlace/daejeon/daejeonFood3.png';
 
+
+export const likedPlaces = []; // 좋아요가 선택된 장소를 저장하는 배열
+
 export const placeData = [
   // 서울
   {

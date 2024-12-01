@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Navbar from '@/components/common/Navbar/Navbar';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
-import Carousel from 'react-material-ui-carousel';
 import { Grid, Box, Typography, Button, Card as MuiCard, CardMedia, CardContent } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; // React Router의 useNavigate 훅
+import { usePlaceInfo } from '@/hooks/usePlaceInfo';
+import { ResultSection } from '@/components/InterestTest/ResultSection';
 
 import backgroundImage from "@/assets/images/background.jpg"; // 배경 이미지
 import hotAirBalloonImage from "@/assets/images/hot-air-balloon.png"; // 열기구 이미지
 import anniversaryLogo from "@/assets/images/Timmerman.png"; 
-
-// 랜드마크 이미지 배열
-import busanRandmark1 from '@/assets/images/TripPlace/busan/busanRandmark1.png';
-import busanRandmark2 from '@/assets/images/TripPlace/busan/busanRandmark2.png';
-import busanRandmark3 from '@/assets/images/TripPlace/busan/busanRandmark3.png';
 
 // 추가된 이미지
 import koreaImage from '@/assets/images/TripPlace/Korea.png';
@@ -30,9 +26,6 @@ import busanFestival3 from '@/assets/images/TripPlace/busan/busanFestival3.png';
 import busanFood1 from '@/assets/images/TripPlace/busan/busanFood1.png';
 import busanFood2 from '@/assets/images/TripPlace/busan/busanFood2.png';
 import busanFood3 from '@/assets/images/TripPlace/busan/busanFood3.png';
-
-// 랜드마크 배열
-const landmarkImages = [busanRandmark1, busanRandmark2, busanRandmark3];
 
 // "어디로 갈까요?" 스타일 추가
 const SearchContainer = styled.div`
@@ -176,7 +169,7 @@ const HeartIcon = styled.div`
 
   svg {
     font-size: 1.5rem;
-    fill: ${(props) => (props.liked ? 'red' : 'rgba(0, 0, 0, 0.2)')};
+    fill: ${(props) => (props.$liked ? 'red' : 'rgba(0, 0, 0, 0.2)')};
     color: #ccc;
     transition: fill 0.3s ease;
   }
@@ -186,9 +179,10 @@ const HeartIcon = styled.div`
   }
 `;
 
+// CardWithHeart 컴포넌트에서 liked 속성을 $liked로 변경
 const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
-  <StyledCard> 
-    <HeartIcon liked={liked} onClick={onHeartClick}>
+  <StyledCard>
+    <HeartIcon $liked={liked} onClick={onHeartClick}>
       {liked ? <Favorite /> : <FavoriteBorder />}
     </HeartIcon>
     <CardImage src={image} alt={title} />
@@ -201,19 +195,69 @@ const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
 const Busan = () => {
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
   const [hoveredIndex, setHoveredIndex] = useState(null); // 인기 여행지 상태 관리
-  const [likes, setLikes] = useState({
-    attractions: new Array(3).fill(false),
-    festivals: new Array(3).fill(false),
-    foods: new Array(3).fill(false),
+  const [searchInput, setSearchInput] = useState('');
+  const { placeInfo, isLoading, error, activeCategory, setActiveCategory, fetchPlaceInfo, resetPlaceInfo } = usePlaceInfo();
+  
+  const [likedPlaces, setLikedPlaces] = useState(() => {
+    const savedLikes = JSON.parse(localStorage.getItem('likedPlaces')) || [];
+    return savedLikes;
+  });
+  
+  const [likes, setLikes] = useState(() => {
+    const savedLikes = JSON.parse(localStorage.getItem('likes')) || {
+      attractions: new Array(3).fill(false),
+      festivals: new Array(3).fill(false),
+      foods: new Array(3).fill(false),
+    };
+    return savedLikes;
   });
 
-  const toggleLike = (section, index) => {
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [section]: prevLikes[section].map((liked, i) =>
-        i === index ? !liked : liked
-      ),
-    }));
+  useEffect(() => {
+    localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
+  }, [likedPlaces]);
+  
+  useEffect(() => {
+    localStorage.setItem('likes', JSON.stringify(likes));
+  }, [likes]);
+
+  const toggleLike = (section, index, title) => {
+    setLikes((prevLikes) => {
+      const updatedLikes = {
+        ...prevLikes,
+        [section]: prevLikes[section].map((liked, i) =>
+          i === index ? !liked : liked
+        ),
+      };
+      localStorage.setItem('likes', JSON.stringify(updatedLikes)); // 로컬 스토리지 업데이트
+      return updatedLikes;
+    });
+  
+    setLikedPlaces((prevLikedPlaces) => {
+      let updatedLikedPlaces;
+      if (prevLikedPlaces.includes(title)) {
+        updatedLikedPlaces = prevLikedPlaces.filter((place) => place !== title);
+      } else {
+        updatedLikedPlaces = [...prevLikedPlaces, title];
+      }
+      localStorage.setItem('likedPlaces', JSON.stringify(updatedLikedPlaces)); // 로컬 스토리지에 바로 저장
+      return updatedLikedPlaces;
+    });
+  };
+
+  useEffect(() => {
+    if (likedPlaces.length > 0) {
+      localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
+    }
+  }, [likedPlaces]);
+  
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  const handleSearch = () => {
+    if (searchInput.trim()) {
+      fetchPlaceInfo(searchInput, activeCategory);
+    }
   };
 
   const attractions = [
@@ -259,10 +303,21 @@ const Busan = () => {
         <SearchTitle>어디로 갈까요?</SearchTitle>
         <SearchSubtitle>당신이 꿈꾸는 여행을 저렴하면서도 간편하고 풍성하게!</SearchSubtitle>
         <SearchBox>
-          <Input placeholder="가고 싶은 곳, 하고 싶은 것을 검색해보세요." />
-          <SearchButton>🔍</SearchButton>
+          <Input value={searchInput} onChange={handleSearchChange} placeholder="가고 싶은 곳, 하고 싶은 것을 검색해보세요." />
+          <SearchButton onClick={handleSearch}>🔍</SearchButton>
         </SearchBox>
       </SearchContainer>
+
+      <ResultSection
+        result={searchInput}
+        placeInfo={placeInfo}
+        isLoading={isLoading}
+        error={error}
+        activeCategory={activeCategory}
+        onCategoryChange={setActiveCategory}
+        onReset={resetPlaceInfo}
+        onPlaceInfoRequest={fetchPlaceInfo}
+      />
 
       <StyledContainer>
         <Box sx={{ marginTop: '32px', marginBottom: '32px' }}>
@@ -413,53 +468,8 @@ const Busan = () => {
             </Grid>
           ))}
         </Grid>
-
-        <SectionTitle>랜드마크</SectionTitle>
-        <div style={{ marginBottom: '32px', padding: '16px 64px' }}>
-          <Carousel
-            navButtonsAlwaysVisible={true} // 네비게이션 버튼 항상 표시
-            indicators={true} // 하단 인디케이터 표시
-            animation="slide" // 슬라이드 애니메이션
-            duration={500} // 애니메이션 지속 시간 (500ms)
-            autoPlay={true} // 자동 재생 활성화
-            interval={4000} // 4초마다 슬라이드 전환
-          >
-            {landmarkImages.map((image, index) => (
-              <div key={index} style={{ position: 'relative', textAlign: 'center' }}>
-                <img
-                  src={image}
-                  alt={`랜드마크 ${index + 1}`}
-                  style={{
-                    width: '100%',
-                    maxWidth: '1200px',
-                    height: '300px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                  }}
-                />
-                <Typography
-                  variant="h5"
-                  sx={{
-                    position: 'absolute',
-                    bottom: '16px',
-                    left: '16px',
-                    color: 'white',
-                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.8)',
-                    padding: '8px 16px',
-                    borderRadius: '4px',
-                    fontWeight: 'bold',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  }}
-                >
-                  랜드마크 {index + 1}
-                </Typography>
-              </div>
-            ))}
-          </Carousel>
-        </div>
         
-        {/* 기존 관광지, 축제, 음식 섹션 */}
+        {/* 관광지 섹션 */}
         <SectionTitle>관광지</SectionTitle>
         <GridContainer>
           {attractions.map((attraction, index) => (
@@ -468,11 +478,12 @@ const Busan = () => {
               image={attraction.image}
               title={attraction.title}
               liked={likes.attractions[index]}
-              onHeartClick={() => toggleLike('attractions', index)}
+              onHeartClick={() => toggleLike('attractions', index, attraction.title)}
             />
           ))}
         </GridContainer>
 
+        {/* 축제 섹션 */}
         <SectionTitle>축제</SectionTitle>
         <GridContainer>
           {festivals.map((festival, index) => (
@@ -481,11 +492,12 @@ const Busan = () => {
               image={festival.image}
               title={festival.title}
               liked={likes.festivals[index]}
-              onHeartClick={() => toggleLike('festivals', index)}
+              onHeartClick={() => toggleLike('festivals', index, festival.title)}
             />
           ))}
         </GridContainer>
 
+        {/* 음식 섹션 */}
         <SectionTitle>음식</SectionTitle>
         <GridContainer>
           {foods.map((food, index) => (
@@ -494,7 +506,7 @@ const Busan = () => {
               image={food.image}
               title={food.title}
               liked={likes.foods[index]}
-              onHeartClick={() => toggleLike('foods', index)}
+              onHeartClick={() => toggleLike('foods', index, food.title)}
             />
           ))}
         </GridContainer>
