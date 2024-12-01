@@ -127,6 +127,9 @@ const TripCard = ({ data, onLikeClick, onCardClick }) => {
           onLikeClick(data.id);
         }}
       >
+        <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
+          {data.totalLike}
+        </span>
         {data.like ? (
           <FavoriteIcon sx={{ color: '#ff1744' }} />
         ) : (
