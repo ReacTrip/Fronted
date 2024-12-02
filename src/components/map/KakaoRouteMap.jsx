@@ -48,7 +48,7 @@ const KakaoRouteMap = ({ routeData, placeNames }) => {
         new window.naver.maps.Polyline({
           map: map,
           path: path,
-          strokeColor: '#000000', // 경로 색상
+          strokeColor: '#006FFD', // 경로 색상
           strokeWeight: 4, // 경로 두께
           strokeOpacity: 0.8, // 경로 투명도
         });

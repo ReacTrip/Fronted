@@ -7,7 +7,9 @@ export const MAJOR_CITIES = [
   { title: '인천', lat: 37.4563, lng: 126.7052 },
   { title: '광주', lat: 35.1595, lng: 126.8526 },
   { title: '대전', lat: 36.3504, lng: 127.3845 },
-  { title: '울산', lat: 35.5384, lng: 129.3114 }
+  { title: '울산', lat: 35.5384, lng: 129.3114 },
+  { title: '포천', lat: 37.8943, lng: 127.2001 },
+  { title: '제주', lat: 33.4996, lng: 126.5312 }
 ];
 
 export const NAVER_MAP_CENTER = { lat: 36.5, lng: 127.8 };

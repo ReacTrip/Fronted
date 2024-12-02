@@ -228,12 +228,8 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
     handleRegionChange(region);
   };
 
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-  const displayedPlaces = getDisplayedPlaces();
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  const displayedPlaces = getDisplayedPlaces();  //좋아요 or 일반 장소데이터 반환
+  
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
