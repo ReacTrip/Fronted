@@ -16,7 +16,7 @@ import TabContent from "@/components/common/TabContent/TabContent";
 import { storage } from "@/firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import DeleteIcon from "@mui/icons-material/Delete";
-import TripDialog from "@/components/TripDialog";
+import TripDialog from "@/components/TripDialog/TripDialog";
 import LoadingAnimation from '@/components/common/Animation/LoadingAnimation'; // Lottie 로딩 컴포넌트 가져오기
 import { format } from "date-fns";
 

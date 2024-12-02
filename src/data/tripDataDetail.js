@@ -5,85 +5,153 @@ import trip4 from '@/assets/images/main/trip4.png';
 import trip5 from '@/assets/images/main/trip5.png';
 import trip6 from '@/assets/images/main/trip6.png';
 
+import busanFestival4 from '@/assets/images/TripPlace/busan/busanFestival4.png';
+import busanFestival5 from '@/assets/images/TripPlace/busan/busanFestival4.png';
+import 코오롱1 from '@/assets/images/TripPlace/busan/코오롱호텔1.png';
+import 코오롱2 from '@/assets/images/TripPlace/busan/코오롱호텔2.png';
+import 코오롱3 from '@/assets/images/TripPlace/busan/코오롱호텔3.png';
+import 코오롱4 from '@/assets/images/TripPlace/busan/코오롱호텔4.png';
+import 파라다이스1 from '@/assets/images/TripPlace/busan/파라다이스호텔1.png';
+import 파라다이스2 from '@/assets/images/TripPlace/busan/파라다이스호텔2.png';
+import 파라다이스3 from '@/assets/images/TripPlace/busan/파라다이스호텔3.png';
+import 파라다이스4 from '@/assets/images/TripPlace/busan/파라다이스호텔4.png';
+import 황금조개구이1 from '@/assets/images/TripPlace/busan/황금조개구이횟집1.png';
+import 황금조개구이2 from '@/assets/images/TripPlace/busan/황금조개구이횟집2.png';
+import 황금조개구이3 from '@/assets/images/TripPlace/busan/황금조개구이횟집3.png';
+import 해운대해수욕장1 from '@/assets/images/TripPlace/busan/해운대해수욕장1.png';
+import 해운대해수욕장2 from '@/assets/images/TripPlace/busan/해운대해수욕장2.png';
+import 해운대해수욕장3 from '@/assets/images/TripPlace/busan/해운대해수욕장3.png';
+import lightFestival1 from '@/assets/images/TripPlace/busan/lightFestival1.png';
+import lightFestival2 from '@/assets/images/TripPlace/busan/lightFestival2.png';
+import lightFestival3 from '@/assets/images/TripPlace/busan/lightFestival3.png';
+
+import 달맞이동산1 from '@/assets/images/TripPlace/busan/달맞이동산1.png';
+import 달맞이동산2 from '@/assets/images/TripPlace/busan/달맞이동산2.png';
+
+import 등대장어1 from '@/assets/images/TripPlace/busan/등대장어1.png';
+import 등대장어2 from '@/assets/images/TripPlace/busan/등대장어2.png';
+import 등대장어3 from '@/assets/images/TripPlace/busan/등대장어3.png';
+import 등대장어4 from '@/assets/images/TripPlace/busan/등대장어4.png';
+
+import 원조할매국밥1 from '@/assets/images/TripPlace/busan/원조할매국밥1.png';
+import 원조할매국밥2 from '@/assets/images/TripPlace/busan/원조할매국밥2.png';
+import 원조할매국밥3 from '@/assets/images/TripPlace/busan/원조할매국밥3.png';
+
+import 부산역1 from '@/assets/images/TripPlace/busan/부산역1.png';
+// import 코오롱 from '@/assets/images/TripPlace/busan/코오롱호텔1.png';
+// import 코오롱 from '@/assets/images/TripPlace/busan/코오롱호텔1.png';
 
 // 시연할 때, 미리 정해둘 데이터
 export const detailData = [
     {
         id: 1,  // 여행 id
-        title: "부산 여행",  // 여행 이름
-        startDate: "2024-05-01",  // 여행 시작 일자
-        endDate: "2024-05-10",  // 여행 종료 일자
+        title: "해운대 빛축제 계획",  // 여행 이름
+        startDate: "2024-01-29",  // 여행 시작 일자
+        endDate: "2024-01-31",  // 여행 종료 일자
         AuthorId: "TripLover", //작성자 id
-        mainImage: trip2,  //메인 이미지
-        totalLike: 2050,
+        mainImage: busanFestival5,  //메인 이미지
+        totalLike: 12050,
         like: 0,
         post: 1,
         dailyItinerary: { // 일자별 계획
 
-            "2024-05-01": [  // 이동할 장소 정보
+            "2024-01-29": [  // 이동할 장소 정보
                 {
-                    name: "광안리 해수욕장",
+                    name: "해운대 해수욕장",
                     city: "Busan",
                     time: "12:00",
                     notes: "수영복 가져가기",
-                    placeImage: trip1,
-                    images: [trip3, trip4],
-                    x: "127.0105811",
-                    y: "37.58284829999999"
+                    placeImage: 해운대해수욕장1,
+                    images: [해운대해수욕장2, 해운대해수욕장3],
+                    x: "129.1598107023669",
+                    y: "35.15852039665702"
                 },
                 {
-                    name: "조개구이 가게",
+                    name: "황금조개구이",
                     city: "Busan",
-                    time: "15:00",
-                    notes: "",
-                    placeImage: trip2,
-                    images: [trip5, trip6],
-                    x: "127.066881928111",
-                    y: "37.6226208171943 "
+                    time: "14:00",
+                    notes: "정우가 강추한 조개구이집",
+                    placeImage: 황금조개구이1,
+                    images: [황금조개구이2, 황금조개구이3],
+                    x: "129.16114939855925",
+                    y: "35.16049029019174"
                 },
                 {
-                    name: "광안리 해수욕장",
+                    name: "구남로 광장",
                     city: "Busan",
-                    time: "12:00",
+                    time: "16:00",
+                    notes: "해운대 빛축제",
+                    placeImage: lightFestival1,
+                    images: [lightFestival2, lightFestival3],
+                    x: "129.1606971",
+                    y: "35.1616873"
+                },
+                {
+                    name: "코오롱 씨클라우드호텔",
+                    city: "Busan",
+                    time: "20:00",
                     notes: "수영복 가져가기",
-                    placeImage: trip1,
-                    images: [trip3, trip4],
-                    x: "126.9972889",
-                    y: "37.6108694 "
+                    placeImage: 코오롱1,
+                    images: [코오롱2, 코오롱3, 코오롱4],
+                    x: "129.16226413645822",
+                    y: "35.160423080834185"
                 }
             ],
 
 
-            "2024-05-02": [  // 이동할 장소 정보
+            "2024-01-30": [  // 이동할 장소 정보
                 {
-                    name: "울산 맛집",
-                    city: "울산",
-                    time: "09:00",
-                    notes: "오전 방문",
-                    placeImage: trip3,
-                    images: [trip5, trip6],
-                    x: "127.11341936045922",
-                    y: "37.39639094915999"
+                    name: "달맞이 동산",
+                    city: "Busan",
+                    time: "10:00",
+                    notes: "아침 산책",
+                    placeImage: 달맞이동산1,
+                    images: [달맞이동산2],
+                    x: "129.17895507011644",
+                    y: "35.15603273070436"
                 },
                 {
-                    name: "울산 해수욕장",
-                    city: "울산",
+                    name: "등대장어 조개구이집",
+                    city: "Busan",
                     time: "13:00",
-                    notes: "밥 먹고 방문",
-                    placeImage: trip4,
-                    images: [trip1, trip2],
-                    x: "127.10860518470294",
-                    y: "37.401999820065534"
+                    notes: "친구가 추천해준 맛집!!",
+                    placeImage: 등대장어1,
+                    images: [등대장어2, 등대장어3, 등대장어4],
+                    x: "129.19394516059958",
+                    y: "35.16140544990262"
                 },
                 {
-                    name: "울산 맛집",
-                    city: "울산",
-                    time: "09:00",
+                    name: "파라다이스 호텔 부산",
+                    city: "Busan",
+                    time: "21:00",
                     notes: "오전 방문",
-                    placeImage: trip3,
-                    images: [trip5, trip6],
-                    x: "127.11024293202674",
-                    y: "37.394348634049784"
+                    placeImage: 파라다이스1,
+                    images: [파라다이스2, 파라다이스3, 파라다이스4],
+                    x: "129.16527065508131",
+                    y: "35.16021165999654"
+                },
+            ],
+
+            "2024-01-31": [  // 이동할 장소 정보
+                {
+                    name: "원조 할매국밥",
+                    city: "Busan",
+                    time: "12:00",
+                    notes: "아침엔 해장",
+                    placeImage: 원조할매국밥1,
+                    images: [원조할매국밥2, 원조할매국밥3],
+                    x: "129.16133875844824",
+                    y: "35.16329171408399"
+                },
+                {
+                    name: "부산역",
+                    city: "Busan",
+                    time: "14:00",
+                    notes: "집으로!",
+                    placeImage: 부산역1,
+                    images: [],
+                    x: "129.03933",
+                    y: "35.114495"
                 },
             ]
 
