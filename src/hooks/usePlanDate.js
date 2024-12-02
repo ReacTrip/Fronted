@@ -57,7 +57,7 @@ export const usePlaceManager = () => {
     const [tabIndex, setTabIndex] = useState(0);
     const [likedPlaces, setLikedPlaces] = useState(placeData);  //좋아요 눌린 장소
     const storedLikePlaces = JSON.parse(localStorage.getItem("likedPlaces") || "[]");
-    console.log(storedLikePlaces);
+    //console.log(storedLikePlaces);
     
 
     useEffect(() => {
