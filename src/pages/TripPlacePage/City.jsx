@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import Navbar from '@/components/common/Navbar/Navbar';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import { Grid, Box, Typography, Button, Card as MuiCard, CardMedia, CardContent } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom'; // React Router의 useNavigate 훅
+import { useNavigate, useLocation } from 'react-router-dom';
 import { usePlaceInfo } from '@/hooks/usePlaceInfo';
-import { ResultSection } from '@/components/InterestTest/ResultSection';
+import { CityResultSection } from '@/components/tripPlace/CityResultSection';
 import { placeData } from '@/data/placeData';
 import StyledContainer from '@/components/tripPlace/StyledContainer';
 
@@ -14,7 +14,6 @@ import hotAirBalloonImage from "@/assets/images/hot-air-balloon.png";
 import anniversaryLogo from "@/assets/images/Timmerman.png"; 
 import koreaImage from '@/assets/images/TripPlace/Korea.png';
 
-// "어디로 갈까요?" 
 const SearchContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -29,9 +28,9 @@ const SearchContainer = styled.div`
 `;
 
 const SearchLogo = styled.div`
-  position: relative; /* 로고와 텍스트를 독립적으로 배치 */
+  position: relative;
   display: flex;
-  justify-content: center; /* 텍스트를 부모 컨테이너 기준으로 중앙 정렬 */
+  justify-content: center;
   align-items: center;
   font-size: 2rem;
   font-weight: bold;
@@ -40,17 +39,17 @@ const SearchLogo = styled.div`
 
 const LogoImage = styled.img`
   position: absolute;
-  left: -40px; /* 로고를 더 왼쪽으로 이동 */
-  transform: translateX(-50%); /* 로고의 중심을 기준으로 이동 */
-  max-width: 120px; /* 로고 크기 */
-  margin-right: 10px; /* 로고와 텍스트 간격 */
+  left: -40px;
+  transform: translateX(-50%);
+  max-width: 120px;
+  margin-right: 10px;
 `;
 
 const SearchTitle = styled.h1`
   font-size: 3rem;
-  margin: 30px 0; /* 로고와 간격을 줌 */
-  text-align: center; /* 텍스트 자체를 중앙 정렬 */
-  width: 100%; /* 부모 컨테이너 기준 중앙 정렬 */
+  margin: 30px 0;
+  text-align: center;
+  width: 100%;
 `;
 
 const SearchSubtitle = styled.p`
@@ -125,7 +124,7 @@ const CardImage = styled.img`
   object-fit: cover;
 `;
 
-const StyledCardContent = styled.div` 
+const StyledCardContent = styled.div`
   padding: 15px;
   text-align: center;
 `;
@@ -171,12 +170,12 @@ const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
 );
 
 const City = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const location = useLocation();
   const { cityName } = location.state || {};
-  const [hoveredIndex, setHoveredIndex] = useState(null); // 인기 여행지 상태 관리
+  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [searchInput, setSearchInput] = useState('');
-  const { placeInfo, isLoading, error, activeCategory, setActiveCategory, fetchPlaceInfo, resetPlaceInfo } = usePlaceInfo();
+  const { placeInfo, isLoading, error, activeCategory, setActiveCategory, fetchPlaceInfo } = usePlaceInfo();
 
   const [likedPlaces, setLikedPlaces] = useState(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likedPlaces')) || [];
@@ -187,12 +186,6 @@ const City = () => {
     localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
   }, [likedPlaces]);
 
-  useEffect(() => {
-    if (likedPlaces.length > 0) {
-      localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
-    }
-  }, [likedPlaces]);
-  
   const [likes, setLikes] = useState(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likes')) || {};
     return savedLikes[cityName] || {
@@ -204,11 +197,10 @@ const City = () => {
   
   useEffect(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likes')) || {};
-    savedLikes[cityName] = likes; // 현재 도시의 'likes' 상태 저장
+    savedLikes[cityName] = likes;
     localStorage.setItem('likes', JSON.stringify(savedLikes));
   }, [likes, cityName]);
 
-  // toggleLike 함수 수정
   const toggleLike = (section, index, title) => {
     setLikes((prevLikes) => {
       const updatedLikes = {
@@ -239,25 +231,21 @@ const City = () => {
     }
   };
 
-  // 선택된 도시에 따라 placeData 필터링
   const attractions = placeData.filter((place) => place.place === cityName && place.category === 'touristAttraction');
   const festivals = placeData.filter((place) => place.place === cityName && place.category === 'festival');
   const foods = placeData.filter((place) => place.place === cityName && place.category === 'restaurant');
 
-  // 선택된 도시에 따라 인기 여행지 데이터 필터링
   const popularPlaces = [
-    ...attractions.slice(0, 2), // 관광지 첫 번째와 두 번째
-    ...festivals.slice(0, 1), // 축제 첫 번째
-    ...foods.slice(0, 2), // 음식 첫 번째와 두 번째
+    ...attractions.slice(0, 2),
+    ...festivals.slice(0, 1),
+    ...foods.slice(0, 2),
   ];
 
   return (
-   
     <>
       <StyledContainer>
-      <Navbar />
+        <Navbar />
       </StyledContainer>
-      {/* "어디로 갈까요?" UI */}
       <SearchContainer>
         <HotAirBalloon src={hotAirBalloonImage} alt="Hot Air Balloon" />
         <SearchLogo>
@@ -267,26 +255,28 @@ const City = () => {
         <SearchTitle>어디로 갈까요?</SearchTitle>
         <SearchSubtitle>당신이 꿈꾸는 여행을 저렴하면서도 간편하고 풍성하게!</SearchSubtitle>
         <SearchBox>
-          <Input value={searchInput} onChange={handleSearchChange} placeholder="가고 싶은 곳, 하고 싶은 것을 검색해보세요." />
+          <Input 
+            value={searchInput} 
+            onChange={handleSearchChange} 
+            placeholder="가고 싶은 곳, 하고 싶은 것을 검색해보세요."
+          />
           <SearchButton onClick={handleSearch}>🔍</SearchButton>
         </SearchBox>
       </SearchContainer>
 
-      <ResultSection
+      <CityResultSection
         result={searchInput}
         placeInfo={placeInfo}
         isLoading={isLoading}
         error={error}
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
-        onReset={resetPlaceInfo}
         onPlaceInfoRequest={fetchPlaceInfo}
       />
 
       <StyledContainer>
         <Box sx={{ marginTop: '32px', marginBottom: '32px' }}>
           <Grid container spacing={4} alignItems="center">
-            {/* Left Section */}
             <Grid item xs={12} md={6}>
               <Box
                 sx={{
@@ -308,7 +298,6 @@ const City = () => {
               </Box>
             </Grid>
 
-            {/* Right Section */}
             <Grid item xs={12} md={6}>
               <Typography
                 variant="h4"
@@ -335,7 +324,7 @@ const City = () => {
                     backgroundColor: '#ff3f30',
                   },
                 }}
-                onClick={() => navigate('/my-trip')} // 버튼 클릭 시 이동
+                onClick={() => navigate('/my-trip')}
               >
                 플래너 시작하기
               </Button>
@@ -343,7 +332,6 @@ const City = () => {
           </Grid>
         </Box>
 
-        {/* 인기 여행지 섹션 */}
         <SectionTitle>인기 여행지</SectionTitle>
         <Grid
           container
@@ -351,9 +339,9 @@ const City = () => {
           sx={{
             display: 'grid',
             gridTemplateColumns: {
-              xs: 'repeat(2, 1fr)', // 작은 화면에서는 2열
-              sm: 'repeat(3, 1fr)', // 중간 화면에서는 3열
-              md: 'repeat(7, 1fr)', // 기본: 7열
+              xs: 'repeat(2, 1fr)',
+              sm: 'repeat(3, 1fr)',
+              md: 'repeat(7, 1fr)',
             },
             gap: 2,
           }}
@@ -362,15 +350,15 @@ const City = () => {
             <Grid
               item
               key={index}
-              onMouseEnter={() => setHoveredIndex(index)} // 호버 시 인덱스 설정
+              onMouseEnter={() => setHoveredIndex(index)}
               sx={{
-                gridColumn: hoveredIndex === index ? 'span 3' : 'span 1', // 확장된 카드
-                transition: 'grid-column 1.5s ease-in-out, transform 1.5s ease-in-out', // 옆으로 늘어나는 시간 조정
+                gridColumn: hoveredIndex === index ? 'span 3' : 'span 1',
+                transition: 'grid-column 1.5s ease-in-out, transform 1.5s ease-in-out',
                 height: '300px',
                 overflow: 'hidden',
                 position: 'relative',
                 '&:hover': {
-                  transform: 'scale(1.02)', // 확대 효과
+                  transform: 'scale(1.02)',
                 },
               }}
             >
@@ -380,19 +368,19 @@ const City = () => {
                   position: 'relative',
                   boxShadow: hoveredIndex === index ? 8 : 2,
                   border: hoveredIndex === index ? '2px solid #ff6f61' : '1px solid #ddd',
-                  transition: 'all 1.5s ease-in-out', // 카드 전환 시간 조정
+                  transition: 'all 1.5s ease-in-out',
                 }}
               >
                 <CardMedia
                   component="img"
                   image={place.image}
-                  alt={place.title}
+                  alt={place.name}
                   sx={{
                     height: '100%',
                     width: '100%',
                     objectFit: 'cover',
                     filter: hoveredIndex === index ? 'brightness(85%)' : 'none',
-                    transition: 'transform 1.5s ease-in-out', // 이미지 확대 전환 시간 동일하게 조정
+                    transition: 'transform 1.5s ease-in-out',
                     transform: hoveredIndex === index ? 'scale(1.1)' : 'scale(1)',
                   }}
                 />
@@ -402,12 +390,12 @@ const City = () => {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    background: 'transparent', 
+                    background: 'transparent',
                     color: 'white',
                     textAlign: 'center',
-                    padding: '0', 
-                    backdropFilter: 'none', 
-                    transition: 'none', 
+                    padding: '0',
+                    backdropFilter: 'none',
+                    transition: 'none',
                   }}
                 >
                   {hoveredIndex === index && (
@@ -437,8 +425,7 @@ const City = () => {
             </Grid>
           ))}
         </Grid>
-        
-        {/* 관광지 섹션 */}
+
         <SectionTitle>관광지</SectionTitle>
         <GridContainer>
           {attractions.map((attraction, index) => (
@@ -452,7 +439,6 @@ const City = () => {
           ))}
         </GridContainer>
 
-        {/* 축제 섹션 */}
         <SectionTitle>축제</SectionTitle>
         <GridContainer>
           {festivals.map((festival, index) => (
@@ -466,7 +452,6 @@ const City = () => {
           ))}
         </GridContainer>
 
-        {/* 음식 섹션 */}
         <SectionTitle>음식</SectionTitle>
         <GridContainer>
           {foods.map((food, index) => (

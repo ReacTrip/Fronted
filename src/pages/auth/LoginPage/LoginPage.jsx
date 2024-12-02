@@ -5,38 +5,95 @@ import {
   Typography, 
   TextField, 
   Button, 
-  Link, 
-  Paper 
+  Link,
+  IconButton,
+  InputAdornment
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import { Email, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
 import { MOCK_USERS } from '@/data/userData';
+
+const PageContainer = styled('div')({
+  minHeight: '100vh',
+  display: 'flex',
+  background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+});
 
 const StyledContainer = styled(Container)({
   display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '40px 20px',
+});
+
+const LoginBox = styled(Box)(({ theme }) => ({
+  width: '100%',
+  maxWidth: '900px',
+  display: 'flex',
+  borderRadius: '20px',
+  overflow: 'hidden',
+  boxShadow: '0 15px 35px rgba(0,0,0,0.1)',
+  backgroundColor: '#fff',
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
+  },
+}));
+
+const LeftSection = styled(Box)(({ theme }) => ({
+  flex: '1',
+  padding: '60px 40px',
+  display: 'flex',
+  flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  minHeight: '100vh',
-  padding: '20px',
+  background: 'linear-gradient(135deg, #0061ff 0%, #60efff 100%)',
+  color: '#fff',
+  [theme.breakpoints.down('md')]: {
+    padding: '40px 20px',
+  },
+}));
+
+const RightSection = styled(Box)(({ theme }) => ({
+  flex: '1',
+  padding: '60px 40px',
+  backgroundColor: '#fff',
+  [theme.breakpoints.down('md')]: {
+    padding: '40px 20px',
+  },
+}));
+
+const StyledTextField = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '10px',
+    '& fieldset': {
+      borderColor: '#e0e0e0',
+    },
+    '&:hover fieldset': {
+      borderColor: '#0061ff',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#0061ff',
+    },
+  },
 });
 
-const StyledPaper = styled(Paper)({
-  padding: '40px',
-  width: '100%',
-  maxWidth: '400px',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: '20px',
-  borderRadius: '15px',
-  boxShadow: '0 3px 10px rgba(0, 0, 0, 0.2)',
+const LoginButton = styled(Button)({
+  borderRadius: '10px',
+  padding: '12px',
+  fontSize: '16px',
+  fontWeight: 600,
+  textTransform: 'none',
+  background: 'linear-gradient(135deg, #0061ff 0%, #60efff 100%)',
+  '&:hover': {
+    background: 'linear-gradient(135deg, #0052d9 0%, #50d9ff 100%)',
+  },
 });
 
-const Form = styled('form')({
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '20px',
+const Logo = styled('img')({
+  width: '300px',  
+  height: 'auto',  
+  marginBottom: '40px', 
 });
 
 const LoginPage = () => {
@@ -45,6 +102,7 @@ const LoginPage = () => {
     email: '',
     password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
@@ -62,7 +120,6 @@ const LoginPage = () => {
     );
 
     if (user) {
-      // 실제로는 여기서 토큰 저장 등의 작업을 수행
       localStorage.setItem('user', JSON.stringify(user));
       navigate('/');
     } else {
@@ -71,83 +128,106 @@ const LoginPage = () => {
   };
 
   return (
-    <StyledContainer>
-      <StyledPaper>
-        <Typography 
-          variant="h5" 
-          component="h1"
-          sx={{ 
-            fontWeight: 'bold',
-            color: '#333',
-            textAlign: 'center' 
-          }}
-        >
-          Reactrip 로그인
-        </Typography>
-
-        <Form onSubmit={handleSubmit}>
-          <TextField
-            fullWidth
-            label="이메일"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            variant="outlined"
-            required
-          />
-
-          <TextField
-            fullWidth
-            label="비밀번호"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            variant="outlined"
-            required
-          />
-
-          {error && (
-            <Typography color="error" textAlign="center">
-              {error}
+    <PageContainer>
+      <StyledContainer>
+        <LoginBox>
+          <LeftSection>
+            <Logo src="/src/assets/images/Timmerman.png" alt="Logo" />
+            <Typography variant="h4" fontWeight="700" textAlign="center" mb={3}>
+              Welcome Back!
             </Typography>
-          )}
+            <Typography textAlign="center" fontSize="16px" mb={4}>
+              새로운 여행의 시작,<br />
+              리액트립에서 특별한 순간을 만나보세요.
+            </Typography>
+          </LeftSection>
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{
-              bgcolor: '#000',
-              py: 1.5,
-              '&:hover': {
-                bgcolor: '#333',
-              },
-            }}
-          >
-            로그인
-          </Button>
-        </Form>
+          <RightSection>
+            <Typography variant="h5" fontWeight="700" mb={4}>
+              로그인
+            </Typography>
 
-        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-          <Typography color="text.secondary">
-            계정이 없으신가요?
-          </Typography>
-          <Link 
-            href="/auth/signup" 
-            underline="hover"
-            sx={{ 
-              color: '#000',
-              fontWeight: 500,
-              cursor: 'pointer'
-            }}
-          >
-            회원가입
-          </Link>
-        </Box>
-      </StyledPaper>
-    </StyledContainer>
+            <form onSubmit={handleSubmit}>
+              <StyledTextField
+                fullWidth
+                name="email"
+                placeholder="이메일을 입력해주세요"
+                value={formData.email}
+                onChange={handleChange}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email sx={{ color: '#9e9e9e' }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <StyledTextField
+                fullWidth
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="비밀번호를 입력해주세요"
+                value={formData.password}
+                onChange={handleChange}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock sx={{ color: '#9e9e9e' }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              {error && (
+                <Typography color="error" textAlign="center" mt={2}>
+                  {error}
+                </Typography>
+              )}
+
+              <LoginButton
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 4, mb: 2 }}
+              >
+                로그인
+              </LoginButton>
+
+              <Box textAlign="center">
+                <Typography color="text.secondary" display="inline">
+                  계정이 없으신가요? 
+                </Typography>
+                <Link 
+                  href="/auth/signup"
+                  underline="none"
+                  sx={{ 
+                    ml: 1,
+                    color: '#0061ff',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  회원가입
+                </Link>
+              </Box>
+            </form>
+          </RightSection>
+        </LoginBox>
+      </StyledContainer>
+    </PageContainer>
   );
 };
 
