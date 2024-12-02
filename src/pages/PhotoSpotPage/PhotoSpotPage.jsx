@@ -7,15 +7,11 @@ import {
   MenuItem, 
   Button, 
   Paper,
-  IconButton,
-  Dialog,
-  AppBar,
-  Toolbar 
+  IconButton 
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import CloseIcon from '@mui/icons-material/Close';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import Navbar from '../../components/common/Navbar/Navbar';
@@ -81,7 +77,6 @@ const PhotoSpotPage = () => {
   const [spots, setSpots] = useState([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [naverMapsLoaded, setNaverMapsLoaded] = useState(false);
-  const [fullscreenPanoInstance, setFullscreenPanoInstance] = useState(null);
 
   const handleResize = useCallback(() => {
     requestAnimationFrame(() => {
@@ -95,7 +90,7 @@ const PhotoSpotPage = () => {
         );
       }
       
-      if (panoRef.current && panoInstance.current) {
+      if (panoRef.current && panoInstance.current && !isFullscreen) {
         const panoContainer = panoRef.current;
         panoInstance.current.setSize(
           new window.naver.maps.Size(
@@ -104,18 +99,8 @@ const PhotoSpotPage = () => {
           )
         );
       }
-
-      if (fullscreenPanoRef.current && fullscreenPanoInstance) {
-        const container = fullscreenPanoRef.current;
-        fullscreenPanoInstance.setSize(
-          new window.naver.maps.Size(
-            container.clientWidth,
-            container.clientHeight
-          )
-        );
-      }
     });
-  }, [fullscreenPanoInstance]);
+  }, [isFullscreen]);
 
   const clearMarkers = useCallback(() => {
     markersRef.current.forEach(marker => {
@@ -133,12 +118,14 @@ const PhotoSpotPage = () => {
     const spotMarker = createPhotoSpotMarker(
       mapInstance.current,
       selectedSpot,
-      (spot) => {
-        const position = new window.naver.maps.LatLng(
-          spot.viewingSpot.lat,
-          spot.viewingSpot.lng
-        );
-        panoInstance.current?.setPosition(position);
+      () => {
+        if (panoInstance.current) {
+          const position = new window.naver.maps.LatLng(
+            selectedSpot.viewingSpot.lat,
+            selectedSpot.viewingSpot.lng
+          );
+          panoInstance.current.setPosition(position);
+        }
       }
     );
     markersRef.current.push(spotMarker);
@@ -150,53 +137,51 @@ const PhotoSpotPage = () => {
         personSpot,
         (spot) => {
           setSelectedPersonSpot(spot);
-          const position = new window.naver.maps.LatLng(spot.lat, spot.lng);
-          panoInstance.current?.setPosition(position);
+          if (panoInstance.current) {
+            const position = new window.naver.maps.LatLng(spot.lat, spot.lng);
+            panoInstance.current.setPosition(position);
+          }
         }
       );
       markersRef.current.push(personMarker);
     });
   }, [selectedSpot, clearMarkers]);
 
-  const handleSpotSelect = useCallback((spot) => {
+  const handleSpotSelect = useCallback(async (spot) => {
     setSelectedSpot(spot);
     setSelectedPersonSpot(null);
     
     if (!window.naver?.maps) return;
-    
+
     const position = new window.naver.maps.LatLng(spot.lat, spot.lng);
+    const viewingPosition = new window.naver.maps.LatLng(
+      spot.viewingSpot.lat,
+      spot.viewingSpot.lng
+    );
     
-    if (mapInstance.current) {
-      mapInstance.current.setCenter(position);
-      mapInstance.current.setZoom(18);
-    }
+    await Promise.all([
+      new Promise(resolve => {
+        if (mapInstance.current) {
+          mapInstance.current.setCenter(position);
+          mapInstance.current.setZoom(18);
+        }
+        resolve();
+      }),
+      new Promise(resolve => {
+        if (panoInstance.current) {
+          panoInstance.current.setPosition(viewingPosition);
+        }
+        resolve();
+      })
+    ]);
 
-    if (panoInstance.current) {
-      const viewingPosition = new window.naver.maps.LatLng(
-        spot.viewingSpot.lat,
-        spot.viewingSpot.lng
-      );
-      panoInstance.current.setPosition(viewingPosition);
-    }
-
-    if (fullscreenPanoInstance) {
-      const viewingPosition = new window.naver.maps.LatLng(
-        spot.viewingSpot.lat,
-        spot.viewingSpot.lng
-      );
-      fullscreenPanoInstance.setPosition(viewingPosition);
-    }
-  }, [fullscreenPanoInstance]);
+    updateMarkers();
+  }, [updateMarkers]);
 
   const toggleFullscreen = useCallback(() => {
-    if (isFullscreen && fullscreenPanoInstance) {
-      fullscreenPanoInstance.destroy();
-      setFullscreenPanoInstance(null);
-    }
-    setIsFullscreen(!isFullscreen);
-  }, [isFullscreen, fullscreenPanoInstance]);
+    setIsFullscreen(prev => !prev);
+  }, []);
 
-  // 네이버 지도 API 로드
   useEffect(() => {
     const loadMaps = async () => {
       try {
@@ -209,7 +194,6 @@ const PhotoSpotPage = () => {
     loadMaps();
   }, []);
 
-  // 메인 파노라마 및 지도 초기화
   useEffect(() => {
     if (!naverMapsLoaded) return;
 
@@ -231,8 +215,6 @@ const PhotoSpotPage = () => {
         streetLayer.setMap(map);
         handleResize();
       });
-
-      updateMarkers();
     };
 
     const initMainPanorama = () => {
@@ -263,13 +245,11 @@ const PhotoSpotPage = () => {
     };
 
     const initializeComponents = () => {
-      window.removeEventListener('resize', handleResize);
-      window.addEventListener('resize', handleResize);
-      
       initMap();
       timer = setTimeout(initMainPanorama, 100);
     };
 
+    window.addEventListener('resize', handleResize);
     initializeComponents();
 
     return () => {
@@ -286,24 +266,24 @@ const PhotoSpotPage = () => {
       }
       clearMarkers();
     };
-  }, [naverMapsLoaded, handleResize, updateMarkers, clearMarkers]);
+  }, [naverMapsLoaded, handleResize, clearMarkers]);
 
-  // 전체화면 파노라마 초기화
   useEffect(() => {
-    if (!isFullscreen || !fullscreenPanoRef.current || !naverMapsLoaded) return;
+    const citySpots = getPhotoSpots(selectedCity, selectedCategory);
+    setSpots(citySpots);
+  }, [selectedCity, selectedCategory]);
 
-    let pano;
-    let timer;
+  const FullscreenPanorama = () => {
+    if (!isFullscreen) return null;
 
-    const initFullscreenPano = () => {
-      if (!window.naver?.maps) return;
+    useEffect(() => {
+      if (!fullscreenPanoRef.current || !selectedSpot) return;
 
-      const position = panoInstance.current ? 
-        panoInstance.current.getPosition() : 
-        new window.naver.maps.LatLng(37.5666103, 126.9783882);
-
-      pano = new window.naver.maps.Panorama(fullscreenPanoRef.current, {
-        position: position,
+      const pano = new window.naver.maps.Panorama(fullscreenPanoRef.current, {
+        position: new window.naver.maps.LatLng(
+          selectedSpot.viewingSpot.lat,
+          selectedSpot.viewingSpot.lng
+        ),
         pov: {
           pan: -133,
           tilt: 0,
@@ -313,64 +293,74 @@ const PhotoSpotPage = () => {
         flightSpot: true
       });
 
-      setFullscreenPanoInstance(pano);
-      handleResize();
-    };
+      return () => {
+        if (pano) {
+          pano.destroy();
+        }
+      };
+    }, []);
 
-    timer = setTimeout(initFullscreenPano, 100);
-
-    return () => {
-      if (pano) {
-        pano.destroy();
-      }
-      if (timer) {
-        clearTimeout(timer);
-      }
-      setFullscreenPanoInstance(null);
-    };
-  }, [isFullscreen, naverMapsLoaded, handleResize]);
-
-  // 스팟 목록 업데이트
-  useEffect(() => {
-    const citySpots = getPhotoSpots(selectedCity, selectedCategory);
-    setSpots(citySpots);
-  }, [selectedCity, selectedCategory]);
-
-  const FullscreenPanorama = () => (
-    <Dialog
-      fullScreen
-      open={isFullscreen}
-      onClose={toggleFullscreen}
-    >
-      <AppBar sx={{ position: 'relative' }}>
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={toggleFullscreen}
-            aria-label="close"
-          >
-            <CloseIcon />
-          </IconButton>
-          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-            {selectedSpot?.title || '거리뷰'}
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Box sx={{ width: '100%', height: 'calc(100vh - 64px)', position: 'relative' }}>
+    return (
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          backgroundColor: '#000'
+        }}
+      >
+        <IconButton
+          onClick={toggleFullscreen}
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: 16,
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            },
+            zIndex: 10000,
+          }}
+        >
+          <FullscreenExitIcon />
+        </IconButton>
         <div 
           ref={fullscreenPanoRef}
           style={{ 
             width: '100%', 
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0
+            height: '100%'
           }} 
         />
-      </Box>
-    </Dialog>
-  );
+        {selectedSpot && (
+          <Paper
+            sx={{
+              position: 'absolute',
+              bottom: 16,
+              left: 16,
+              right: 16,
+              p: 2,
+              mx: 'auto',
+              maxWidth: '800px',
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              color: 'white',
+              backdropFilter: 'blur(5px)'
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              {selectedSpot.title}
+            </Typography>
+            <Typography variant="body2">
+              💡 촬영 팁: {selectedSpot.tips}
+            </Typography>
+          </Paper>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', backgroundColor: '#fff' }}>
@@ -454,13 +444,15 @@ const PhotoSpotPage = () => {
                   <FullscreenButton onClick={toggleFullscreen}>
                     {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
                   </FullscreenButton>
-                  <div ref={panoRef} style={{ 
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0
-                  }} />
+                  {!isFullscreen && (
+                    <div ref={panoRef} style={{ 
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0
+                    }} />
+                  )}
                 </div>
                 <div style={{ 
                   backgroundColor: '#fff',
@@ -479,7 +471,7 @@ const PhotoSpotPage = () => {
                 </div>
               </div>
 
-              {selectedSpot && (
+              {selectedSpot && !isFullscreen && (
                 <Paper
                   sx={{
                     position: 'absolute',
@@ -497,7 +489,7 @@ const PhotoSpotPage = () => {
                 </Paper>
               )}
 
-              {selectedPersonSpot && (
+              {selectedPersonSpot && !isFullscreen && (
                 <Paper
                   sx={{
                     position: 'absolute',
