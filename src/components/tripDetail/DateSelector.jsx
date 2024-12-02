@@ -7,6 +7,7 @@ import {
   IconButton
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 
 //날짜 선택 버튼 
@@ -29,8 +30,20 @@ const StyledIconButton = styled(IconButton)({
   padding: "8px", // 버튼 크기 조정
 });
 
+// DeleteIcon에 맞는 스타일의 IconButton 생성
+const StyledDeleteIconButton = styled(IconButton)({
+  backgroundColor: "#f44336", // 삭제 버튼 기본 배경색 (빨간색)
+  color: "#fff", // 아이콘 색상
+  "&:hover": {
+    backgroundColor: "#d32f2f", // 호버 시 더 어두운 빨간색
+  },
+  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // 그림자 효과
+  borderRadius: "50%", // 둥근 모양
+  padding: "8px", // 버튼 크기 조정
+});
+
 //날짜 선택 컴포넌트
-const DateSelector = ({ dates = [], onDateClick = f => f, selectedDate, onaddDate }) => {
+const DateSelector = ({ dates = [], onDateClick = f => f, selectedDate, onaddDate, onDeleteDate }) => {
 
     // const [startDate, endDate] = previewData[0].date.split(" - "); // 시작 날짜와 종료 날짜를 가져옴
   
@@ -67,6 +80,11 @@ const DateSelector = ({ dates = [], onDateClick = f => f, selectedDate, onaddDat
           <StyledIconButton onClick={()=>onaddDate()}>
           <AddIcon/>
           </StyledIconButton>
+        </Grid>
+        <Grid item>
+          <StyledDeleteIconButton onClick={()=>onDeleteDate()}>
+          <RemoveIcon/>
+          </StyledDeleteIconButton>
         </Grid>
       </Grid>
       </Box>
