@@ -11,7 +11,7 @@ const MapContainer = styled(Box)({
   boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
 });
 
-const KakaoRouteMap = ({ routeData }) => {
+const KakaoRouteMap = ({ routeData, placeNames }) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const KakaoRouteMap = ({ routeData }) => {
         routeData.routes[0].summary.origin.y,
         routeData.routes[0].summary.origin.x
       ),
-      zoom: 13,
+      zoom: 11,
       zoomControl: true,
       zoomControlOptions: {
         position: window.naver.maps.Position.TOP_RIGHT,
@@ -55,27 +55,51 @@ const KakaoRouteMap = ({ routeData }) => {
       });
     });
 
+    let activeLabel = null; // 현재 열려 있는 Label
+
     // 마커 추가 (출발지, 경유지, 목적지)
     const addMarker = (x, y, title) => {
-      new window.naver.maps.Marker({
+      const marker = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(y, x),
         map: map,
-        title: title,
+      });
+    
+      const label = new window.naver.maps.InfoWindow({
+        content: `
+          <div style="
+            background: white; 
+            border: 1px solid #ccc; 
+            padding: 5px 10px; 
+            border-radius: 5px; 
+            font-size: 12px;
+            white-space: nowrap;">
+            ${title}
+          </div>
+        `,
+      });
+    
+      window.naver.maps.Event.addListener(marker, "click", () => {
+        // 기존 Label 닫기
+        if (activeLabel) activeLabel.close();
+    
+        // 현재 Label 열기
+        label.open(map, marker);
+        activeLabel = label; // 현재 활성 Label 저장
       });
     };
 
     // 출발지
     const origin = routeData.routes[0].summary.origin;
-    addMarker(origin.x, origin.y, '출발지');
+    addMarker(origin.x, origin.y, placeNames[0]);
 
     // 경유지
-    routeData.routes[0].summary.waypoints.forEach((waypoint) => {
-      addMarker(waypoint.x, waypoint.y, '경유지');
+    routeData.routes[0].summary.waypoints.forEach((waypoint, index) => {
+      addMarker(waypoint.x, waypoint.y, placeNames[index + 1]);
     });
 
     // 목적지
     const destination = routeData.routes[0].summary.destination;
-    addMarker(destination.x, destination.y, '목적지');
+    addMarker(destination.x, destination.y, placeNames[placeNames.length - 1]);
 
     return () => {
       // Cleanup

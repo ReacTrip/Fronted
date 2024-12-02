@@ -243,7 +243,24 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
 
       </Box>
       {/* 여행 계획이 있으면 계획을 표시하고, 없으면 안내 문구 표시 */}
-      {datePlan !== undefined ? (
+      {(!datePlan || datePlan.length === 0) ? (
+        <>
+          <Typography sx={{ textAlign: 'center', color: 'grey.500', mt: 5 }}>
+            계획을 추가해보세요
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
+            {isAuthor && (isAddButton ? (<Button variant="outlined" startIcon={<AddIcon />} onClick={handleClick}>
+              추가
+            </Button>) : (
+              <AddButtonGroup>
+                <StyledIconButton onClick={() => openModalWithCategory("touristAttraction")}><PlaceIcon /></StyledIconButton>
+                <StyledIconButton onClick={() => openModalWithCategory("restaurant")}><RestaurantIcon /></StyledIconButton>
+                <StyledIconButton onClick={() => openModalWithCategory("festival")}><FestivalIcon /></StyledIconButton>
+                <StyledIconButton onClick={handleClick}><CloseIcon /></StyledIconButton>
+              </AddButtonGroup>))}
+          </Box>
+        </>
+      ) : (
         <Box sx={{ padding: 3, maxWidth: 1400, margin: 'auto' }}>
           {/* Vertical Line Container */}
           <Box sx={{ position: 'relative' }}>
@@ -289,24 +306,7 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
               총 이동 시간: {formatTime(result.allDuration)}, 총 이동 거리: {formatDistance(result.allDistance)}
             </TimeTypography>)}
         </Box>
-      ) : (
-        <>
-          <Typography sx={{ textAlign: 'center', color: 'grey.500', mt: 5 }}>
-            계획을 추가해보세요
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-            {isAuthor && (isAddButton ? (<Button variant="outlined" startIcon={<AddIcon />} onClick={handleClick}>
-              추가
-            </Button>) : (
-              <AddButtonGroup>
-                <StyledIconButton onClick={() => openModalWithCategory("touristAttraction")}><PlaceIcon /></StyledIconButton>
-                <StyledIconButton onClick={() => openModalWithCategory("restaurant")}><RestaurantIcon /></StyledIconButton>
-                <StyledIconButton onClick={() => openModalWithCategory("festival")}><FestivalIcon /></StyledIconButton>
-                <StyledIconButton onClick={handleClick}><CloseIcon /></StyledIconButton>
-              </AddButtonGroup>))}
-          </Box>
-        </>
-      )}
+      ) }
 
       <Modal open={isModalOpen} onClose={closeModalClearValue}>
         <ModalContainer >

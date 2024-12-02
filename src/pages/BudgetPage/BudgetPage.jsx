@@ -57,16 +57,10 @@ import {useTripDetail} from "../../hooks/usePlanPage.js"
 
 
 const StyledContainer = styled(Container)({
-  maxWidth: '1400px !important',
+  maxWidth: '1200px !important',
   padding: '0 20px',
 });
 
-
-// 임시 사용자 정보
-const currentUser = {
-  id: "@TripLover",
-  name: '여행매니아',
-};
 
 
 //페이지 컴포넌트
@@ -119,6 +113,7 @@ const BudgetPage = () => {
 
   const changeMap = (resultData) => {
     setRouteData(resultData);
+    console.log(routeData);
   }
 
 
@@ -173,7 +168,8 @@ const BudgetPage = () => {
   };
 
   const changeLike = (like) => {
-    const newDetail = {...detail, like};
+    const totalLike = like === 1 ? (detail.totalLike + 1) : (detail.totalLike - 1)
+    const newDetail = {...detail, like, totalLike};
     setDetail(newDetail);
   }
 
@@ -221,7 +217,7 @@ const BudgetPage = () => {
             }}
           >
             {routeData.routes.length > 0 ? (
-              <KakaoRouteMap routeData={routeData} />
+              <KakaoRouteMap routeData={routeData} placeNames={detail.dailyItinerary[selectedDate].map(item => item.name)}/>
             ) : (
               <p>장소를 2개 이상 추가해보세요.</p>
             )}
