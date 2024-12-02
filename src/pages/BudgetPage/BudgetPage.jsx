@@ -76,24 +76,14 @@ const BudgetPage = () => {
     changeImages,
     addPlace,
     postTrip,
-    addDate
+    addDate,
+    deleteDate,
+    dates,
+    selectedDate,
+    handleDateClick
 } = useTripDetail(location.state?.detail || {});
 
   const navigate = useNavigate();
-
-  //시작날짜와 끝 날짜로 날짜 배열 생성해주는 함수
-  const generateDateArray = (startDate, endDate) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const dateArray = [];
-
-    for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
-      const formattedDate = date.toISOString().split("T")[0]; // 'yyyy-mm-dd' 형식으로 변환
-      dateArray.push(formattedDate);
-    }
-
-    return dateArray;
-  };
 
   const [routeData, setRouteData] = useState({ routes: [], });  //이동경로api로 받아온 데이터.
 
@@ -117,14 +107,6 @@ const BudgetPage = () => {
   }
 
 
-  // 날짜 배열 생성
-  const dates = generateDateArray(detail.startDate, detail.endDate);
-
-  const [selectedDate, setSelectedDate] = useState(dates[0]);
-
-  const handleDateClick = (dates) => {
-    setSelectedDate(dates);
-  };
 
   const copyTrip = () => {
     if (confirm("여행 계획을 내 여행에 생성하시겠습니까?")) {
@@ -193,7 +175,7 @@ const BudgetPage = () => {
             </Button>)}
           </Box>
           <Divider sx={{ margin: '20px 0' }} />
-          <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} onaddDate={addDate}/>
+          <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} onaddDate={addDate} onDeleteDate={deleteDate}/>
           <Divider sx={{ margin: '20px 0' }} />
           <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx) => deleteDetail(selectedDate, idx)} onChangeMap={changeMap} onChangeImages={(idx, newImages) => changeImages(selectedDate, idx, newImages)}
             onAddPlace={(place, notes, time) => addPlace(selectedDate, place, notes, time)} isAuthor={isAuthor} />
@@ -216,7 +198,7 @@ const BudgetPage = () => {
               backgroundColor: "#f5f5f5",
             }}
           >
-            {routeData.routes.length > 0 ? (
+            {(routeData.routes.length > 0 && (detail.dailyItinerary[selectedDate] || []).length > 1) ? (
               <KakaoRouteMap routeData={routeData} placeNames={detail.dailyItinerary[selectedDate].map(item => item.name)}/>
             ) : (
               <p>장소를 2개 이상 추가해보세요.</p>
