@@ -57,9 +57,10 @@ import {useTripDetail} from "../../hooks/usePlanPage.js"
 
 
 const StyledContainer = styled(Container)({
-  maxWidth: '1400px !important',
+  maxWidth: '1200px !important',
   padding: '0 20px',
 });
+
 
 
 //페이지 컴포넌트
@@ -95,10 +96,6 @@ const BudgetPage = () => {
   };
 
   const [routeData, setRouteData] = useState({ routes: [], });  //이동경로api로 받아온 데이터.
-
-  const location = useLocation();
-  const [detail, setDetail] = useState(location.state?.detail || {});// `detail`에 전달된 데이터가 없을 때를 대비한 안전 처리
-  console.log(detail);
   const isAuthor = (detail.AuthorId === UserInfo.id);  //작성자인지 확인
 
   useEffect(() => {
@@ -115,6 +112,7 @@ const BudgetPage = () => {
 
   const changeMap = (resultData) => {
     setRouteData(resultData);
+    console.log(routeData);
   }
 
 
@@ -169,7 +167,8 @@ const BudgetPage = () => {
   };
 
   const changeLike = (like) => {
-    const newDetail = {...detail, like};
+    const totalLike = like === 1 ? (detail.totalLike + 1) : (detail.totalLike - 1)
+    const newDetail = {...detail, like, totalLike};
     setDetail(newDetail);
   }
 
@@ -217,7 +216,7 @@ const BudgetPage = () => {
             }}
           >
             {routeData.routes.length > 0 ? (
-              <KakaoRouteMap routeData={routeData} />
+              <KakaoRouteMap routeData={routeData} placeNames={detail.dailyItinerary[selectedDate].map(item => item.name)}/>
             ) : (
               <p>장소를 2개 이상 추가해보세요.</p>
             )}
