@@ -20,9 +20,59 @@ import PhotoSpotPage from './pages/PhotoSpotPage/PhotoSpotPage';
 import SpotDetail from './pages/PhotoSpotPage/SpotDetail';
 
 const App = () => {
- useEffect(() => {
-   localStorage.setItem("trips", JSON.stringify(detailData));
- }, []);
+  useEffect(() => {
+    // 기존 로컬스토리지 초기화 및 초기값 설정
+    localStorage.clear();
+    localStorage.setItem('likedPlaces', JSON.stringify([]));
+    localStorage.setItem('likes', JSON.stringify({
+      서울: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      제주: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      광주: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      포천: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      울산: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      대구: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      부산: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      인천: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      대전: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+    }));
+    localStorage.setItem("trips", JSON.stringify(detailData));
+  }, []);
  
  return (
    <MuiThemeProvider theme={muiTheme}>
