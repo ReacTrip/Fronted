@@ -43,6 +43,12 @@ export const useTripDetail = (initialDetail) => {
 
     const addPlace = (date, place, notes, time) => {
         const updatedItinerary = { ...detail.dailyItinerary };
+
+        console.log("Before:", updatedItinerary[date]); // 기존 값 확인
+
+        if (!Array.isArray(updatedItinerary[date])) {
+            updatedItinerary[date] = [];
+        }
         updatedItinerary[date] = [
             ...updatedItinerary[date],
             {
@@ -67,18 +73,26 @@ export const useTripDetail = (initialDetail) => {
     const postTrip = () => {
         const newDetail = { ...detail };
         if (newDetail.post) {
-          if (confirm("게시물을 삭제하시겠습니까?")) {
-            newDetail.post = 0; // 값 변경
-            alert("게시물이 삭제되었습니다.");
-          } else {
-            return;
-          }
+            if (confirm("게시물을 삭제하시겠습니까?")) {
+                newDetail.post = 0; // 값 변경
+                alert("게시물이 삭제되었습니다.");
+            } else {
+                return;
+            }
         } else {
-          newDetail.post = 1; // 값 변경
-          alert("게시물 작성을 완료하였습니다.");
+            newDetail.post = 1; // 값 변경
+            alert("게시물 작성을 완료하였습니다.");
         }
         setDetail(newDetail);
-      }
+    }
+
+    const addDate = () => {
+        const newDetail = { ...detail }; // 원본 데이터 복사
+        const endDate = new Date(detail.endDate);
+        endDate.setDate(endDate.getDate() + 1); // 하루 추가
+        newDetail.endDate = endDate.toISOString().split("T")[0]; // 날짜 문자열로 변환
+        setDetail(newDetail);
+    }
 
     return {
         detail,
@@ -88,5 +102,6 @@ export const useTripDetail = (initialDetail) => {
         changeImages,
         addPlace,
         postTrip,
+        addDate,
     };
 };
