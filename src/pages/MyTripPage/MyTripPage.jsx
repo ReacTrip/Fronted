@@ -74,7 +74,6 @@ const MyTripPage = () => {
     setLikedTrips(likedTrips);
   }, []);
 
-  // 여행 추가
   const handleAddTrip = async () => {
     if (!newTrip.title) {
       alert("여행 제목을 입력하세요");
@@ -117,12 +116,16 @@ const MyTripPage = () => {
       mainImage: newTrip.image ? imageUrl : null,
       dailyItinerary,
       AuthorId: UserInfo.id,
+      totalLike: 0,
       like: 0,
       post: 0,
     };
   
-    const updatedTrips = [...trips, newTripData];
+    // localStorage에서 기존 데이터를 가져옴
+    const existingTrips = JSON.parse(localStorage.getItem("trips")) || [];
+    const updatedTrips = [...existingTrips, newTripData];
   
+    // 상태와 localStorage를 업데이트
     setTrips(updatedTrips);
     localStorage.setItem("trips", JSON.stringify(updatedTrips));
   
