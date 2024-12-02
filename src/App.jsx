@@ -17,7 +17,6 @@ import LoginPage from './pages/auth/LoginPage/LoginPage';
 import SignupPage from './pages/auth/SignupPage/SignupPage';
 import InterestTestPage from './pages/InterestTestPage/InterestTestPage';
 import PhotoSpotPage from './pages/PhotoSpotPage/PhotoSpotPage';
-import SpotDetail from './pages/PhotoSpotPage/SpotDetail';
 
 const App = () => {
   useEffect(() => {
@@ -90,7 +89,6 @@ const App = () => {
            <Route path="/my-trip" element={<MyTripPage />} />
            <Route path="/trip-place" element={<TripPlacePage />} />
            <Route path="/photo-spot" element={<PhotoSpotPage />} />
-           <Route path="/photo-spot/:cityId/:spotId" element={<SpotDetail />} />
            
            {/* 인증 페이지 */}
            <Route path="/auth/login" element={<LoginPage />} />
@@ -98,8 +96,7 @@ const App = () => {
            
            {/* City 경로 설정 */}
            <Route path="/city" element={<City />} />
-
-        </Routes>
+         </Routes>
        </Router>
      </StyledThemeProvider>
    </MuiThemeProvider>

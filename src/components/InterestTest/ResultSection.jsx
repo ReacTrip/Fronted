@@ -1,4 +1,5 @@
 import React, { useEffect, memo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
   Typography, 
@@ -93,6 +94,17 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   }
 }));
 
+const ButtonContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(2),
+  justifyContent: 'center',
+  marginTop: theme.spacing(6)
+}));
+
+const availableCities = [
+  "서울", "제주", "광주", "포천", "울산", "대구", "부산", "인천", "대전"
+];
+
 export const ResultSection = memo(({
   result,
   placeInfo,
@@ -103,6 +115,8 @@ export const ResultSection = memo(({
   onReset,
   onPlaceInfoRequest
 }) => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     let isMounted = true;
 
@@ -120,6 +134,12 @@ export const ResultSection = memo(({
   }, [result, activeCategory, onPlaceInfoRequest]);
 
   if (!result) return null;
+
+  const isCityAvailable = availableCities.includes(result);
+
+  const handleExploreCity = () => {
+    navigate('/city', { state: { cityName: result } });
+  };
 
   return (
     <Container>
@@ -294,13 +314,13 @@ export const ResultSection = memo(({
           )}
         </Box>
 
-        <Box sx={{ mt: 6, textAlign: 'center' }}>
+        <ButtonContainer>
           <Button
             variant="contained"
             size="large"
             onClick={onReset}
             sx={{
-              px: 6,
+              px: 4,
               py: 2,
               borderRadius: 3,
               background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
@@ -315,7 +335,30 @@ export const ResultSection = memo(({
           >
             다시 테스트하기
           </Button>
-        </Box>
+
+          {isCityAvailable && (
+            <Button
+              variant="contained"
+              size="large"
+              onClick={handleExploreCity}
+              sx={{
+                px: 4,
+                py: 2,
+                borderRadius: 3,
+                background: 'linear-gradient(45deg, #FF6B6B 30%, #FF8E8E 90%)',
+                color: 'white',
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                boxShadow: '0 3px 5px 2px rgba(255, 107, 107, .3)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #FF5252 30%, #FF7676 90%)',
+                }
+              }}
+            >
+              추천 지역 더 알아보기
+            </Button>
+          )}
+        </ButtonContainer>
       </ContentWrapper>
     </Container>
   );
