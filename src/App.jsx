@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
 import { muiTheme } from './styles/theme';
 import GlobalStyles from './styles/globalStyles';
+import City from './pages/TripPlacePage/City';
 
 // 페이지 컴포넌트 import
 import BudgetPage from './pages/BudgetPage/BudgetPage';
@@ -18,21 +19,60 @@ import InterestTestPage from './pages/InterestTestPage/InterestTestPage';
 import PhotoSpotPage from './pages/PhotoSpotPage/PhotoSpotPage';
 import SpotDetail from './pages/PhotoSpotPage/SpotDetail';
 
-// 각 여행지
-import Jeju from './pages/TripPlacePage/Cities/Jeju';
-import Seoul from './pages/TripPlacePage/Cities/Seoul';
-import Busan from './pages/TripPlacePage/Cities/Busan';
-import Daegu from './pages/TripPlacePage/Cities/Daegu';
-import Gwangju from './pages/TripPlacePage/Cities/Gwangju';
-import Daejeon from './pages/TripPlacePage/Cities/Daejeon';
-import Incheon from './pages/TripPlacePage/Cities/Incheon';
-import Ulsan from './pages/TripPlacePage/Cities/Ulsan';
-import Pocheon from './pages/TripPlacePage/Cities/Pocheon';
-
 const App = () => {
- useEffect(() => {
-   localStorage.setItem("trips", JSON.stringify(detailData));
- }, []);
+  useEffect(() => {
+    // 기존 로컬스토리지 초기화 및 초기값 설정
+    localStorage.clear();
+    localStorage.setItem('likedPlaces', JSON.stringify([]));
+    localStorage.setItem('likes', JSON.stringify({
+      서울: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      제주: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      광주: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      포천: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      울산: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      대구: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      부산: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      인천: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+      대전: {
+        attractions: [false, false, false],
+        festivals: [false, false, false],
+        foods: [false, false, false],
+      },
+    }));
+    localStorage.setItem("trips", JSON.stringify(detailData));
+  }, []);
  
  return (
    <MuiThemeProvider theme={muiTheme}>
@@ -56,17 +96,10 @@ const App = () => {
            <Route path="/auth/login" element={<LoginPage />} />
            <Route path="/auth/signup" element={<SignupPage />} />
            
-           {/* 도시 페이지 */}
-           <Route path="/trip/jeju" element={<Jeju />} />
-           <Route path="/trip/seoul" element={<Seoul />} />
-           <Route path="/trip/busan" element={<Busan />} />
-           <Route path="/trip/daegu" element={<Daegu />} />
-           <Route path="/trip/gwangju" element={<Gwangju />} />
-           <Route path="/trip/daejeon" element={<Daejeon />} />
-           <Route path="/trip/incheon" element={<Incheon />} />
-           <Route path="/trip/ulsan" element={<Ulsan />} />
-           <Route path="/trip/pocheon" element={<Pocheon />} />
-         </Routes>
+           {/* City 경로 설정 */}
+           <Route path="/city" element={<City />} />
+
+        </Routes>
        </Router>
      </StyledThemeProvider>
    </MuiThemeProvider>

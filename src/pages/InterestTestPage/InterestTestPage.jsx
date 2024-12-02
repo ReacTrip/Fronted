@@ -1,8 +1,8 @@
 import React from 'react';
 import { 
   Box, 
-  Container,
-  Paper,
+  Container, 
+  Paper, 
   Typography 
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -18,16 +18,21 @@ import Navbar from '../../components/common/Navbar/Navbar';
 const PageWrapper = styled(Box)({
   minHeight: '100vh',
   display: 'flex',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  backgroundColor: '#ffffff'
 });
 
-// 컨텐츠 컨테이너 (Navbar 아래 영역)
+// 메인 컨테이너 (메인페이지와 동일한 maxWidth 적용)
+const StyledContainer = styled(Container)({
+  maxWidth: '1200px !important',
+  padding: '0 20px',
+});
+
+// 컨텐츠 컨테이너
 const ContentContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(4),
-  padding: theme.spacing(4),
-  maxWidth: '1400px',
-  margin: '0 auto',
+  padding: theme.spacing(-4),
   alignItems: 'flex-start',
   width: '100%',
   [theme.breakpoints.down('md')]: {
@@ -50,12 +55,6 @@ const MainContentInner = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(2)
   }
-}));
-
-const BackgroundWrapper = styled(Box)(({ theme }) => ({
-  backgroundColor: '#ffffff',
-  flexGrow: 1, 
-  paddingBottom: theme.spacing(4)
 }));
 
 const InterestTestPage = () => {
@@ -87,41 +86,39 @@ const InterestTestPage = () => {
 
   return (
     <PageWrapper>
-      <Navbar />
-      <BackgroundWrapper>
-        <Container maxWidth={false}>
-          <ContentContainer>
-            <GuideSection
-              testPhase={testPhase}
-              mascotImage={character}
-              message={mascotMessage}
-            />
-            
-            <MainContent>
-              <MainContentInner>
-                {!result ? (
-                  <QuestionSection
-                    currentQuestion={currentQuestion}
-                    progress={progress}
-                    onAnswer={handleAnswer}
-                  />
-                ) : (
-                  <ResultSection
-                    result={result}
-                    placeInfo={placeInfo}
-                    isLoading={isLoading}
-                    error={error}
-                    activeCategory={activeCategory}
-                    onCategoryChange={setActiveCategory}
-                    onReset={handleReset}
-                    onPlaceInfoRequest={fetchPlaceInfo}
-                  />
-                )}
-              </MainContentInner>
-            </MainContent>
-          </ContentContainer>
-        </Container>
-      </BackgroundWrapper>
+      <StyledContainer>
+        <Navbar />
+        <ContentContainer>
+          <GuideSection
+            testPhase={testPhase}
+            mascotImage={character}
+            message={mascotMessage}
+          />
+          
+          <MainContent>
+            <MainContentInner>
+              {!result ? (
+                <QuestionSection
+                  currentQuestion={currentQuestion}
+                  progress={progress}
+                  onAnswer={handleAnswer}
+                />
+              ) : (
+                <ResultSection
+                  result={result}
+                  placeInfo={placeInfo}
+                  isLoading={isLoading}
+                  error={error}
+                  activeCategory={activeCategory}
+                  onCategoryChange={setActiveCategory}
+                  onReset={handleReset}
+                  onPlaceInfoRequest={fetchPlaceInfo}
+                />
+              )}
+            </MainContentInner>
+          </MainContent>
+        </ContentContainer>
+      </StyledContainer>
     </PageWrapper>
   );
 };

@@ -2,30 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Camera, Clock, Sun, MapPin, Info, Star } from 'lucide-react';
 import NaverMapComponent from '../../components/map/NaverMapComponent';
-import tourApiService from '../../api/TourApiService';
+import { getSpotDetail } from '../../api/KakoTourApi.js';
 
-// getSpotDetail 함수를 tourApiService에서 직접 사용
 const SpotDetail = () => {
-  const { cityId, spotId } = useParams();
-  const [spotData, setSpotData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('info');
-  const [selectedImage, setSelectedImage] = useState(null);
+ const { spotName } = useParams();
+ const [spotData, setSpotData] = useState(null);
+ const [loading, setLoading] = useState(true);
+ const [activeTab, setActiveTab] = useState('info');
+ const [selectedImage, setSelectedImage] = useState(null);
 
-  useEffect(() => {
-    const fetchSpotDetail = async () => {
-      try {
-        const data = await tourApiService.getRelatedAttractions(spotId);
-        setSpotData(data);
-      } catch (error) {
-        console.error('Failed to fetch spot details:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+ useEffect(() => {
+   const fetchSpotDetail = async () => {
+     try {
+       const data = await getSpotDetail(decodeURIComponent(spotName));
+       setSpotData(data);
+     } catch (error) {
+       console.error('Failed to fetch spot details:', error);
+     } finally {
+       setLoading(false);
+     }
+   };
 
-    fetchSpotDetail();
-  }, [spotId]);
+   fetchSpotDetail();
+ }, [spotName]);
 
  if (loading) {
    return (
@@ -48,7 +47,7 @@ const SpotDetail = () => {
      {/* Header Image Section */}
      <div className="relative h-[500px]">
        <img
-         src={spotData.firstimage || '/placeholder-image.jpg'}
+         src={spotData.images[0] || '/placeholder-image.jpg'}
          alt={spotData.title}
          className="w-full h-full object-cover"
        />
@@ -58,7 +57,7 @@ const SpotDetail = () => {
            <h1 className="text-4xl font-bold mb-4">{spotData.title}</h1>
            <p className="flex items-center text-lg">
              <MapPin className="mr-2" />
-             {spotData.addr1}
+             {spotData.address}
            </p>
          </div>
        </div>
@@ -102,29 +101,38 @@ const SpotDetail = () => {
          <div className="lg:col-span-2">
            {activeTab === 'info' ? (
              <>
-               {/* Overview Section */}
+               {/* Photo Gallery */}
                <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-                 <h2 className="text-2xl font-bold mb-4">소개</h2>
-                 <p className="text-gray-700 leading-relaxed">{spotData.overview}</p>
-               </div>
-
-               {/* Gallery Section */}
-               <div className="bg-white rounded-lg shadow-lg p-6">
                  <h2 className="text-2xl font-bold mb-4">사진 갤러리</h2>
                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                   {spotData.additionalImages?.map((image, index) => (
+                   {spotData.images.map((image, index) => (
                      <div
                        key={index}
                        className="relative aspect-square cursor-pointer overflow-hidden rounded-lg"
-                       onClick={() => setSelectedImage(image.originimgurl)}
+                       onClick={() => setSelectedImage(image)}
                      >
                        <img
-                         src={image.originimgurl}
+                         src={image}
                          alt={`Gallery ${index + 1}`}
                          className="w-full h-full object-cover transform transition-transform hover:scale-110"
                        />
                      </div>
                    ))}
+                 </div>
+               </div>
+
+               {/* Additional Info */}
+               <div className="bg-white rounded-lg shadow-lg p-6">
+                 <h2 className="text-2xl font-bold mb-4">상세 정보</h2>
+                 <div className="space-y-4">
+                   <p className="text-gray-600">
+                     카테고리: {spotData.category}
+                   </p>
+                   {spotData.phone && (
+                     <p className="text-gray-600">
+                       전화번호: {spotData.phone}
+                     </p>
+                   )}
                  </div>
                </div>
              </>
@@ -136,7 +144,19 @@ const SpotDetail = () => {
                    <Clock className="mr-2" />
                    최적의 촬영 시간
                  </h2>
-                 <TimeGuide timeInfo={spotData} weatherTips={spotData.weatherTips} />
+                 <div className="space-y-4">
+                   <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                     <div>
+                       <p className="font-semibold">아침</p>
+                       <p className="text-gray-600">{spotData.photoGuide.bestTime.morning}</p>
+                     </div>
+                     <div>
+                       <p className="font-semibold">저녁</p>
+                       <p className="text-gray-600">{spotData.photoGuide.bestTime.evening}</p>
+                     </div>
+                   </div>
+                   <p className="text-gray-600">{spotData.photoGuide.bestTime.reason}</p>
+                 </div>
                </div>
 
                {/* Camera Settings */}
@@ -145,34 +165,58 @@ const SpotDetail = () => {
                    <Camera className="mr-2" />
                    카메라 설정 가이드
                  </h2>
-                 <CameraGuide settings={spotData.cameraSettings} />
+                 <div className="grid grid-cols-3 gap-4 mb-6">
+                   <div className="p-4 bg-gray-50 rounded-lg">
+                     <p className="font-semibold">조리개</p>
+                     <p className="text-gray-600">{spotData.photoGuide.camera.aperture}</p>
+                   </div>
+                   <div className="p-4 bg-gray-50 rounded-lg">
+                     <p className="font-semibold">셔터스피드</p>
+                     <p className="text-gray-600">{spotData.photoGuide.camera.shutterSpeed}</p>
+                   </div>
+                   <div className="p-4 bg-gray-50 rounded-lg">
+                     <p className="font-semibold">ISO</p>
+                     <p className="text-gray-600">{spotData.photoGuide.camera.iso}</p>
+                   </div>
+                 </div>
                </div>
 
-               {/* Pose Guide */}
+               {/* Photo Spots */}
                <div className="bg-white rounded-lg shadow-lg p-6">
-                 <h2 className="text-2xl font-bold mb-4">추천 포즈 & 구도</h2>
-                 <PoseGuide poses={spotData.poses} />
+                 <h2 className="text-2xl font-bold mb-4">추천 촬영 포인트</h2>
+                 <div className="space-y-4">
+                   {spotData.photoGuide.photoSpots.map((spot, index) => (
+                     <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                       <h3 className="font-semibold mb-2">{spot.name}</h3>
+                       <p className="text-gray-600 mb-2">{spot.description}</p>
+                       <ul className="list-disc list-inside text-gray-600">
+                         {spot.tips.map((tip, tipIndex) => (
+                           <li key={tipIndex}>{tip}</li>
+                         ))}
+                       </ul>
+                     </div>
+                   ))}
+                 </div>
                </div>
              </div>
            )}
          </div>
 
-         {/* Right Column - Fixed Map & Info */}
+         {/* Right Column - Map */}
          <div className="lg:col-span-1">
-           <div className="sticky top-8 space-y-8">
-             {/* Map */}
-             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+           <div className="sticky top-8">
+             <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
                <div className="h-[300px]">
                  <NaverMapComponent
                    center={{
-                     lat: parseFloat(spotData.mapy),
-                     lng: parseFloat(spotData.mapx)
+                     lat: parseFloat(spotData.location.lat),
+                     lng: parseFloat(spotData.location.lng)
                    }}
                    markers={[
                      {
                        position: {
-                         lat: parseFloat(spotData.mapy),
-                         lng: parseFloat(spotData.mapx)
+                         lat: parseFloat(spotData.location.lat),
+                         lng: parseFloat(spotData.location.lng)
                        },
                        title: spotData.title
                      }
@@ -182,27 +226,17 @@ const SpotDetail = () => {
                </div>
              </div>
 
-             {/* Quick Info */}
+             {/* Quick Tips */}
              <div className="bg-white rounded-lg shadow-lg p-6">
-               <h3 className="text-xl font-bold mb-4">기본 정보</h3>
-               <div className="space-y-4">
-                 <div className="flex items-start">
-                   <MapPin className="w-5 h-5 mr-3 mt-1 text-gray-500" />
-                   <div>
-                     <p className="text-sm font-medium text-gray-800">주소</p>
-                     <p className="text-sm text-gray-600">{spotData.addr1}</p>
-                   </div>
-                 </div>
-                 {spotData.tel && (
-                   <div className="flex items-start">
-                     <Phone className="w-5 h-5 mr-3 mt-1 text-gray-500" />
-                     <div>
-                       <p className="text-sm font-medium text-gray-800">전화번호</p>
-                       <p className="text-sm text-gray-600">{spotData.tel}</p>
-                     </div>
-                   </div>
-                 )}
-               </div>
+               <h3 className="text-xl font-bold mb-4">촬영 팁</h3>
+               <ul className="space-y-3">
+                 {spotData.photoGuide.tips.map((tip, index) => (
+                   <li key={index} className="flex items-start">
+                     <Star className="w-5 h-5 mr-2 text-yellow-500 flex-shrink-0" />
+                     <span className="text-gray-600">{tip}</span>
+                   </li>
+                 ))}
+               </ul>
              </div>
            </div>
          </div>
