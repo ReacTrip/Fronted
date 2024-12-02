@@ -174,7 +174,7 @@ const City = () => {
   const navigate = useNavigate(); 
   const location = useLocation();
   const { cityName } = location.state || {};
-  const [hoveredIndex, setHoveredIndex] = useState(null); 
+  const [hoveredIndex, setHoveredIndex] = useState(null); // 인기 여행지 상태 관리
   const [searchInput, setSearchInput] = useState('');
   const { placeInfo, isLoading, error, activeCategory, setActiveCategory, fetchPlaceInfo, resetPlaceInfo } = usePlaceInfo();
 
@@ -182,6 +182,16 @@ const City = () => {
     const savedLikes = JSON.parse(localStorage.getItem('likedPlaces')) || [];
     return savedLikes;
   });
+
+  useEffect(() => {
+    localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
+  }, [likedPlaces]);
+
+  useEffect(() => {
+    if (likedPlaces.length > 0) {
+      localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
+    }
+  }, [likedPlaces]);
   
   const [likes, setLikes] = useState(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likes')) || {};
@@ -191,10 +201,6 @@ const City = () => {
       foods: new Array(foods.length).fill(false),
     };
   });
-
-  useEffect(() => {
-    localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
-  }, [likedPlaces]);
   
   useEffect(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likes')) || {};
@@ -222,12 +228,6 @@ const City = () => {
       return updatedLikedPlaces;
     });
   };
-
-  useEffect(() => {
-    if (likedPlaces.length > 0) {
-      localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
-    }
-  }, [likedPlaces]);
   
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
