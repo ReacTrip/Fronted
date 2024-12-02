@@ -1,3 +1,5 @@
+import { PHOTO_SPOTS } from '../../data/photoSpotData'; 
+
 export const MAJOR_CITIES = [
   { title: '서울', lat: 37.5665, lng: 126.9780 },
   { title: '부산', lat: 35.1796, lng: 129.0756 },
@@ -62,6 +64,74 @@ export const initializePanorama = (container, options = {}) => {
   return new window.naver.maps.Panorama(container, { ...defaultOptions, ...options });
 };
 
+export const createPhotoSpotMarker = (map, spot, onClick) => {
+  const marker = new window.naver.maps.Marker({
+    position: new window.naver.maps.LatLng(spot.lat, spot.lng),
+    map: map,
+    icon: {
+      content: `
+        <div style="
+          width: 30px;
+          height: 30px;
+          background-color: #2196F3;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 16px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          cursor: pointer;
+        ">
+          📸
+        </div>
+      `,
+      size: new window.naver.maps.Size(30, 30),
+      anchor: new window.naver.maps.Point(15, 15)
+    }
+  });
+
+  if (onClick) {
+    window.naver.maps.Event.addListener(marker, 'click', () => onClick(spot));
+  }
+
+  return marker;
+};
+
+export const createPersonSpotMarker = (map, personSpot, onClick) => {
+  const marker = new window.naver.maps.Marker({
+    position: new window.naver.maps.LatLng(personSpot.lat, personSpot.lng),
+    map: map,
+    icon: {
+      content: `
+        <div style="
+          width: 24px;
+          height: 24px;
+          background-color: #4CAF50;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 14px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          cursor: pointer;
+        ">
+          👤
+        </div>
+      `,
+      size: new window.naver.maps.Size(24, 24),
+      anchor: new window.naver.maps.Point(12, 12)
+    }
+  });
+
+  if (onClick) {
+    window.naver.maps.Event.addListener(marker, 'click', () => onClick(personSpot));
+  }
+
+  return marker;
+};
+
 export const createMarker = (map, position, options = {}) => {
   return new window.naver.maps.Marker({
     map,
@@ -87,4 +157,62 @@ export const geocodeAddress = (query) => {
       resolve(response);
     });
   });
+};
+
+export const getPhotoSpots = (city, category = 'all') => {
+  const spots = PHOTO_SPOTS[city] || [];
+  if (category === 'all') return spots;
+  return spots.filter(spot => spot.category.includes(category));
+};
+
+export const PHOTO_SPOT_CATEGORIES = [
+  { id: 'all', name: '전체' },
+  { id: 'sunrise', name: '일출' },
+  { id: 'sunset', name: '일몰' },
+  { id: 'night', name: '야경' },
+  { id: 'nature', name: '자연경관' },
+  { id: 'architecture', name: '건축물' },
+  { id: 'culture', name: '문화' }
+];
+
+// 마커를 관리하기 위한 유틸리티 함수들
+export const clearMarkers = (markers) => {
+  if (markers && markers.length) {
+    markers.forEach(marker => {
+      if (marker) marker.setMap(null);
+    });
+  }
+};
+
+export const updateMapBounds = (map, markers) => {
+  if (!map || !markers || !markers.length) return;
+
+  const bounds = new window.naver.maps.LatLngBounds();
+  markers.forEach(marker => {
+    bounds.extend(marker.getPosition());
+  });
+  map.fitBounds(bounds);
+};
+
+export const moveToLocation = (map, panorama, location) => {
+  const position = new window.naver.maps.LatLng(location.lat, location.lng);
+  map?.setCenter(position);
+  panorama?.setPosition(position);
+};
+
+export default {
+  MAJOR_CITIES,
+  NAVER_MAP_CENTER,
+  PHOTO_SPOT_CATEGORIES,
+  loadNaverMapScript,
+  initializeMap,
+  initializePanorama,
+  createMarker,
+  createPhotoSpotMarker,
+  createPersonSpotMarker,
+  geocodeAddress,
+  getPhotoSpots,
+  clearMarkers,
+  updateMapBounds,
+  moveToLocation
 };

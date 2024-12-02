@@ -1,113 +1,87 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Container } from '@mui/material';
+import { 
+  Container, 
+  Box, 
+  Typography, 
+  Select, 
+  MenuItem, 
+  Button, 
+  Paper,
+  IconButton,
+  Dialog,
+  AppBar,
+  Toolbar 
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import CloseIcon from '@mui/icons-material/Close';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
 import Navbar from '../../components/common/Navbar/Navbar';
+import { 
+  MAJOR_CITIES,
+  PHOTO_SPOT_CATEGORIES,
+  getPhotoSpots,
+  loadNaverMapScript,
+  createPhotoSpotMarker,
+  createPersonSpotMarker 
+} from '../../api/map/naverMapApi';
 
 const StyledContainer = styled(Container)({
   maxWidth: '1200px !important',
   padding: '0 20px',
 });
 
+const CategoryButton = styled(Button)(({ theme, selected }) => ({
+  marginRight: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  backgroundColor: selected ? theme.palette.primary.main : 'transparent',
+  color: selected ? 'white' : theme.palette.text.primary,
+  '&:hover': {
+    backgroundColor: selected ? theme.palette.primary.dark : theme.palette.action.hover,
+  },
+}));
+
+const SpotCard = styled(Paper)(({ theme, selected }) => ({
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  cursor: 'pointer',
+  borderLeft: selected ? `4px solid ${theme.palette.primary.main}` : 'none',
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+}));
+
+const FullscreenButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  top: theme.spacing(1),
+  right: theme.spacing(1),
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  },
+  zIndex: 1000,
+}));
+
 const PhotoSpotPage = () => {
   const mapRef = useRef(null);
   const panoRef = useRef(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [infoWindow, setInfoWindow] = useState(null);
+  const fullscreenPanoRef = useRef(null);
   const mapInstance = useRef(null);
   const panoInstance = useRef(null);
+  const markersRef = useRef([]);
 
-  // 좌표로 주소 검색
-  const searchCoordinateToAddress = (latlng) => {
-    if (infoWindow) infoWindow.close();
-
-    window.naver.maps.Service.reverseGeocode({
-      coords: latlng,
-      orders: [
-        window.naver.maps.Service.OrderType.ADDR,
-        window.naver.maps.Service.OrderType.ROAD_ADDR
-      ].join(',')
-    }, (status, response) => {
-      if (status === window.naver.maps.Service.Status.ERROR) {
-        return alert('주소 검색 중 오류가 발생했습니다.');
-      }
-
-      if (!response || !response.v2 || !response.v2.address) {
-        return alert('검색 결과가 없습니다.');
-      }
-
-      const address = response.v2.address;
-      const contentText = [
-        address.roadAddress && `<p style="font-size: 14px;margin-bottom: 5px;">[도로명] ${address.roadAddress}</p>`,
-        address.jibunAddress && `<p style="font-size: 14px;margin-bottom: 5px;">[지번] ${address.jibunAddress}</p>`
-      ].filter(Boolean).join('');
-
-      const newInfoWindow = new window.naver.maps.InfoWindow({
-        content: `
-          <div style="padding:10px;min-width:200px;">
-            <h4 style="margin-top:5px;margin-bottom:10px;">선택 위치</h4>
-            ${contentText}
-          </div>
-        `,
-        anchorSkew: true,
-        backgroundColor: '#fff',
-        borderColor: '#5F85BB',
-        borderWidth: 2
-      });
-
-      newInfoWindow.open(mapInstance.current, latlng);
-      setInfoWindow(newInfoWindow);
-    });
-  };
-
-  // 주소/장소 검색
-  const searchAddressToCoordinate = (query) => {
-    if (!query || !window.naver.maps.Service || !window.naver.maps.Service.geocode) return;
-
-    const searchOption = {
-      query: query,
-      types: ['PLACE', 'ADDRESS', 'ROAD_ADDR']
-    };
-
-    window.naver.maps.Service.geocode(searchOption, (status, response) => {
-      if (status === window.naver.maps.Service.Status.ERROR) {
-        return alert('검색 중 오류가 발생했습니다.');
-      }
-
-      if (!response || !response.v2 || !response.v2.addresses || response.v2.addresses.length === 0) {
-        return alert('검색 결과가 없습니다.');
-      }
-
-      const item = response.v2.addresses[0];
-      const point = new window.naver.maps.Point(item.x, item.y);
-      const position = new window.naver.maps.LatLng(item.y, item.x);
-
-      if (infoWindow) infoWindow.close();
-
-      const contentText = [
-        item.roadAddress && `<p style="font-size: 14px;margin-bottom: 5px;">[도로명] ${item.roadAddress}</p>`,
-        item.jibunAddress && `<p style="font-size: 14px;margin-bottom: 5px;">[지번] ${item.jibunAddress}</p>`
-      ].filter(Boolean).join('');
-
-      const newInfoWindow = new window.naver.maps.InfoWindow({
-        content: `
-          <div style="padding:10px;min-width:200px;">
-            <h4 style="margin-top:5px;margin-bottom:10px;">${query}</h4>
-            ${contentText}
-          </div>
-        `,
-        anchorSkew: true,
-        backgroundColor: '#fff',
-        borderColor: '#5F85BB',
-        borderWidth: 2
-      });
-
-      mapInstance.current?.setCenter(position);
-      panoInstance.current?.setPosition(position);
-      
-      newInfoWindow.open(mapInstance.current, position);
-      setInfoWindow(newInfoWindow);
-    });
-  };
+  const [searchQuery, setSearchQuery] = useState('');
+  const [infoWindow, setInfoWindow] = useState(null);
+  const [selectedCity, setSelectedCity] = useState('서울');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [selectedPersonSpot, setSelectedPersonSpot] = useState(null);
+  const [spots, setSpots] = useState([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [naverMapsLoaded, setNaverMapsLoaded] = useState(false);
+  const [fullscreenPanoInstance, setFullscreenPanoInstance] = useState(null);
 
   const handleResize = useCallback(() => {
     requestAnimationFrame(() => {
@@ -130,13 +104,119 @@ const PhotoSpotPage = () => {
           )
         );
       }
+
+      if (fullscreenPanoRef.current && fullscreenPanoInstance) {
+        const container = fullscreenPanoRef.current;
+        fullscreenPanoInstance.setSize(
+          new window.naver.maps.Size(
+            container.clientWidth,
+            container.clientHeight
+          )
+        );
+      }
     });
+  }, [fullscreenPanoInstance]);
+
+  const clearMarkers = useCallback(() => {
+    markersRef.current.forEach(marker => {
+      if (marker) marker.setMap(null);
+    });
+    markersRef.current = [];
   }, []);
 
-  useEffect(() => {
-    let isMounted = true;
+  const updateMarkers = useCallback(() => {
+    clearMarkers();
 
+    if (!mapInstance.current || !selectedSpot) return;
+
+    // 포토스팟 마커
+    const spotMarker = createPhotoSpotMarker(
+      mapInstance.current,
+      selectedSpot,
+      (spot) => {
+        const position = new window.naver.maps.LatLng(
+          spot.viewingSpot.lat,
+          spot.viewingSpot.lng
+        );
+        panoInstance.current?.setPosition(position);
+      }
+    );
+    markersRef.current.push(spotMarker);
+
+    // 인물 위치 마커들
+    selectedSpot.personSpots?.forEach(personSpot => {
+      const personMarker = createPersonSpotMarker(
+        mapInstance.current,
+        personSpot,
+        (spot) => {
+          setSelectedPersonSpot(spot);
+          const position = new window.naver.maps.LatLng(spot.lat, spot.lng);
+          panoInstance.current?.setPosition(position);
+        }
+      );
+      markersRef.current.push(personMarker);
+    });
+  }, [selectedSpot, clearMarkers]);
+
+  const handleSpotSelect = useCallback((spot) => {
+    setSelectedSpot(spot);
+    setSelectedPersonSpot(null);
+    
+    if (!window.naver?.maps) return;
+    
+    const position = new window.naver.maps.LatLng(spot.lat, spot.lng);
+    
+    if (mapInstance.current) {
+      mapInstance.current.setCenter(position);
+      mapInstance.current.setZoom(18);
+    }
+
+    if (panoInstance.current) {
+      const viewingPosition = new window.naver.maps.LatLng(
+        spot.viewingSpot.lat,
+        spot.viewingSpot.lng
+      );
+      panoInstance.current.setPosition(viewingPosition);
+    }
+
+    if (fullscreenPanoInstance) {
+      const viewingPosition = new window.naver.maps.LatLng(
+        spot.viewingSpot.lat,
+        spot.viewingSpot.lng
+      );
+      fullscreenPanoInstance.setPosition(viewingPosition);
+    }
+  }, [fullscreenPanoInstance]);
+
+  const toggleFullscreen = useCallback(() => {
+    if (isFullscreen && fullscreenPanoInstance) {
+      fullscreenPanoInstance.destroy();
+      setFullscreenPanoInstance(null);
+    }
+    setIsFullscreen(!isFullscreen);
+  }, [isFullscreen, fullscreenPanoInstance]);
+
+  // 네이버 지도 API 로드
+  useEffect(() => {
+    const loadMaps = async () => {
+      try {
+        await loadNaverMapScript();
+        setNaverMapsLoaded(true);
+      } catch (error) {
+        console.error('Failed to load Naver Maps:', error);
+      }
+    };
+    loadMaps();
+  }, []);
+
+  // 메인 파노라마 및 지도 초기화
+  useEffect(() => {
+    if (!naverMapsLoaded) return;
+
+    let timer;
     const initMap = () => {
+      if (!mapRef.current || !window.naver?.maps) return;
+
       const map = new window.naver.maps.Map(mapRef.current, {
         center: new window.naver.maps.LatLng(37.5666103, 126.9783882),
         zoom: 17,
@@ -147,165 +227,304 @@ const PhotoSpotPage = () => {
       mapInstance.current = map;
 
       const streetLayer = new window.naver.maps.StreetLayer();
-      window.naver.maps.Event.once(map, 'init', function() {
+      window.naver.maps.Event.once(map, 'init', () => {
         streetLayer.setMap(map);
         handleResize();
       });
 
-      window.naver.maps.Event.addListener(map, 'click', function(e) {
-        if (!isMounted) return;
-        const latlng = e.coord;
-        searchCoordinateToAddress(latlng);
-        
-        if (streetLayer.getMap() && panoInstance.current) {
-          panoInstance.current.setPosition(latlng);
+      updateMarkers();
+    };
+
+    const initMainPanorama = () => {
+      if (!panoRef.current || !window.naver?.maps) return;
+      
+      const pano = new window.naver.maps.Panorama(panoRef.current, {
+        position: new window.naver.maps.LatLng(37.5666103, 126.9783882),
+        pov: {
+          pan: -133,
+          tilt: 0,
+          fov: 100
+        },
+        zoomControl: true,
+        flightSpot: true
+      });
+
+      panoInstance.current = pano;
+
+      pano.addListener('pano_changed', () => {
+        if (!mapInstance.current) return;
+        const latlng = pano.getPosition();
+        if (!latlng.equals(mapInstance.current.getCenter())) {
+          mapInstance.current.setCenter(latlng);
         }
       });
+
+      handleResize();
     };
 
-    const initPanorama = () => {
-      window.naver.maps.onJSContentLoaded = function() {
-        if (!isMounted) return;
-
-        const pano = new window.naver.maps.Panorama(panoRef.current, {
-          position: new window.naver.maps.LatLng(37.5666103, 126.9783882),
-          pov: {
-            pan: -133,
-            tilt: 0,
-            fov: 100
-          }
-        });
-
-        panoInstance.current = pano;
-
-        window.naver.maps.Event.addListener(pano, 'pano_changed', function() {
-          if (!isMounted || !mapInstance.current) return;
-          const latlng = pano.getPosition();
-          if (!latlng.equals(mapInstance.current.getCenter())) {
-            mapInstance.current.setCenter(latlng);
-          }
-        });
-
-        handleResize();
-      };
-    };
-
-    const script = document.createElement('script');
-    script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${import.meta.env.VITE_NAVER_MAP_CLIENT_ID}&submodules=panorama,geocoder,drawing`;
-    script.async = true;
-    script.onload = () => {
-      if (!isMounted) return;
+    const initializeComponents = () => {
+      window.removeEventListener('resize', handleResize);
+      window.addEventListener('resize', handleResize);
+      
       initMap();
-      initPanorama();
+      timer = setTimeout(initMainPanorama, 100);
     };
-    document.head.appendChild(script);
 
-    window.addEventListener('resize', handleResize);
+    initializeComponents();
 
     return () => {
-      isMounted = false;
       window.removeEventListener('resize', handleResize);
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
+      if (panoInstance.current) {
+        panoInstance.current.destroy();
+        panoInstance.current = null;
       }
-      if (infoWindow) {
-        infoWindow.close();
+      if (mapInstance.current) {
+        mapInstance.current = null;
       }
+      if (timer) {
+        clearTimeout(timer);
+      }
+      clearMarkers();
     };
-  }, [handleResize]);
+  }, [naverMapsLoaded, handleResize, updateMarkers, clearMarkers]);
 
-  const handleSearch = () => {
-    if (!searchQuery) return;
-    searchAddressToCoordinate(searchQuery);
-  };
+  // 전체화면 파노라마 초기화
+  useEffect(() => {
+    if (!isFullscreen || !fullscreenPanoRef.current || !naverMapsLoaded) return;
+
+    let pano;
+    let timer;
+
+    const initFullscreenPano = () => {
+      if (!window.naver?.maps) return;
+
+      const position = panoInstance.current ? 
+        panoInstance.current.getPosition() : 
+        new window.naver.maps.LatLng(37.5666103, 126.9783882);
+
+      pano = new window.naver.maps.Panorama(fullscreenPanoRef.current, {
+        position: position,
+        pov: {
+          pan: -133,
+          tilt: 0,
+          fov: 100
+        },
+        zoomControl: true,
+        flightSpot: true
+      });
+
+      setFullscreenPanoInstance(pano);
+      handleResize();
+    };
+
+    timer = setTimeout(initFullscreenPano, 100);
+
+    return () => {
+      if (pano) {
+        pano.destroy();
+      }
+      if (timer) {
+        clearTimeout(timer);
+      }
+      setFullscreenPanoInstance(null);
+    };
+  }, [isFullscreen, naverMapsLoaded, handleResize]);
+
+  // 스팟 목록 업데이트
+  useEffect(() => {
+    const citySpots = getPhotoSpots(selectedCity, selectedCategory);
+    setSpots(citySpots);
+  }, [selectedCity, selectedCategory]);
+
+  const FullscreenPanorama = () => (
+    <Dialog
+      fullScreen
+      open={isFullscreen}
+      onClose={toggleFullscreen}
+    >
+      <AppBar sx={{ position: 'relative' }}>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={toggleFullscreen}
+            aria-label="close"
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+            {selectedSpot?.title || '거리뷰'}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ width: '100%', height: 'calc(100vh - 64px)', position: 'relative' }}>
+        <div 
+          ref={fullscreenPanoRef}
+          style={{ 
+            width: '100%', 
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0
+          }} 
+        />
+      </Box>
+    </Dialog>
+  );
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', backgroundColor: '#fff' }}>
       <StyledContainer>
         <Navbar />
         
-        <div style={{ width: '100%' }}>
-          <div style={{
-            marginBottom: '20px',
-            display: 'flex',
-            gap: '10px'
-          }}>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="장소명이나 주소를 입력하세요 (예: 명동성당, 강남역)"
-              style={{
-                flex: 1,
-                padding: '8px 12px',
-                borderRadius: '4px',
-                border: '1px solid #ddd',
-                fontSize: '14px'
-              }}
-            />
-            <button
-              onClick={handleSearch}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#2DB400',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '500',
-                minWidth: '80px'
-              }}
-            >
-              검색
-            </button>
-          </div>
+        <Box sx={{ width: '100%', mt: 3 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            포토스팟 가이드
+          </Typography>
 
-          <div style={{ 
+          <Box sx={{ mb: 3 }}>
+            <Select
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+              sx={{ mr: 2, minWidth: 120 }}
+            >
+              {MAJOR_CITIES.map(city => (
+                <MenuItem key={city.title} value={city.title}>
+                  {city.title}
+                </MenuItem>
+              ))}
+            </Select>
+
+            <Box sx={{ mt: 2 }}>
+              {PHOTO_SPOT_CATEGORIES.map(category => (
+                <CategoryButton
+                  key={category.id}
+                  selected={selectedCategory === category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  variant={selectedCategory === category.id ? "contained" : "outlined"}
+                  startIcon={category.id === 'all' ? <CameraAltIcon /> : null}
+                >
+                  {category.name}
+                </CategoryButton>
+              ))}
+            </Box>
+          </Box>
+
+          <Box sx={{ 
             display: 'grid', 
-            gridTemplateColumns: '2fr 1fr', 
-            gap: '20px',
-            height: 'calc(100vh - 200px)',
-            width: '100%'
+            gridTemplateColumns: '1fr 3fr', 
+            gap: 3,
+            height: 'calc(100vh - 300px)'
           }}>
-            <div style={{ 
-              backgroundColor: '#fff',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-              width: '100%',
-              height: '100%',
-              position: 'relative'
-            }}>
-              <div ref={panoRef} style={{ 
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-              }} />
-            </div>
-            <div style={{ 
-              backgroundColor: '#fff',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-              width: '100%',
-              height: '100%',
-              position: 'relative'
-            }}>
-              <div ref={mapRef} style={{ 
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-              }} />
-            </div>
-          </div>
-        </div>
+            <Box sx={{ overflowY: 'auto' }}>
+              {spots.map(spot => (
+                <SpotCard
+                  key={spot.id}
+                  selected={selectedSpot?.id === spot.id}
+                  onClick={() => handleSpotSelect(spot)}
+                  elevation={selectedSpot?.id === spot.id ? 3 : 1}
+                >
+                  <Typography variant="h6" gutterBottom>
+                    {spot.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    📸 추천 시간: {spot.bestTime.join(', ')}
+                  </Typography>
+                  <Typography variant="body2">
+                    {spot.description}
+                  </Typography>
+                </SpotCard>
+              ))}
+            </Box>
+
+            <Box sx={{ position: 'relative' }}>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '3fr 2fr', 
+                gap: '20px',
+                height: '100%'
+              }}>
+                <div style={{ 
+                  backgroundColor: '#fff',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  position: 'relative'
+                }}>
+                  <FullscreenButton onClick={toggleFullscreen}>
+                    {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+                  </FullscreenButton>
+                  <div ref={panoRef} style={{ 
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0
+                  }} />
+                </div>
+                <div style={{ 
+                  backgroundColor: '#fff',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  position: 'relative'
+                }}>
+                  <div ref={mapRef} style={{ 
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0
+                  }} />
+                </div>
+              </div>
+
+              {selectedSpot && (
+                <Paper
+                  sx={{
+                    position: 'absolute',
+                    bottom: 16,
+                    left: 16,
+                    right: 16,
+                    p: 2,
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(5px)'
+                  }}
+                >
+                  <Typography variant="body2">
+                    💡 촬영 팁: {selectedSpot.tips}
+                  </Typography>
+                </Paper>
+              )}
+
+              {selectedPersonSpot && (
+                <Paper
+                  sx={{
+                    position: 'absolute',
+                    top: 16,
+                    left: 16,
+                    right: 16,
+                    p: 2,
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(5px)',
+                    zIndex: 1000
+                  }}
+                >
+                  <Typography variant="subtitle1" gutterBottom>
+                    <PersonPinIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+                    {selectedPersonSpot.description}
+                  </Typography>
+                  <Typography variant="body2">
+                    {selectedPersonSpot.tip}
+                  </Typography>
+                </Paper>
+              )}
+            </Box>
+          </Box>
+        </Box>
       </StyledContainer>
+
+      <FullscreenPanorama />
     </div>
   );
 };
