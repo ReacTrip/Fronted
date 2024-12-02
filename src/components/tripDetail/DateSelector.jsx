@@ -43,8 +43,7 @@ const StyledDeleteIconButton = styled(IconButton)({
 });
 
 //날짜 선택 컴포넌트
-const DateSelector = ({ dates = [], onDateClick = f => f, selectedDate, onaddDate, onDeleteDate }) => {
-
+const DateSelector = ({ dates = [], onDateClick = f => f, selectedDate, onaddDate, isAuthor, onDeleteDate }) => {
     // const [startDate, endDate] = previewData[0].date.split(" - "); // 시작 날짜와 종료 날짜를 가져옴
   
     // // 날짜 배열 생성
@@ -77,9 +76,11 @@ const DateSelector = ({ dates = [], onDateClick = f => f, selectedDate, onaddDat
             </Grid>
           ))}
           <Grid item>
-          <StyledIconButton onClick={()=>onaddDate()}>
-          <AddIcon/>
-          </StyledIconButton>
+          {isAuthor && (
+            <StyledIconButton onClick={() => onaddDate()}>
+              <AddIcon />
+            </StyledIconButton>
+          )}
         </Grid>
         <Grid item>
           <StyledDeleteIconButton onClick={()=>onDeleteDate()}>

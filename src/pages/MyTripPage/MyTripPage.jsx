@@ -16,7 +16,7 @@ import TabContent from "@/components/common/TabContent/TabContent";
 import { storage } from "@/firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import DeleteIcon from "@mui/icons-material/Delete";
-import TripDialog from "@/components/TripDialog";
+import TripDialog from "@/components/TripDialog/TripDialog";
 import LoadingAnimation from '@/components/common/Animation/LoadingAnimation'; // Lottie 로딩 컴포넌트 가져오기
 import { format } from "date-fns";
 
@@ -74,7 +74,6 @@ const MyTripPage = () => {
     setLikedTrips(likedTrips);
   }, []);
 
-  // 여행 추가
   const handleAddTrip = async () => {
     if (!newTrip.title) {
       alert("여행 제목을 입력하세요");
@@ -117,12 +116,16 @@ const MyTripPage = () => {
       mainImage: newTrip.image ? imageUrl : null,
       dailyItinerary,
       AuthorId: UserInfo.id,
+      totalLike: 0,
       like: 0,
       post: 0,
     };
   
-    const updatedTrips = [...trips, newTripData];
+    // localStorage에서 기존 데이터를 가져옴
+    const existingTrips = JSON.parse(localStorage.getItem("trips")) || [];
+    const updatedTrips = [...existingTrips, newTripData];
   
+    // 상태와 localStorage를 업데이트
     setTrips(updatedTrips);
     localStorage.setItem("trips", JSON.stringify(updatedTrips));
   

@@ -29,42 +29,43 @@ const StartButton = styled(Button)({
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const [trips, setTrips] = useState([]); // 여행 데이터
+  const [trips, setTrips] = useState([]); // 전체 여행 데이터
+  const [visibleTrips, setVisibleTrips] = useState([]); // 현재 화면에 보여지는 여행 데이터
+  const [visibleCount, setVisibleCount] = useState(4); // 한 번에 표시할 여행 개수
 
   useEffect(() => {
     // 로컬 스토리지에서 데이터 로드 및 필터링
     const storedTrips = JSON.parse(localStorage.getItem("trips")) || [];
     const filteredTrips = storedTrips.filter(trip => trip.post === 1); // post 값이 1인 데이터만 필터링
     setTrips(filteredTrips);
-  }, []);
+    setVisibleTrips(filteredTrips.slice(0, visibleCount)); // 초기 표시 개수 설정
+  }, [visibleCount]);
 
   // 좋아요 클릭 핸들러
-const handleLikeClick = (id) => {
-  // 여행 데이터 업데이트
-  const updatedTrips = trips.map((trip) => {
-    if (trip.id === id) {
-      const isLiked = trip.like === 1; // 현재 좋아요 여부 확인
-      return {
-        ...trip,
-        like: isLiked ? 0 : 1, // like 상태 토글
-        totalLike: isLiked ? trip.totalLike - 1 : trip.totalLike + 1, // totalLike 업데이트
-      };
-    }
-    return trip;
-  });
+  const handleLikeClick = (id) => {
+    const updatedTrips = trips.map((trip) => {
+      if (trip.id === id) {
+        const isLiked = trip.like === 1;
+        return {
+          ...trip,
+          like: isLiked ? 0 : 1,
+          totalLike: isLiked ? trip.totalLike - 1 : trip.totalLike + 1,
+        };
+      }
+      return trip;
+    });
 
-  setTrips(updatedTrips);
-  localStorage.setItem("trips", JSON.stringify(updatedTrips)); // 업데이트된 여행 데이터 저장
-};
-
-  const handleMoreClick = () => {
-    navigate('/trips');
+    setTrips(updatedTrips);
+    localStorage.setItem("trips", JSON.stringify(updatedTrips));
   };
 
-  // 상세 페이지로 이동
+  const handleMoreClick = () => {
+    // "더 많은 여행 보기" 버튼 클릭 시 표시 개수 증가
+    setVisibleCount((prevCount) => prevCount + 4);
+  };
+
   const handleClick = (item) => {
     const { actions, ...data } = item;
-
     navigate('/budget', { state: { detail: data } });
   };
 
@@ -114,7 +115,7 @@ const handleLikeClick = (id) => {
 
         <Box sx={{ mt: 6, mb: 6 }}>
           <Grid container spacing={3}>
-            {[...trips]
+            {[...visibleTrips]
               .sort((a, b) => b.totalLike - a.totalLike)
               .map((trip) => (
                 <Grid item xs={6} key={trip.id}>
@@ -127,40 +128,42 @@ const handleLikeClick = (id) => {
             ))}
           </Grid>
 
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            mt: 5
-          }}>
-            <Typography
-              variant="body1"
-              sx={{
-                fontSize: '16px',
-                color: '#666',
-                mb: 2
-              }}
-            >
-              더 많은 여행 일정이 준비되어 있습니다
-            </Typography>
-            <Button
-              variant="outlined"
-              onClick={handleMoreClick}
-              sx={{
-                borderColor: '#000',
-                color: '#000',
-                padding: '12px 40px',
-                fontSize: '16px',
-                '&:hover': {
-                  borderColor: '#333',
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                },
-              }}
-            >
-              더 많은 여행 보기
-            </Button>
-          </Box>
+          {visibleCount < trips.length && (
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              mt: 5
+            }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: '16px',
+                  color: '#666',
+                  mb: 2
+                }}
+              >
+                더 많은 여행 일정이 준비되어 있습니다
+              </Typography>
+              <Button
+                variant="outlined"
+                onClick={handleMoreClick}
+                sx={{
+                  borderColor: '#000',
+                  color: '#000',
+                  padding: '12px 40px',
+                  fontSize: '16px',
+                  '&:hover': {
+                    borderColor: '#333',
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  },
+                }}
+              >
+                더 많은 여행 보기
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
     </StyledContainer>

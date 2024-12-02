@@ -3,52 +3,16 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
-  Paper,
   Box,
-  List,
-  ListItem,
   Grid,
   Button,
   Divider,
-  SvgIcon,
-  IconButton,
-  Badge,
-  Modal,
-  Backdrop,
-  Fade,
-  Card,
-  CardMedia,
-  CardContent,
-  TextField,
-  CircularProgress,
-  InputAdornment,
-  Select,
-  MenuItem,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navbar from '@/components/common/Navbar/Navbar';
 import KakaoRouteMap from '@/components/map/KakaoRouteMap';
-import EastIcon from '@mui/icons-material/East';
-import TodayIcon from '@mui/icons-material/Today';
-import HotelIcon from '@mui/icons-material/Hotel';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Carousel from 'react-material-ui-carousel';
-import PlaceIcon from '@mui/icons-material/Place';
-import CloseIcon from "@mui/icons-material/Close";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import FestivalIcon from '@mui/icons-material/Festival';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
-import SearchIcon from "@mui/icons-material/Search";
-import { storage } from "@/firebase/firebaseConfig";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { placeData } from "../../data/placeData.js"
-import dayjs from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import DateSelector from "../../components/tripDetail/DateSelector.jsx";
 import ImageWithTextOverlay from "../../components/tripDetail/ImageWithTextOverlay.jsx";
 import PlanDate from "../../components/tripDetail/PlanDate.jsx";
@@ -91,7 +55,7 @@ const BudgetPage = () => {
 
   useEffect(() => {
     //detail이 변경될때 마다 자동 저장. 로컬스토리지에 자동으로 올리기 위함.
-    console.log("지금 저장");
+    //console.log("지금 저장");
     const storedTrips = JSON.parse(localStorage.getItem("trips"));
     const updatedTrips = storedTrips.map(item =>
       item.id === detail.id
@@ -175,7 +139,7 @@ const BudgetPage = () => {
             </Button>)}
           </Box>
           <Divider sx={{ margin: '20px 0' }} />
-          <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} onaddDate={addDate} onDeleteDate={deleteDate}/>
+          <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} onaddDate={addDate} isAuthor={isAuthor} onDeleteDate={deleteDate}/>
           <Divider sx={{ margin: '20px 0' }} />
           <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx) => deleteDetail(selectedDate, idx)} onChangeMap={changeMap} onChangeImages={(idx, newImages) => changeImages(selectedDate, idx, newImages)}
             onAddPlace={(place, notes, time) => addPlace(selectedDate, place, notes, time)} isAuthor={isAuthor} />
