@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/common/Navbar/Navbar';
 import { Typography, Box } from '@mui/material';
-import CircleSection from '/src/components/common/CircleSection/CircleSection';
+import CircleSection from '@/components/tripPlace/CircleSection';
+import StyledContainer from '@/components/tripPlace/StyledContainer';
 
 const TripPlacePage = () => {
   const navigate = useNavigate();
@@ -30,7 +31,10 @@ const TripPlacePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+
+      <StyledContainer>
+        <Navbar />
+      </StyledContainer>
 
       {/* Circular Grid Section */}
       <Box

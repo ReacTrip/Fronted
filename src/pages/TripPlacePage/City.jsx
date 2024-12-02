@@ -7,18 +7,12 @@ import { useNavigate, useLocation } from 'react-router-dom'; // React Router의 
 import { usePlaceInfo } from '@/hooks/usePlaceInfo';
 import { ResultSection } from '@/components/InterestTest/ResultSection';
 import { placeData } from '@/data/placeData';
+import StyledContainer from '@/components/tripPlace/StyledContainer';
 
 import backgroundImage from "@/assets/images/background.jpg"; // 배경 이미지
 import hotAirBalloonImage from "@/assets/images/hot-air-balloon.png"; // 열기구 이미지
 import anniversaryLogo from "@/assets/images/Timmerman.png"; 
 import koreaImage from '@/assets/images/TripPlace/Korea.png';
-
-// 스타일 컴포넌트
-const StyledContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-`;
 
 // "어디로 갈까요?" 스타일 추가
 const SearchContainer = styled.div`
