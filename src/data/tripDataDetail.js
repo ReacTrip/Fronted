@@ -38,8 +38,21 @@ import 원조할매국밥2 from '@/assets/images/TripPlace/busan/원조할매국
 import 원조할매국밥3 from '@/assets/images/TripPlace/busan/원조할매국밥3.png';
 
 import 부산역1 from '@/assets/images/TripPlace/busan/부산역1.png';
-// import 코오롱 from '@/assets/images/TripPlace/busan/코오롱호텔1.png';
-// import 코오롱 from '@/assets/images/TripPlace/busan/코오롱호텔1.png';
+
+import 서귀포1 from '@/assets/images/main/서귀포1.png';
+
+import 애월1 from '@/assets/images/main/애월1.png';
+
+import 경복궁1 from '@/assets/images/main/경복궁1.png';
+import 경복궁2 from '@/assets/images/main/경복궁2.png';
+
+import 북촌한옥마을1 from '@/assets/images/main/북촌한옥마을1.png';
+
+import 서울타워1 from '@/assets/images/main/서울타워1.png';
+
+import 명동1 from '@/assets/images/main/명동1.png';
+
+import 대구1 from '@/assets/images/main/대구1.png';
 
 // 시연할 때, 미리 정해둘 데이터
 export const detailData = [
@@ -166,8 +179,8 @@ export const detailData = [
         startDate: "2024-08-10",
         endDate: "2024-08-15",
         AuthorId: "TripLover",
-        mainImage: trip3,
-        totalLike: 450,
+        mainImage: 경복궁2,
+        totalLike: 7450,
         like: 0,
         post: 1,
         dailyItinerary: {
@@ -178,16 +191,16 @@ export const detailData = [
                     city: "Seoul",
                     time: "09:00",
                     notes: "오전 궁궐 투어, 사진 촬영 예정",
-                    placeImage: "",
-                    images: [trip1, trip5],
+                    placeImage: 경복궁1,
+                    images: [],
                 },
                 {
                     name: "북촌 한옥 마을",
                     city: "Seoul",
                     time: "13:00",
                     notes: "전통 한옥 체험",
-                    placeImage: "",
-                    images: [trip2, trip6],
+                    placeImage: 북촌한옥마을1,
+                    images: [],
                 }
             ],
 
@@ -198,16 +211,16 @@ export const detailData = [
                     city: "Seoul",
                     time: "10:00",
                     notes: "서울 전망 감상 및 케이블카 이용",
-                    placeImage: "",
-                    images: [trip3, trip4],
+                    placeImage: 서울타워1,
+                    images: [],
                 },
                 {
                     name: "Myeongdong",
                     city: "Seoul",
                     time: "15:00",
                     notes: "쇼핑 및 길거리 음식 체험",
-                    placeImage: "",
-                    images: [trip1, trip6],
+                    placeImage: 명동1,
+                    images: [],
                 }
             ]
 
@@ -220,8 +233,8 @@ export const detailData = [
         startDate: "2024-12-01",  // 여행 시작 일자
         endDate: "2024-12-03",  // 여행 종료 일자
         AuthorId: "TripLover", //작성자 id
-        mainImage: trip4,  //메인 이미지
-        totalLike: 6730,
+        mainImage: 대구1,  //메인 이미지
+        totalLike: 30,
         like: 1,
         post: 1,
         dailyItinerary: { // 일자별 계획
@@ -411,5 +424,35 @@ export const detailData = [
             ],
         },
         description: "친구랑 함께가는 여행" // 메모
+    },
+
+    {
+        id: 5,  // 여행 id
+        title: "서귀포",  // 여행 이름
+        startDate: "2024-03-01",  // 여행 시작 일자
+        endDate: "2025-03-02",  // 여행 종료 일자
+        AuthorId: "SoRyong", //작성자 id
+        mainImage: 서귀포1,  //메인 이미지
+        totalLike: 650,
+        like: 0,
+        post: 1,
+        dailyItinerary: { // 일자별 계획
+        },
+        description: "혼자 사색에 잠기는 여행" // 메모
+    },
+
+    {
+        id: 6,  // 여행 id
+        title: "애월 휴가",  // 여행 이름
+        startDate: "2023-06-05",  // 여행 시작 일자
+        endDate: "2023-06-06",  // 여행 종료 일자
+        AuthorId: "SoRyong", //작성자 id
+        mainImage: 애월1,  //메인 이미지
+        totalLike: 335,
+        like: 0,
+        post: 1,
+        dailyItinerary: { // 일자별 계획
+        },
+        description: "상쾌한 휴가를 즐기는 곳" // 메모
     },
 ];
