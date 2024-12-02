@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { tourQuestions, recommendations } from '../constants/tourConstants';
 
 export const useInterestTest = () => {
+  //상태 관리
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
@@ -9,6 +10,7 @@ export const useInterestTest = () => {
     "안녕하세요! 여러분의 취향에 맞는 최고의 여행지를 찾아보아요! 준비되셨나요?"
   );
   const [testPhase, setTestPhase] = useState('initial');
+  //질문 랜덤화
   const [randomizedQuestions] = useState(() => 
     [...tourQuestions].sort(() => Math.random() - 0.5)
   );
@@ -37,6 +39,7 @@ export const useInterestTest = () => {
     }
   }, [currentStep, result, messages]);
 
+   // 답변을 처리하고 다음 단계로 진행
   const handleAnswer = (answerValue) => {
     const currentQuestion = randomizedQuestions[currentStep];
     const selectedOption = currentQuestion.options.find(opt => opt.value === answerValue);
@@ -51,6 +54,7 @@ export const useInterestTest = () => {
     }
   };
 
+  // 최종 추천 계산
   const calculateRecommendation = (userAnswers) => {
     // 여행 스타일(질문 1)과 기간(질문 2)의 답변 가져오기
     const styleAnswer = userAnswers[1];

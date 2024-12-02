@@ -7,6 +7,7 @@ export const usePhotoSpot = (cityId, spotId) => {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
 
+// 포토스팟 정보 로드
   useEffect(() => {
     if (cityId && spotId) {
       const spot = photoSpots[cityId]?.[spotId];
@@ -17,6 +18,7 @@ export const usePhotoSpot = (cityId, spotId) => {
     setLoading(false);
   }, [cityId, spotId]);
 
+  // 현재 시간대의 최적 촬영 시간 계산
   const getBestTimeForNow = () => {
     if (!currentSpot) return null;
     
@@ -33,6 +35,7 @@ export const usePhotoSpot = (cityId, spotId) => {
     );
   };
 
+  // 날씨에 따른 촬영 팁 제공
   const getCurrentWeatherTips = () => {
     if (!weather) return null;
     return weatherRecommendations[weather];

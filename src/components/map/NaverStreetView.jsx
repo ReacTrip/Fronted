@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { loadNaverMapScript, getPhotoSpots, createPhotoSpotMarker } from '../../api/map/naverMapApi';
 
 const NaverStreetView = ({ location, onSpotSelect }) => {
+  // ref와 상태 관리
   const mapRef = useRef(null);
   const panoInstance = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentSpot, setCurrentSpot] = useState(null);
 
+  // 스트리트 뷰 초기화 및 설정
   useEffect(() => {
     const handleResize = () => {
       requestAnimationFrame(() => {
@@ -25,6 +27,7 @@ const NaverStreetView = ({ location, onSpotSelect }) => {
 
     const initPanorama = async () => {
       try {
+        // 파노라마 초기화 로직
         setIsLoading(true);
         await loadNaverMapScript();
         
