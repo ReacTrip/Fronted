@@ -24,6 +24,8 @@ import {
   InputAdornment,
   Select,
   MenuItem,
+  Tabs,
+  Tab
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navbar from '@/components/common/Navbar/Navbar';
@@ -51,7 +53,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 import PlanDetail from "./PlanDetail";
-import {useModalManager, usePlaceManager, useDragAndDrop, useTravelCalculator} from "../../hooks/usePlanDate.js"
+import { useModalManager, usePlaceManager, useDragAndDrop, useTravelCalculator } from "../../hooks/usePlanDate.js"
 
 //왼쪽 외곽선 box
 const LineBox = styled(Box)({
@@ -175,20 +177,23 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
     selectPlace,
     backToList,
     setNote,
-} = useModalManager();
+  } = useModalManager();
 
-const {
-  filteredPlaceDatas,
-  searchValue,
-  selectedRegion,
-  handleSearchChange,
-  handleRegionChange,
-  handleCategoryChange
-} = usePlaceManager();
+  const {
+    filteredPlaceDatas,
+    searchValue,
+    selectedRegion,
+    handleSearchChange,
+    handleRegionChange,
+    handleCategoryChange,
+    tabIndex,
+    handleTabChange,
+    getDisplayedPlaces
+  } = usePlaceManager();
 
-const { dragStart, dragEnter, drop } = useDragAndDrop(onDrop, date);
+  const { dragStart, dragEnter, drop } = useDragAndDrop(onDrop, date);
 
-const { result, calculateTravelTime } = useTravelCalculator(onChangeMap);
+  const { result, calculateTravelTime } = useTravelCalculator(onChangeMap);
 
   const handleClick = () => {
     setIsAddButton(!isAddButton);
@@ -211,7 +216,7 @@ const { result, calculateTravelTime } = useTravelCalculator(onChangeMap);
   }
 
   useEffect(() => {
-      calculateTravelTime(datePlan);
+    calculateTravelTime(datePlan);
   }, [datePlan]);
 
 
@@ -223,10 +228,16 @@ const { result, calculateTravelTime } = useTravelCalculator(onChangeMap);
     handleRegionChange(region);
   };
 
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  const displayedPlaces = getDisplayedPlaces();
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Header  variant="h5" >
+        <Header variant="h5" >
           {new Date(date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}
         </Header >
 
@@ -392,6 +403,15 @@ const { result, calculateTravelTime } = useTravelCalculator(onChangeMap);
                   <CloseIcon />
                 </IconButton>
               </Box>
+              <Tabs
+                value={tabIndex}
+                onChange={handleTabChange}
+                sx={{ marginBottom: "20px", borderBottom: "1px solid #ddd" }}
+              >
+                <Tab label="전체 장소" />
+                <Tab label="좋아요 누른 장소" />
+              </Tabs>
+
               <Select
                 value={selectedRegion}
                 onChange={handleRegionChangeEvent}
@@ -441,8 +461,8 @@ const { result, calculateTravelTime } = useTravelCalculator(onChangeMap);
                   overflowY: "auto",
                 }}
               >
-                {filteredPlaceDatas.length === 0 ? (<Typography>죄송합니다. "{searchValue}"을(를) 찾을 수 없습니다.</Typography>)
-                  : (filteredPlaceDatas.map((place, idx) => (
+                {displayedPlaces.length === 0 ? (<Typography>죄송합니다. "{searchValue}"을(를) 찾을 수 없습니다.</Typography>)
+                  : (displayedPlaces.map((place, idx) => (
                     <Card
                       key={idx}
                       onClick={() => selectPlace(place)}
