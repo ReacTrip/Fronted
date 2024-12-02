@@ -135,7 +135,9 @@ export const useTravelCalculator = (onChangeMap) => {
         const url = "https://apis-navi.kakaomobility.com/v1/waypoints/directions";
         const apiKey = import.meta.env.VITE_KAKAODEVELOPERS_API_KEY;
 
-        if (datePlan.length < 2) return;
+        if (datePlan == undefined) return;
+        if (datePlan.length < 2 ) return;
+
 
         const waypoints = datePlan.slice(1, -1).map((point, index) => ({
             name: `name${index}`,
