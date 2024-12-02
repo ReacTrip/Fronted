@@ -9,12 +9,12 @@ import { ResultSection } from '@/components/InterestTest/ResultSection';
 import { placeData } from '@/data/placeData';
 import StyledContainer from '@/components/tripPlace/StyledContainer';
 
-import backgroundImage from "@/assets/images/background.jpg"; // 배경 이미지
-import hotAirBalloonImage from "@/assets/images/hot-air-balloon.png"; // 열기구 이미지
+import backgroundImage from "@/assets/images/background.jpg"; 
+import hotAirBalloonImage from "@/assets/images/hot-air-balloon.png";
 import anniversaryLogo from "@/assets/images/Timmerman.png"; 
 import koreaImage from '@/assets/images/TripPlace/Korea.png';
 
-// "어디로 갈까요?" 스타일 추가
+// "어디로 갈까요?" 
 const SearchContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -107,7 +107,6 @@ const GridContainer = styled.div`
   gap: 20px;
 `;
 
-// Card 컴포넌트 이름 변경 (StyledCard로 변경)
 const StyledCard = styled.div`
   position: relative;
   border-radius: 10px;
@@ -172,10 +171,10 @@ const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
 );
 
 const City = () => {
-  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
+  const navigate = useNavigate(); 
   const location = useLocation();
   const { cityName } = location.state || {};
-  const [hoveredIndex, setHoveredIndex] = useState(null); // 인기 여행지 상태 관리
+  const [hoveredIndex, setHoveredIndex] = useState(null); 
   const [searchInput, setSearchInput] = useState('');
   const { placeInfo, isLoading, error, activeCategory, setActiveCategory, fetchPlaceInfo, resetPlaceInfo } = usePlaceInfo();
 
@@ -403,29 +402,34 @@ const City = () => {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    background: hoveredIndex === index
-                      ? 'rgba(0, 0, 0, 0.8)'
-                      : 'rgba(0, 0, 0, 0.6)',
+                    background: 'transparent', 
                     color: 'white',
                     textAlign: 'center',
-                    padding: '8px',
-                    backdropFilter: 'blur(10px)',
-                    transition: 'all 1.5s ease-in-out', // 배경 전환 시간 조정
+                    padding: '0', 
+                    backdropFilter: 'none', 
+                    transition: 'none', 
                   }}
                 >
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 'bold',
-                      fontSize: hoveredIndex === index ? '1.6rem' : '1rem',
-                      transition: 'font-size 1.5s ease-in-out',
-                    }}
-                  >
-                    {place.title}
-                  </Typography>
                   {hoveredIndex === index && (
-                    <Typography variant="body2" sx={{ marginTop: '8px', color: '#ccc' }}>
-                      지금 가보세요! 인기 있는 여행지입니다.
+                    <Typography
+                      sx={{
+                        position: 'absolute',
+                        bottom: '10px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '1rem',
+                        fontWeight: 'bold',
+                        zIndex: 2,
+                        textAlign: 'center',
+                        opacity: hoveredIndex === index ? 1 : 0,
+                        transition: 'opacity 0.3s ease-in-out',
+                      }}
+                    >
+                      {place.name}
                     </Typography>
                   )}
                 </CardContent>
