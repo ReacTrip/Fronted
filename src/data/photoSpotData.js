@@ -117,6 +117,44 @@ export const PHOTO_SPOTS = {
     },
     {
       id: "busan-3",
+      title: '태종대',
+      lat: 35.0513,
+      lng: 129.0844,
+      bestTime: ['morning', 'afternoon'],
+      description: '부산의 대표적인 자연 경관과 바다 풍경을 감상할 수 있는 명소',
+      tips: '태종대 전망대에서 내려다보는 바다와 섬이 아름답습니다. 등대 주변에서 촬영하기에도 좋습니다.',
+      viewingSpot: { lat: 35.0511, lng: 129.0842 },
+      personSpots: [
+        {
+          lat: 35.0512,
+          lng: 129.0843,
+          description: '태종대 등대',
+          tip: '등대와 바다를 함께 담는 구도'
+        }
+      ],
+      category: ['nature', 'landscape']
+    },
+    {
+      id: "busan-4",
+      title: '오륙도 스카이워크',
+      lat: 35.100594,
+      lng: 129.124603, 
+      bestTime: ['morning', 'afternoon'],
+      description: '투명한 바닥으로 바다를 볼 수 있는 스릴 넘치는 포토존',
+      tips: '맑은 날 바닥을 통해 보이는 바다와 섬을 촬영하면 특별한 사진이 완성됩니다.',
+      viewingSpot: { lat: 35.100488, lng: 129.124547 },
+      personSpots: [
+        {
+          lat: 35.100532,
+          lng: 129.124578,
+          description: '스카이워크 중앙',
+          tip: '투명 바닥을 배경으로 촬영'
+        }
+      ],
+      category: ['nature', 'adventure']
+    },
+    {
+      id: "busan-5",
       title: '광안대교',
       lat: 35.1478,
       lng: 129.1318,
@@ -139,18 +177,18 @@ export const PHOTO_SPOTS = {
     {
       id: "jeju-1",
       title: '성산일출봉',
-      lat: 33.4587,
-      lng: 126.9426,
+      lat: 33.462230, 
+      lng: 126.936753,
       bestTime: ['sunrise', 'afternoon'],
       description: '유네스코 세계자연유산으로 지정된 제주의 상징적인 명소',
       tips: '일출 명소이며, 정상에서 바라보는 제주 해안선이 장관입니다.',
-      viewingSpot: { lat: 33.4585, lng: 126.9424 },
+      viewingSpot: { lat: 33.462148, lng: 126.936700 },  
       personSpots: [
         {
-          lat: 33.4586,
-          lng: 126.9425,
-          description: '성산일출봉 정상',
-          tip: '분화구와 해안선을 배경으로 촬영'
+          lat: 33.462190,
+          lng: 126.936720,
+          description: '성산일출봉 입구',
+          tip: '성산일출봉 전경을 배경으로 촬영'
         }
       ],
       category: ['nature', 'sunrise']
@@ -158,16 +196,16 @@ export const PHOTO_SPOTS = {
     {
       id: "jeju-2",
       title: '카멜리아힐',
-      lat: 33.2887,
-      lng: 126.3712,
+      lat: 33.289167,
+      lng: 126.369444,  
       bestTime: ['morning', 'afternoon'],
       description: '사계절 아름다운 꽃과 정원이 있는 포토스팟',
       tips: '동백꽃이 피는 겨울이 특히 아름답습니다.',
-      viewingSpot: { lat: 33.2885, lng: 126.3710 },
+      viewingSpot: { lat: 33.289278, lng: 126.369556 },
       personSpots: [
         {
-          lat: 33.2886,
-          lng: 126.3711,
+          lat: 33.289222,
+          lng: 126.369500,
           description: '동백꽃 터널',
           tip: '꽃터널을 배경으로 인물 촬영'
         }
@@ -176,6 +214,44 @@ export const PHOTO_SPOTS = {
     },
     {
       id: "jeju-3",
+      title: '우도',
+      lat: 33.5000,
+      lng: 126.9420,
+      bestTime: ['morning', 'afternoon'],
+      description: '제주도 근처의 작은 섬으로, 청정 자연과 독특한 풍경을 자랑하는 명소',
+      tips: '우도 해변에서 독특한 조약돌과 해안선을 배경으로 촬영하면 좋습니다.',
+      viewingSpot: { lat: 33.4998, lng: 126.9418 },
+      personSpots: [
+        {
+          lat: 33.4999,
+          lng: 126.9419,
+          description: '검멀레 해변',
+          tip: '검은 모래와 바다를 배경으로 촬영'
+        }
+      ],
+      category: ['nature', 'adventure']
+    },
+    {
+      id: "jeju-4",
+      title: '천지연 폭포',
+      lat: 33.2466,
+      lng: 126.5617,
+      bestTime: ['morning', 'afternoon'],
+      description: '제주의 대표적인 폭포로, 자연과 조화를 이루는 포토존',
+      tips: '폭포의 물줄기와 주변의 초록 풍경을 프레임에 담아보세요.',
+      viewingSpot: { lat: 33.2464, lng: 126.5615 },
+      personSpots: [
+        {
+          lat: 33.2465,
+          lng: 126.5616,
+          description: '폭포 앞',
+          tip: '폭포와 물줄기를 가까이서 촬영'
+        }
+      ],
+      category: ['nature', 'landscape']
+    },
+    {
+      id: "jeju-5",
       title: '협재해수욕장',
       lat: 33.3940,
       lng: 126.2393,
@@ -194,6 +270,8 @@ export const PHOTO_SPOTS = {
       category: ['nature', 'sunset']
     }
   ]
-};
+}
+
+;
 
 export default PHOTO_SPOTS;
