@@ -157,7 +157,7 @@ const BudgetPage = () => {
             </Button>)}
           </Box>
           <Divider sx={{ margin: '20px 0' }} />
-          <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} onaddDate={addDate}/>
+          <DateSelector dates={dates} onDateClick={handleDateClick} selectedDate={selectedDate} onaddDate={addDate} isAuthor={isAuthor}/>
           <Divider sx={{ margin: '20px 0' }} />
           <PlanDate datePlan={detail.dailyItinerary[selectedDate]} date={selectedDate} onDrop={drop} onDelete={(idx) => deleteDetail(selectedDate, idx)} onChangeMap={changeMap} onChangeImages={(idx, newImages) => changeImages(selectedDate, idx, newImages)}
             onAddPlace={(place, notes, time) => addPlace(selectedDate, place, notes, time)} isAuthor={isAuthor} />
