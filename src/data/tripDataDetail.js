@@ -6,7 +6,7 @@ import trip5 from '@/assets/images/main/trip5.png';
 import trip6 from '@/assets/images/main/trip6.png';
 
 import busanFestival4 from '@/assets/images/TripPlace/busan/busanFestival4.png';
-import busanFestival5 from '@/assets/images/TripPlace/busan/busanFestival4.png';
+import busanFestival5 from '@/assets/images/TripPlace/busan/busanFestival5.png';
 import 코오롱1 from '@/assets/images/TripPlace/busan/코오롱호텔1.png';
 import 코오롱2 from '@/assets/images/TripPlace/busan/코오롱호텔2.png';
 import 코오롱3 from '@/assets/images/TripPlace/busan/코오롱호텔3.png';
@@ -61,7 +61,7 @@ export const detailData = [
         title: "해운대 빛축제 계획",  // 여행 이름
         startDate: "2024-01-29",  // 여행 시작 일자
         endDate: "2024-01-31",  // 여행 종료 일자
-        AuthorId: "TripLover", //작성자 id
+        AuthorId: "BusanOfficial", //작성자 id
         mainImage: busanFestival5,  //메인 이미지
         totalLike: 12050,
         like: 0,
