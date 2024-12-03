@@ -18,6 +18,7 @@ import ImageWithTextOverlay from "../../components/tripDetail/ImageWithTextOverl
 import PlanDate from "../../components/tripDetail/PlanDate.jsx";
 import UserInfo from "@/components/common/UserInfo"; // 사용자 정보
 import {useTripDetail} from "../../hooks/usePlanPage.js"
+import LoadingAnimation from '@/components/common/Animation/LoadingAnimation'; // Lottie 로딩 컴포넌트 가져오기
 
 
 const StyledContainer = styled(Container)({
@@ -53,6 +54,8 @@ const BudgetPage = () => {
   const [routeData, setRouteData] = useState({ routes: [], });  //이동경로api로 받아온 데이터.
 
   const isAuthor = (detail.AuthorId === UserInfo.id);  //작성자인지 확인
+
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
 
   useEffect(() => {
     //detail이 변경될때 마다 자동 저장. 로컬스토리지에 자동으로 올리기 위함.
@@ -120,22 +123,21 @@ const BudgetPage = () => {
     setDetail(newDetail);
   }
 
-  const changeImage = async (imageUrl) => {
-    try {
-      // Update the detail state with the new image URL
+  const changeImage = async (imageUrl, isLoading) => {
+    setIsLoading(isLoading);
+    
+    if (imageUrl) {
       setDetail((prevDetail) => ({
         ...prevDetail,
         mainImage: imageUrl,
       }));
-      console.log("대표 이미지 업데이트 성공:", imageUrl);
-    } catch (error) {
-      console.error("이미지 업데이트 실패:", error);
     }
   };
   
 
   return (
     <StyledContainer>
+      {isLoading && <LoadingAnimation />} {/* 로딩 애니메이션 표시 */}
       <Navbar />
       <Grid container>
         {/* 왼쪽 영역 */}
