@@ -69,6 +69,8 @@ import busanFood1 from '@/assets/images/TripPlace/busan/busanFood1.png';
 import busanFood2 from '@/assets/images/TripPlace/busan/busanFood2.png';
 import busanFood3 from '@/assets/images/TripPlace/busan/busanFood3.png';
 
+import busanFestival4 from '@/assets/images/TripPlace/busan/busanFestival4.png';
+
 import Lilkoi1 from '@/assets/images/TripPlace/busan/Lilkoi1.png';
 import shilla1 from '@/assets/images/TripPlace/busan/shilla1.png';
 import grand1 from '@/assets/images/TripPlace/busan/grand1.png';
@@ -564,6 +566,14 @@ export const placeData = [
     image: busanAttraction3,
     x: "129.0205256",
     y: "35.0615784"
+  },
+  {
+    category : "festival",
+    place: "부산",
+    name: "2025 해운대 빛축제",
+    image: busanFestival4,
+    x: "129.1603842",
+    y: "35.1586975"
   },
   {
     category : "festival",

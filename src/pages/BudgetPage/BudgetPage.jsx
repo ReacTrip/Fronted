@@ -120,13 +120,36 @@ const BudgetPage = () => {
     setDetail(newDetail);
   }
 
+  const changeImage = async (imageUrl) => {
+    try {
+      // Update the detail state with the new image URL
+      setDetail((prevDetail) => ({
+        ...prevDetail,
+        mainImage: imageUrl,
+      }));
+      console.log("대표 이미지 업데이트 성공:", imageUrl);
+    } catch (error) {
+      console.error("이미지 업데이트 실패:", error);
+    }
+  };
+  
+
   return (
     <StyledContainer>
       <Navbar />
       <Grid container>
         {/* 왼쪽 영역 */}
         <Grid item xs={8} sx={{ padding: "0 16px 16px" }}>
-          <ImageWithTextOverlay startDate={detail.startDate} endDate={detail.endDate} mainImage={detail.mainImage} title={detail.title} isLike={detail.like} onChangeLike={changeLike} onChangeTitle={changeTitle} />
+        <ImageWithTextOverlay 
+          startDate={detail.startDate} 
+          endDate={detail.endDate} 
+          mainImage={detail.mainImage} 
+          title={detail.title} 
+          isLike={detail.like} 
+          onChangeLike={changeLike} 
+          onChangeTitle={changeTitle} 
+          onChangeImage={changeImage} // Pass the changeImage method
+        />
           <Box sx={{ marginTop: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
               여행 일정

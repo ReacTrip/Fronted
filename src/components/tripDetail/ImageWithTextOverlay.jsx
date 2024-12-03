@@ -1,85 +1,121 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Typography,
-    Box,
-    SvgIcon,
-    IconButton,
-    TextField,
-  } from '@mui/material';
-  import { styled } from '@mui/material/styles';
-  import TodayIcon from '@mui/icons-material/Today';
-  import EastIcon from '@mui/icons-material/East';
-  import FavoriteIcon from '@mui/icons-material/Favorite';
-  import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-  import EditIcon from '@mui/icons-material/Edit';
-
-
+  Typography,
+  Box,
+  SvgIcon,
+  IconButton,
+  TextField,
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import TodayIcon from '@mui/icons-material/Today';
+import EastIcon from '@mui/icons-material/East';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/firebase/firebaseConfig';
 
 const TitleBox = styled(Box)({
-    position: "relative",
-    width: "100%",
-    height: "400px",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-end",
-    color: "#fff",
-    borderRadius: '10px',
-    padding: "50px",
-  })
+  position: "relative",
+  width: "100%",
+  height: "400px",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justifyContent: "flex-end",
+  color: "#fff",
+  borderRadius: '10px',
+  padding: "50px",
+});
 
+const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, onChangeLike, onChangeTitle, onChangeImage = () => {} }) => {
+  const startDateKr = new Date(startDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
+  const endDateKr = new Date(endDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
 
-// 이미지와 계획명 나타내는 컴포넌트
-const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, onChangeLike, onChangeTitle }) => {
+  const [isLiked, setIsLiked] = useState(isLike);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentTitle, setCurrentTitle] = useState(title);
 
-    const startDateKr = new Date(startDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
-    const endDateKr = new Date(endDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
+  const toggleLike = () => {
+    !isLiked ? onChangeLike(1) : onChangeLike(0);
+    setIsLiked(!isLiked);
+  };
 
-    const [isLiked, setIsLiked] = useState(isLike);
-    const [isEditing, setIsEditing] = useState(false);
-    const [currentTitle, setCurrentTitle] = useState(title);
-    const toggleLike = () => {
-      !isLiked ? onChangeLike(1) : onChangeLike(0);
-      console.log(isLiked);
-      setIsLiked(!isLiked);
-    };
+  const handleEditToggle = () => {
+    setIsEditing(true);
+  };
 
-    const handleEditToggle = () => {
-      setIsEditing(true);
-    };
-  
-    const handleEditComplete = () => {
-        setIsEditing(false);
-    };
+  const handleEditComplete = () => {
+    setIsEditing(false);
+  };
 
-    useEffect(()=>{
-      onChangeTitle(currentTitle);
-    },[currentTitle]);
-  
-    return (
-      <TitleBox
-        sx={{ backgroundImage: `url(${mainImage})`, }}
-      >
-        <IconButton
+  const handleImageChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const storageRef = ref(storage, `images/${file.name}`);
+      try {
+        // Firebase에 파일 업로드
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
+        onChangeImage(downloadURL); // 업로드된 이미지 URL을 부모 컴포넌트에 전달
+      } catch (error) {
+        console.error("Image upload failed:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    onChangeTitle(currentTitle);
+  }, [currentTitle]);
+
+  return (
+    <TitleBox
+      sx={{ backgroundImage: `url(${mainImage})` }}
+    >
+      {/* 좋아요 버튼 */}
+      <IconButton
         onClick={toggleLike}
         sx={{
           position: 'absolute',
-          top: 16, // 상단에서 16px 떨어짐
-          right: 16, // 오른쪽에서 16px 떨어짐
-          color: isLiked ? 'red' : 'white', // 좋아요 여부에 따라 색상 변경
+          top: 16,
+          right: 16,
+          color: isLiked ? 'red' : 'white',
         }}
       >
         {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
       </IconButton>
+
+      {/* 이미지 변경 버튼 */}
+      <IconButton
+        component="label"
+        sx={{
+          position: 'absolute',
+          top: 16,
+          right: 56, // 좋아요 버튼과 간격
+          color: 'white',
+        }}
+      >
+        <SettingsIcon />
+        {/* 파일 입력 */}
+        <input
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={handleImageChange}
+        />
+      </IconButton>
+
+      {/* 제목 및 수정 기능 */}
       <Box display="flex" alignItems="center">
         {isEditing ? (
           <TextField
             value={currentTitle}
             onChange={(e) => setCurrentTitle(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleEditComplete()}
-            onBlur={handleEditComplete} // 포커스가 벗어날 때 저장
+            onBlur={handleEditComplete}
             variant="outlined"
             size="small"
             sx={{ backgroundColor: 'white', borderRadius: '4px' }}
@@ -95,11 +131,13 @@ const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, on
           </IconButton>
         )}
       </Box>
-        <Typography variant="body1" component="div" sx={{ mt: 1 }}>
-          <SvgIcon component={TodayIcon} sx={{ verticalAlign: "middle" }} /> {startDateKr} <SvgIcon component={EastIcon} sx={{ verticalAlign: "middle" }} /> {endDateKr}
-        </Typography>
-      </TitleBox>
-  
-    );
-  };
+
+      {/* 날짜 표시 */}
+      <Typography variant="body1" component="div" sx={{ mt: 1 }}>
+        <SvgIcon component={TodayIcon} sx={{ verticalAlign: "middle" }} /> {startDateKr} <SvgIcon component={EastIcon} sx={{ verticalAlign: "middle" }} /> {endDateKr}
+      </Typography>
+    </TitleBox>
+  );
+};
+
 export default ImageWithTextOverlay;
