@@ -253,8 +253,8 @@ export const placeData = [
     place: "광주",
     name: "광주사직공원 전망타워",
     image: gwangjuAttraction2,
-    x: "",
-    y: ""
+    x: "126.9116793",
+    y: "35.141854"
   },
   {
     category : "touristAttraction",
@@ -658,8 +658,8 @@ export const placeData = [
     place: "인천",
     name: "금문도",
     image: incheonFood1,
-    x: "",
-    y: ""
+    x: "126.4903905",
+    y: "37.7399686"
   },
   {
     category : "restaurant",
