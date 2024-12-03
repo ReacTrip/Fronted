@@ -15,6 +15,7 @@ import anniversaryLogo from "@/assets/images/Timmerman.png";
 import koreaImage from '@/assets/images/TripPlace/Korea.png';
 
 // "어디로 갈까요?" 
+// 검색 컨테이너 - 배경 이미지와 검색 UI를 포함
 const SearchContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -158,6 +159,7 @@ const HeartIcon = styled.div`
   }
 `;
 
+// 좋아요 기능이 있는 카드 컴포넌트
 const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
   <StyledCard>
     <HeartIcon $liked={liked} onClick={onHeartClick}>
@@ -174,15 +176,19 @@ const City = () => {
   const navigate = useNavigate(); 
   const location = useLocation();
   const { cityName } = location.state || {};
-  const [hoveredIndex, setHoveredIndex] = useState(null); // 인기 여행지 상태 관리
+
+  // 상태 관리
+  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const { placeInfo, isLoading, error, activeCategory, setActiveCategory, fetchPlaceInfo, resetPlaceInfo } = usePlaceInfo();
 
+  // 좋아요 상태 관리
   const [likedPlaces, setLikedPlaces] = useState(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likedPlaces')) || [];
     return savedLikes;
   });
 
+  // 종아요 목록 localStorage에 저장
   useEffect(() => {
     localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
   }, [likedPlaces]);
@@ -193,6 +199,7 @@ const City = () => {
     }
   }, [likedPlaces]);
   
+
   const [likes, setLikes] = useState(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likes')) || {};
     return savedLikes[cityName] || {
@@ -229,6 +236,7 @@ const City = () => {
     });
   };
   
+  // 검색 관련 핸들러
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
   };
@@ -240,6 +248,7 @@ const City = () => {
   };
 
   // 선택된 도시에 따라 placeData 필터링
+  // 카테고리별 장소 필터링
   const attractions = placeData.filter((place) => place.place === cityName && place.category === 'touristAttraction');
   const festivals = placeData.filter((place) => place.place === cityName && place.category === 'festival');
   const foods = placeData.filter((place) => place.place === cityName && place.category === 'restaurant');

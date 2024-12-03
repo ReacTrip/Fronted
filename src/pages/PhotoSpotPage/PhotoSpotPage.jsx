@@ -61,6 +61,7 @@ const FullscreenButton = styled(IconButton)(({ theme }) => ({
 }));
 
 const PhotoSpotPage = () => {
+  // 지도와 파노라마 관련 ref 선언
   const mapRef = useRef(null);
   const panoRef = useRef(null);
   const fullscreenPanoRef = useRef(null);
@@ -68,6 +69,7 @@ const PhotoSpotPage = () => {
   const panoInstance = useRef(null);
   const markersRef = useRef([]);
 
+  // 상태 관리
   const [searchQuery, setSearchQuery] = useState('');
   const [infoWindow, setInfoWindow] = useState(null);
   const [selectedCity, setSelectedCity] = useState('서울');
@@ -78,6 +80,7 @@ const PhotoSpotPage = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [naverMapsLoaded, setNaverMapsLoaded] = useState(false);
 
+  // 지도/파노라마 크기 조정 핸들러
   const handleResize = useCallback(() => {
     requestAnimationFrame(() => {
       if (mapRef.current && mapInstance.current) {

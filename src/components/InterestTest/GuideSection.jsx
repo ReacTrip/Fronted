@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+// 가이드 섹션의 래퍼 컴포넌트
 const GuideSectionWrapper = styled(Box)(({ theme }) => ({
   flex: '0 0 300px',
   position: 'sticky',
@@ -43,6 +44,7 @@ const MessageBubble = styled(Paper)(({ theme }) => ({
   }
 }));
 
+// 단계별 가이드 콘텐츠 정의
 const guideContent = {
   initial: {
     title: "여행 취향 테스트 시작!",
