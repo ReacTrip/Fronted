@@ -265,7 +265,7 @@ const City = () => {
         <HotAirBalloon src={hotAirBalloonImage} alt="Hot Air Balloon" />
         <SearchLogo>
           <LogoImage src={anniversaryLogo} alt="Anniversary Logo" />
-          <span>리엑트립과 여행을 함께해요</span>
+          <span>리액트립과 여행을 함께해요</span>
         </SearchLogo>
         <SearchTitle>어디로 갈까요?</SearchTitle>
         <SearchSubtitle>당신이 꿈꾸는 여행을 저렴하면서도 간편하고 풍성하게!</SearchSubtitle>
