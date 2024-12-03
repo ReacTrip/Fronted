@@ -130,6 +130,11 @@ export const useTripDetail = (initialDetail) => {
         if(strEndDate === selectedDate) setSelectedDate(newDetail.endDate);
     }
 
+    const changeTitle = (title) => {
+        const newDetail = {...detail, title};
+        setDetail(newDetail);
+    }
+
     return {
         detail,
         setDetail,
@@ -142,6 +147,7 @@ export const useTripDetail = (initialDetail) => {
         deleteDate,
         dates,
         selectedDate,
-        handleDateClick
+        handleDateClick,
+        changeTitle
     };
 };

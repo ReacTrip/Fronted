@@ -44,7 +44,8 @@ const BudgetPage = () => {
     deleteDate,
     dates,
     selectedDate,
-    handleDateClick
+    handleDateClick,
+    changeTitle
 } = useTripDetail(location.state?.detail || {});
 
   const navigate = useNavigate();
@@ -125,7 +126,7 @@ const BudgetPage = () => {
       <Grid container>
         {/* 왼쪽 영역 */}
         <Grid item xs={8} sx={{ padding: "0 16px 16px" }}>
-          <ImageWithTextOverlay startDate={detail.startDate} endDate={detail.endDate} mainImage={detail.mainImage} title={detail.title} isLike={detail.like} onChangeLike={changeLike} />
+          <ImageWithTextOverlay startDate={detail.startDate} endDate={detail.endDate} mainImage={detail.mainImage} title={detail.title} isLike={detail.like} onChangeLike={changeLike} onChangeTitle={changeTitle} />
           <Box sx={{ marginTop: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
               여행 일정
