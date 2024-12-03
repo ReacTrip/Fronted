@@ -72,7 +72,7 @@ const MyTripPage = () => {
     setTrips(userTrips);
     const likedTrips = storedTrips.filter((trip) => trip.like === 1);
     setLikedTrips(likedTrips);
-  }, []);
+  });
 
   const handleAddTrip = async () => {
     if (!newTrip.title) {
