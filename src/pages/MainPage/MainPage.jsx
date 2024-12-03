@@ -36,7 +36,10 @@ const MainPage = () => {
   useEffect(() => {
     // 로컬 스토리지에서 데이터 로드 및 필터링
     const storedTrips = JSON.parse(localStorage.getItem("trips")) || [];
-    const filteredTrips = storedTrips.filter(trip => trip.post === 1); // post 값이 1인 데이터만 필터링
+    const filteredTrips = storedTrips
+      .filter(trip => trip.post === 1) // post 값이 1인 데이터만 필터링
+      .sort((a, b) => b.totalLike - a.totalLike); // 좋아요 개수 순으로 정렬
+  
     setTrips(filteredTrips);
     setVisibleTrips(filteredTrips.slice(0, visibleCount)); // 초기 표시 개수 설정
   }, [visibleCount]);
