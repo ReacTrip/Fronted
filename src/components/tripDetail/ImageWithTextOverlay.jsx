@@ -55,14 +55,18 @@ const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, on
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
+      // 로딩 상태를 부모 컴포넌트에 전달
+      onChangeImage(null, true); // 로딩 시작을 알림
+  
       const storageRef = ref(storage, `images/${file.name}`);
       try {
         // Firebase에 파일 업로드
         await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(storageRef);
-        onChangeImage(downloadURL); // 업로드된 이미지 URL을 부모 컴포넌트에 전달
+        onChangeImage(downloadURL, false); // 이미지 URL과 로딩 종료를 알림
       } catch (error) {
         console.error("Image upload failed:", error);
+        onChangeImage(null, false); // 로딩 종료
       }
     }
   };
