@@ -70,6 +70,7 @@ export const detailData = [
 
             "2024-01-29": [  // 이동할 장소 정보
                 {
+                    category : "touristAttraction",
                     name: "해운대 해수욕장",
                     city: "Busan",
                     time: "12:00",
@@ -80,6 +81,7 @@ export const detailData = [
                     y: "35.15852039665702"
                 },
                 {
+                    category : "restaurant",
                     name: "황금조개구이",
                     city: "Busan",
                     time: "14:00",
@@ -90,6 +92,7 @@ export const detailData = [
                     y: "35.16049029019174"
                 },
                 {
+                    category : "festival",
                     name: "구남로 광장",
                     city: "Busan",
                     time: "16:00",
@@ -100,6 +103,7 @@ export const detailData = [
                     y: "35.1616873"
                 },
                 {
+                    category : "hotel",
                     name: "코오롱 씨클라우드호텔",
                     city: "Busan",
                     time: "20:00",
@@ -114,6 +118,7 @@ export const detailData = [
 
             "2024-01-30": [  // 이동할 장소 정보
                 {
+                    category : "touristAttraction",
                     name: "달맞이 동산",
                     city: "Busan",
                     time: "10:00",
@@ -124,6 +129,7 @@ export const detailData = [
                     y: "35.15603273070436"
                 },
                 {
+                    category : "restaurant",
                     name: "등대장어 조개구이집",
                     city: "Busan",
                     time: "13:00",
@@ -134,6 +140,7 @@ export const detailData = [
                     y: "35.16140544990262"
                 },
                 {
+                    category : "hotel",
                     name: "파라다이스 호텔 부산",
                     city: "Busan",
                     time: "21:00",
@@ -147,6 +154,7 @@ export const detailData = [
 
             "2024-01-31": [  // 이동할 장소 정보
                 {
+                    category : "restaurant",
                     name: "원조 할매국밥",
                     city: "Busan",
                     time: "12:00",
@@ -157,6 +165,7 @@ export const detailData = [
                     y: "35.16329171408399"
                 },
                 {
+                    category : "touristAttraction",
                     name: "부산역",
                     city: "Busan",
                     time: "14:00",
@@ -187,6 +196,7 @@ export const detailData = [
 
             "2024-08-10": [
                 {
+                    category : "touristAttraction",
                     name: "경복궁",
                     city: "Seoul",
                     time: "09:00",
@@ -197,6 +207,7 @@ export const detailData = [
                     y: "37.579617"
                 },
                 {
+                    category : "touristAttraction",
                     name: "북촌 한옥 마을",
                     city: "Seoul",
                     time: "13:00",
@@ -211,6 +222,7 @@ export const detailData = [
 
             "2024-08-11": [
                 {
+                    category : "touristAttraction",
                     name: "Seoul Tower",
                     city: "Seoul",
                     time: "10:00",
@@ -221,6 +233,7 @@ export const detailData = [
                     y: "37.5511694"
                 },
                 {
+                    category : "touristAttraction",
                     name: "Myeongdong",
                     city: "Seoul",
                     time: "15:00",
@@ -249,6 +262,7 @@ export const detailData = [
 
             "2024-12-01": [  // 이동할 장소 정보
                 {
+                    category : "touristAttraction",
                     name: "광안리 해수욕장",
                     city: "Busan",
                     time: "12:00",
@@ -259,6 +273,7 @@ export const detailData = [
                     y: "37.58284829999999"
                 },
                 {
+                    category : "restaurant",
                     name: "조개구이 가게",
                     city: "Busan",
                     time: "15:00",
@@ -269,6 +284,7 @@ export const detailData = [
                     y: "37.6226208171943 "
                 },
                 {
+                    category : "touristAttraction",
                     name: "광안리 해수욕장",
                     city: "Busan",
                     time: "12:00",
@@ -283,6 +299,7 @@ export const detailData = [
 
             "2024-12-02": [  // 이동할 장소 정보
                 {
+                    category : "restaurant",
                     name: "울산 맛집",
                     city: "울산",
                     time: "09:00",
@@ -293,6 +310,7 @@ export const detailData = [
                     y: "37.39639094915999"
                 },
                 {
+                    category : "touristAttraction",
                     name: "울산 해수욕장",
                     city: "울산",
                     time: "13:00",
@@ -303,6 +321,7 @@ export const detailData = [
                     y: "37.401999820065534"
                 },
                 {
+                    category : "restaurant",
                     name: "울산 맛집",
                     city: "울산",
                     time: "09:00",
@@ -316,6 +335,7 @@ export const detailData = [
 
             "2024-12-03": [  // 이동할 장소 정보
                 {
+                    category : "restaurant",
                     name: "울산 맛집",
                     city: "울산",
                     time: "09:00",
@@ -326,6 +346,7 @@ export const detailData = [
                     y: "37.39639094915999"
                 },
                 {
+                    category : "touristAttraction",
                     name: "울산 해수욕장",
                     city: "울산",
                     time: "13:00",
@@ -336,6 +357,7 @@ export const detailData = [
                     y: "37.401999820065534"
                 },
                 {
+                    category : "restaurant",
                     name: "울산 맛집",
                     city: "울산",
                     time: "09:00",
@@ -366,6 +388,7 @@ export const detailData = [
 
             "2025-03-01": [  // 이동할 장소 정보
                 {
+                    category : "touristAttraction",
                     name: "무등산",
                     city: "Busan",
                     time: "12:00",
@@ -376,6 +399,7 @@ export const detailData = [
                     y: "37.58284829999999"
                 },
                 {
+                    category : "restaurant",
                     name: "조개구이 가게",
                     city: "Busan",
                     time: "15:00",
@@ -386,6 +410,7 @@ export const detailData = [
                     y: "37.6226208171943 "
                 },
                 {
+                    category : "touristAttraction",
                     name: "광안리 해수욕장",
                     city: "Busan",
                     time: "12:00",
@@ -400,6 +425,7 @@ export const detailData = [
 
             "2025-03-02": [  // 이동할 장소 정보
                 {
+                    category : "restaurant",
                     name: "울산 맛집",
                     city: "울산",
                     time: "09:00",
@@ -410,6 +436,7 @@ export const detailData = [
                     y: "37.39639094915999"
                 },
                 {
+                    category : "touristAttraction",
                     name: "울산 해수욕장",
                     city: "울산",
                     time: "13:00",
@@ -420,6 +447,7 @@ export const detailData = [
                     y: "37.401999820065534"
                 },
                 {
+                    category : "restaurant",
                     name: "울산 맛집",
                     city: "울산",
                     time: "09:00",
