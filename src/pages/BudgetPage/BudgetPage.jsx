@@ -103,6 +103,7 @@ const BudgetPage = () => {
         title: `[가져온 여행] ${newDetail.title}`,
         id: storedTrips.length + 1,
         AuthorId: UserInfo.id,
+        totalLike: 0,
         like: 0,
         post: 0,
         startDate: startDate.toISOString().split("T")[0], // YYYY-MM-DD 형식
