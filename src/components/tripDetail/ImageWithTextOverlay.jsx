@@ -31,7 +31,7 @@ const TitleBox = styled(Box)({
   padding: "50px",
 });
 
-const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, onChangeLike, onChangeTitle, onChangeImage = () => {} }) => {
+const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, onChangeLike, onChangeTitle, onChangeImage = () => {}, isAuthor }) => {
   const startDateKr = new Date(startDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
   const endDateKr = new Date(endDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
 
@@ -93,7 +93,7 @@ const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, on
       </IconButton>
 
       {/* 이미지 변경 버튼 */}
-      <IconButton
+      {isAuthor && <IconButton
         component="label"
         sx={{
           position: 'absolute',
@@ -110,7 +110,7 @@ const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, on
           style={{ display: "none" }}
           onChange={handleImageChange}
         />
-      </IconButton>
+      </IconButton>}
 
       {/* 제목 및 수정 기능 */}
       <Box display="flex" alignItems="center">
@@ -129,7 +129,7 @@ const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, on
             {currentTitle}
           </Typography>
         )}
-        {!isEditing && (
+        {(!isEditing && isAuthor) &&(
           <IconButton onClick={handleEditToggle} sx={{ ml: 1, color: 'white' }}>
             <EditIcon />
           </IconButton>
