@@ -20,7 +20,7 @@ const SearchContainer = styled.div`
   align-items: center;
   justify-content: center;
   background: url(${backgroundImage}) no-repeat center center/cover;
-  height: 40vh;
+  height: 50vh;
   color: white;
   text-align: center;
   padding: 20px;
