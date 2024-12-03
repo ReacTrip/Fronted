@@ -6,7 +6,7 @@ import trip5 from '@/assets/images/main/trip5.png';
 import trip6 from '@/assets/images/main/trip6.png';
 
 import busanFestival4 from '@/assets/images/TripPlace/busan/busanFestival4.png';
-import busanFestival5 from '@/assets/images/TripPlace/busan/busanFestival4.png';
+import busanFestival5 from '@/assets/images/TripPlace/busan/busanFestival5.png';
 import 코오롱1 from '@/assets/images/TripPlace/busan/코오롱호텔1.png';
 import 코오롱2 from '@/assets/images/TripPlace/busan/코오롱호텔2.png';
 import 코오롱3 from '@/assets/images/TripPlace/busan/코오롱호텔3.png';
@@ -61,7 +61,7 @@ export const detailData = [
         title: "해운대 빛축제 계획",  // 여행 이름
         startDate: "2024-01-29",  // 여행 시작 일자
         endDate: "2024-01-31",  // 여행 종료 일자
-        AuthorId: "TripLover", //작성자 id
+        AuthorId: "BusanOfficial", //작성자 id
         mainImage: busanFestival5,  //메인 이미지
         totalLike: 12050,
         like: 0,
@@ -193,6 +193,8 @@ export const detailData = [
                     notes: "오전 궁궐 투어, 사진 촬영 예정",
                     placeImage: 경복궁1,
                     images: [],
+                    x: "126.977041",
+                    y: "37.579617"
                 },
                 {
                     name: "북촌 한옥 마을",
@@ -201,6 +203,8 @@ export const detailData = [
                     notes: "전통 한옥 체험",
                     placeImage: 북촌한옥마을1,
                     images: [],
+                    x: "126.9849519",
+                    y: "37.5814696"
                 }
             ],
 
@@ -213,6 +217,8 @@ export const detailData = [
                     notes: "서울 전망 감상 및 케이블카 이용",
                     placeImage: 서울타워1,
                     images: [],
+                    x: "126.9882266",
+                    y: "37.5511694"
                 },
                 {
                     name: "Myeongdong",
@@ -221,6 +227,8 @@ export const detailData = [
                     notes: "쇼핑 및 길거리 음식 체험",
                     placeImage: 명동1,
                     images: [],
+                    x: "126.985241620075",
+                    y: "37.5583576447485"
                 }
             ]
 

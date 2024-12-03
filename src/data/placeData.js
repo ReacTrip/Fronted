@@ -68,6 +68,15 @@ import busanFestival3 from '@/assets/images/TripPlace/busan/busanFestival3.png';
 import busanFood1 from '@/assets/images/TripPlace/busan/busanFood1.png';
 import busanFood2 from '@/assets/images/TripPlace/busan/busanFood2.png';
 import busanFood3 from '@/assets/images/TripPlace/busan/busanFood3.png';
+
+import Lilkoi1 from '@/assets/images/TripPlace/busan/Lilkoi1.png';
+import shilla1 from '@/assets/images/TripPlace/busan/shilla1.png';
+import grand1 from '@/assets/images/TripPlace/busan/grand1.png';
+import signiel1 from '@/assets/images/TripPlace/busan/signiel1.png';
+import westin1 from '@/assets/images/TripPlace/busan/westin1.png';
+import lamada1 from '@/assets/images/TripPlace/busan/lamada1.png';
+import 파라다이스호텔1 from '@/assets/images/TripPlace/busan/파라다이스호텔1.png';
+
 // 인천
 import incheonAttraction1 from '@/assets/images/TripPlace/incheon/incheonAttraction1.png';
 import incheonAttraction2 from '@/assets/images/TripPlace/incheon/incheonAttraction2.png';
@@ -253,8 +262,8 @@ export const placeData = [
     place: "광주",
     name: "광주사직공원 전망타워",
     image: gwangjuAttraction2,
-    x: "",
-    y: ""
+    x: "126.9116793",
+    y: "35.141854"
   },
   {
     category : "touristAttraction",
@@ -604,6 +613,62 @@ export const placeData = [
     x: "35.1719465",
     y: "129.1741038"
   },
+  {
+    category : "restaurant",
+    place: "부산",
+    name: "릴코이",
+    image: Lilkoi1,
+    x: "35.160049371467565",
+    y: "129.1670385037033"
+  },
+  {
+    category : "hotel",
+    place: "부산",
+    name: "신라호텔",
+    image: shilla1,
+    x: "35.15978078973868",
+    y: "129.15874124156414"
+  },
+  {
+    category : "hotel",
+    place: "부산",
+    name: "웨스틴 조선 부산",
+    image: westin1,
+    x: "35.1587",
+    y: "129.1635"
+  },
+  {
+    category : "hotel",
+    place: "부산",
+    name: "파라다이스 호텔 부산",
+    image: 파라다이스호텔1,
+    x: "35.1580",
+    y: "129.1625"
+  },
+  {
+    category : "hotel",
+    place: "부산",
+    name: "그랜드 조선 부산",
+    image: grand1,
+    x: "35.1602",
+    y: "129.1630"
+  },
+  {
+    category : "hotel",
+    place: "부산",
+    name: "시그니엘 부산",
+    image: signiel1,
+    x: "35.1615",
+    y: "129.1680"
+  },
+  {
+    category : "hotel",
+    place: "부산",
+    name: "라마다 앙코르 해운대",
+    image: lamada1,
+    x: "35.1630",
+    y: "129.1635"
+  },
   // 인천
   {
     category : "touristAttraction",
@@ -658,8 +723,8 @@ export const placeData = [
     place: "인천",
     name: "금문도",
     image: incheonFood1,
-    x: "",
-    y: ""
+    x: "126.4903905",
+    y: "37.7399686"
   },
   {
     category : "restaurant",

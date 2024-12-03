@@ -25,7 +25,7 @@ const KakaoRouteMap = ({ routeData, placeNames }) => {
         routeData.routes[0].summary.origin.y,
         routeData.routes[0].summary.origin.x
       ),
-      zoom: 11,
+      zoom: 14,
       zoomControl: true,
       zoomControlOptions: {
         position: window.naver.maps.Position.TOP_RIGHT,

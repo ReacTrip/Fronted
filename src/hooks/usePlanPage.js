@@ -31,9 +31,16 @@ export const useTripDetail = (initialDetail) => {
         const updatedItinerary = { ...detail.dailyItinerary };
         const copyListItems = [...updatedItinerary[selectedDate]];
 
+        const time1 = copyListItems[dragIdx].time;  
+        const time2 = copyListItems[dragOverIdx].time;
+        console.log(time1, time2);
+
         const dragItemContent = copyListItems[dragIdx];
         copyListItems.splice(dragIdx, 1);
         copyListItems.splice(dragOverIdx, 0, dragItemContent);
+
+        copyListItems[dragOverIdx].time = time2;  //위치를 바꿔도 시간은 그대로.
+        copyListItems[dragIdx].time = time1;
 
         updatedItinerary[selectedDate] = copyListItems;
 
@@ -130,6 +137,11 @@ export const useTripDetail = (initialDetail) => {
         if(strEndDate === selectedDate) setSelectedDate(newDetail.endDate);
     }
 
+    const changeTitle = (title) => {
+        const newDetail = {...detail, title};
+        setDetail(newDetail);
+    }
+
     return {
         detail,
         setDetail,
@@ -142,6 +154,7 @@ export const useTripDetail = (initialDetail) => {
         deleteDate,
         dates,
         selectedDate,
-        handleDateClick
+        handleDateClick,
+        changeTitle
     };
 };

@@ -5,7 +5,7 @@ import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import { Grid, Box, Typography, Button, Card as MuiCard, CardMedia, CardContent } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { usePlaceInfo } from '@/hooks/usePlaceInfo';
-import { CityResultSection } from '@/components/tripPlace/CityResultSection';
+import { ResultSection } from '@/components/InterestTest/ResultSection';
 import { placeData } from '@/data/placeData';
 import StyledContainer from '@/components/tripPlace/StyledContainer';
 
@@ -14,14 +14,14 @@ import hotAirBalloonImage from "@/assets/images/hot-air-balloon.png";
 import anniversaryLogo from "@/assets/images/Timmerman.png"; 
 import koreaImage from '@/assets/images/TripPlace/Korea.png';
 
-// 검색 컨테이너 - 배경 이미지와 검색 UI를 포함
+// "어디로 갈까요?" 
 const SearchContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background: url(${backgroundImage}) no-repeat center center/cover;
-  height: 40vh;
+  height: 50vh;
   color: white;
   text-align: center;
   padding: 20px;
@@ -125,7 +125,7 @@ const CardImage = styled.img`
   object-fit: cover;
 `;
 
-const StyledCardContent = styled.div`
+const StyledCardContent = styled.div` 
   padding: 15px;
   text-align: center;
 `;
@@ -158,7 +158,6 @@ const HeartIcon = styled.div`
   }
 `;
 
-// 좋아요 기능이 있는 카드 컴포넌트
 const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
   <StyledCard>
     <HeartIcon $liked={liked} onClick={onHeartClick}>
@@ -172,27 +171,24 @@ const CardWithHeart = ({ image, title, liked, onHeartClick }) => (
 );
 
 const City = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const location = useLocation();
   const { cityName } = location.state || {};
-
-  // 상태 관리
-  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null); // 인기 여행지 상태 관리
   const [searchInput, setSearchInput] = useState('');
-  const { placeInfo, isLoading, error, activeCategory, setActiveCategory, fetchPlaceInfo } = usePlaceInfo();
+  const { placeInfo, isLoading, error, activeCategory, setActiveCategory, fetchPlaceInfo, resetPlaceInfo } = usePlaceInfo();
 
-  // 좋아요 상태 관리
   const [likedPlaces, setLikedPlaces] = useState(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likedPlaces')) || [];
     return savedLikes;
   });
 
-  // 종아요 목록 localStorage에 저장
   useEffect(() => {
-    localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
+    if (likedPlaces.length > 0) {
+      localStorage.setItem('likedPlaces', JSON.stringify(likedPlaces));
+    }
   }, [likedPlaces]);
-
-  // 도시별 좋아요 상태 관리
+  
   const [likes, setLikes] = useState(() => {
     const savedLikes = JSON.parse(localStorage.getItem('likes')) || {};
     return savedLikes[cityName] || {
@@ -228,7 +224,6 @@ const City = () => {
     });
   };
   
-  // 검색 관련 핸들러
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
   };
@@ -239,7 +234,6 @@ const City = () => {
     }
   };
 
-  // 카테고리별 장소 필터링
   const attractions = placeData.filter((place) => place.place === cityName && place.category === 'touristAttraction');
   const festivals = placeData.filter((place) => place.place === cityName && place.category === 'festival');
   const foods = placeData.filter((place) => place.place === cityName && place.category === 'restaurant');
@@ -264,22 +258,19 @@ const City = () => {
         <SearchTitle>어디로 갈까요?</SearchTitle>
         <SearchSubtitle>당신이 꿈꾸는 여행을 저렴하면서도 간편하고 풍성하게!</SearchSubtitle>
         <SearchBox>
-          <Input 
-            value={searchInput} 
-            onChange={handleSearchChange} 
-            placeholder="가고 싶은 곳, 하고 싶은 것을 검색해보세요."
-          />
+          <Input value={searchInput} onChange={handleSearchChange} placeholder="가고 싶은 곳, 하고 싶은 것을 검색해보세요." />
           <SearchButton onClick={handleSearch}>🔍</SearchButton>
         </SearchBox>
       </SearchContainer>
 
-      <CityResultSection
+      <ResultSection
         result={searchInput}
         placeInfo={placeInfo}
         isLoading={isLoading}
         error={error}
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
+        onReset={resetPlaceInfo}
         onPlaceInfoRequest={fetchPlaceInfo}
       />
 
@@ -383,7 +374,7 @@ const City = () => {
                 <CardMedia
                   component="img"
                   image={place.image}
-                  alt={place.name}
+                  alt={place.title}
                   sx={{
                     height: '100%',
                     width: '100%',
@@ -434,7 +425,7 @@ const City = () => {
             </Grid>
           ))}
         </Grid>
-
+        
         <SectionTitle>관광지</SectionTitle>
         <GridContainer>
           {attractions.map((attraction, index) => (
@@ -448,6 +439,7 @@ const City = () => {
           ))}
         </GridContainer>
 
+        {/* 축제 섹션 */}
         <SectionTitle>축제</SectionTitle>
         <GridContainer>
           {festivals.map((festival, index) => (
@@ -461,6 +453,7 @@ const City = () => {
           ))}
         </GridContainer>
 
+        {/* 음식 섹션 */}
         <SectionTitle>음식</SectionTitle>
         <GridContainer>
           {foods.map((food, index) => (

@@ -295,6 +295,7 @@ const PlanDate = ({ datePlan, date, onDrop, onDelete, onChangeMap, onChangeImage
               <StyledIconButton onClick={() => openModalWithCategory("touristAttraction")}><PlaceIcon /></StyledIconButton>
               <StyledIconButton onClick={() => openModalWithCategory("restaurant")}><RestaurantIcon /></StyledIconButton>
               <StyledIconButton onClick={() => openModalWithCategory("festival")}><FestivalIcon /></StyledIconButton>
+              <StyledIconButton onClick={() => openModalWithCategory("hotel")}><HotelIcon /></StyledIconButton>
               <StyledIconButton onClick={handleClick}><CloseIcon /></StyledIconButton>
             </Box>))}
           {result?.allDistance !== undefined && result?.allDuration !== undefined && datePlan.length >= 2 && (
