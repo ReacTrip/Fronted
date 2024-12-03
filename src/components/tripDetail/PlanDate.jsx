@@ -60,7 +60,7 @@ const LineBox = styled(Box)({
   width: 36,
   height: 36,
   borderRadius: '50%',
-  backgroundColor: 'black',
+  backgroundColor: 'blue',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
