@@ -31,7 +31,7 @@ const TitleBox = styled(Box)({
   padding: "50px",
 });
 
-const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, onChangeLike, onChangeTitle, onChangeImage = () => {} }) => {
+const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, onChangeLike, onChangeTitle, onChangeImage = () => {}, isAuthor }) => {
   const startDateKr = new Date(startDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
   const endDateKr = new Date(endDate).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
 
@@ -55,14 +55,18 @@ const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, on
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
+      // 로딩 상태를 부모 컴포넌트에 전달
+      onChangeImage(null, true); // 로딩 시작을 알림
+  
       const storageRef = ref(storage, `images/${file.name}`);
       try {
         // Firebase에 파일 업로드
         await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(storageRef);
-        onChangeImage(downloadURL); // 업로드된 이미지 URL을 부모 컴포넌트에 전달
+        onChangeImage(downloadURL, false); // 이미지 URL과 로딩 종료를 알림
       } catch (error) {
         console.error("Image upload failed:", error);
+        onChangeImage(null, false); // 로딩 종료
       }
     }
   };
@@ -89,7 +93,7 @@ const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, on
       </IconButton>
 
       {/* 이미지 변경 버튼 */}
-      <IconButton
+      {isAuthor && <IconButton
         component="label"
         sx={{
           position: 'absolute',
@@ -106,7 +110,7 @@ const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, on
           style={{ display: "none" }}
           onChange={handleImageChange}
         />
-      </IconButton>
+      </IconButton>}
 
       {/* 제목 및 수정 기능 */}
       <Box display="flex" alignItems="center">
@@ -125,7 +129,7 @@ const ImageWithTextOverlay = ({ startDate, endDate, mainImage, title, isLike, on
             {currentTitle}
           </Typography>
         )}
-        {!isEditing && (
+        {(!isEditing && isAuthor) &&(
           <IconButton onClick={handleEditToggle} sx={{ ml: 1, color: 'white' }}>
             <EditIcon />
           </IconButton>
