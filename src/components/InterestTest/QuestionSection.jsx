@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+// 진행 상태바 스타일링
 const StyledProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
   borderRadius: 5,

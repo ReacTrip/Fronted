@@ -58,6 +58,7 @@ const MainContentInner = styled(Box)(({ theme }) => ({
 }));
 
 const InterestTestPage = () => {
+  // 커스텀 훅으로부터 테스트 상태와 함수들을 가져옴
   const {
     currentStep,
     result,
@@ -69,6 +70,7 @@ const InterestTestPage = () => {
     testPhase
   } = useInterestTest();
 
+  // 장소 정보 관리를 위한 커스텀 훅
   const {
     placeInfo,
     isLoading,
@@ -79,6 +81,7 @@ const InterestTestPage = () => {
     resetPlaceInfo
   } = usePlaceInfo();
 
+  // 테스트 초기화 핸들러
   const handleReset = () => {
     resetTest();
     resetPlaceInfo();

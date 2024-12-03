@@ -16,6 +16,7 @@ export const NAVER_MAP_CENTER = { lat: 36.5, lng: 127.8 };
 
 let naverMapScriptPromise = null;
 
+// 네이버 맵 스크립트 로드 함수
 export const loadNaverMapScript = () => {
   if (naverMapScriptPromise) {
     return naverMapScriptPromise;
@@ -37,6 +38,7 @@ export const loadNaverMapScript = () => {
   return naverMapScriptPromise;
 };
 
+// 지도 초기화 함수
 export const initializeMap = (container, options = {}) => {
   const defaultOptions = {
     center: new window.naver.maps.LatLng(NAVER_MAP_CENTER.lat, NAVER_MAP_CENTER.lng),

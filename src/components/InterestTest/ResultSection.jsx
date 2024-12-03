@@ -26,6 +26,7 @@ import {
   OpenInNew as OpenInNewIcon
 } from '@mui/icons-material';
 
+// 스타일링된 컨테이너 컴포넌트들 정의
 const Container = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
   backgroundColor: '#f8f9fa',
@@ -101,10 +102,12 @@ const ButtonContainer = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(6)
 }));
 
+// 사용 가능한 도시 목록
 const availableCities = [
   "서울", "제주", "광주", "포천", "울산", "대구", "부산", "인천", "대전"
 ];
 
+// 결과 섹션 컴포넌트: 테스트 결과와 추천 장소들을 표시
 export const ResultSection = memo(({
   result,
   placeInfo,
@@ -117,6 +120,7 @@ export const ResultSection = memo(({
 }) => {
   const navigate = useNavigate();
 
+  // 결과가 변경될 때마다 장소 정보를 새로 불러옴
   useEffect(() => {
     let isMounted = true;
 
@@ -137,9 +141,10 @@ export const ResultSection = memo(({
 
   const isCityAvailable = availableCities.includes(result);
 
-  const handleExploreCity = () => {
-    navigate('/city', { state: { cityName: result } });
-  };
+ // 도시 상세 페이지로 이동하는 핸들러
+ const handleExploreCity = () => {
+  navigate('/city', { state: { cityName: result } });
+};
 
   return (
     <Container>

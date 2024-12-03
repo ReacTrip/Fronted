@@ -35,6 +35,7 @@ import { storage } from "@/firebase/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Carousel from 'react-material-ui-carousel';
 import { useModal, useImageUpload, useCarousel } from '../../hooks/usePlanDetail'
+import HotelIcon from '@mui/icons-material/Hotel';
 
 
 
@@ -236,6 +237,8 @@ const PlanDetail = (props) => {
                                 <FestivalIcon sx={{ color: 'white', fontSize: 20 }} />
                             ) : props.category === "restaurant" ? (
                                 <RestaurantIcon sx={{ color: 'white', fontSize: 20 }} />
+                            ) : props.category === "hotel" ? (
+                                <HotelIcon sx={{ color: 'white', fontSize: 20 }} />
                             ) : (
                                 <PlaceIcon sx={{ color: 'white', fontSize: 20 }} />
                             )}
