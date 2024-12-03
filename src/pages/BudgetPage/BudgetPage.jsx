@@ -149,6 +149,7 @@ const BudgetPage = () => {
           onChangeLike={changeLike} 
           onChangeTitle={changeTitle} 
           onChangeImage={changeImage} // Pass the changeImage method
+          isAuthor={isAuthor}
         />
           <Box sx={{ marginTop: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
