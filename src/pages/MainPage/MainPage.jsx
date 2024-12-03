@@ -34,15 +34,17 @@ const MainPage = () => {
   const [visibleCount, setVisibleCount] = useState(4); // 한 번에 표시할 여행 개수
 
   useEffect(() => {
-    // 로컬 스토리지에서 데이터 로드 및 필터링
     const storedTrips = JSON.parse(localStorage.getItem("trips")) || [];
     const filteredTrips = storedTrips
-      .filter(trip => trip.post === 1) // post 값이 1인 데이터만 필터링
-      .sort((a, b) => b.totalLike - a.totalLike); // 좋아요 개수 순으로 정렬
+      .filter(trip => trip.post === 1)
+      .sort((a, b) => b.totalLike - a.totalLike);
   
     setTrips(filteredTrips);
-    setVisibleTrips(filteredTrips.slice(0, visibleCount)); // 초기 표시 개수 설정
-  }, [visibleCount]);
+  }, []); // 초기 로드 시 실행
+  
+  useEffect(() => {
+    setVisibleTrips(trips.slice(0, visibleCount)); // trips 상태 변경 시 visibleTrips 업데이트
+  }, [visibleCount, trips]); // visibleCount와 trips 의존성 추가
 
   // 좋아요 클릭 핸들러
   const handleLikeClick = (id) => {
