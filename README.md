@@ -1,5 +1,5 @@
 
-# ReactTrip
+# ✈️ ReactTrip
 
 ## 실행 방법
 
